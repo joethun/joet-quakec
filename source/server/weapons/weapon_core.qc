@@ -926,10 +926,11 @@ void (float shotcount, float sprd, float Damage, float side) FireTrace =
 	while (count < shotcount)
 	{
 		dir = aim (self,0);
-		r = random() * sprd*10;
+		// Use averaged random for tighter, more consistent grouping
+		r = ((random() + random()) * 0.5) * sprd*10;
 		if (random() < 0.5)
 			r = r*-1;
-		ru = random() * sprd*10;
+		ru = ((random() + random()) * 0.5) * sprd*10;
 		if (random() < 0.5)
 			ru = ru*-1;
 

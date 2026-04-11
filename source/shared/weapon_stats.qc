@@ -880,10 +880,10 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 10000;
 			break;
 		case W_KAR_SCOPE:
-			weapon_damage = 130;
+			weapon_damage = 200;
 			break;
 		case W_HEADCRACKER:
-			weapon_damage = 260;
+			weapon_damage = 400;
 			break;
 		// -- Semi-Auto Rifles --
 		case W_GEWEHR:
@@ -968,17 +968,23 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 200;
 			break;
 		// -- Shotguns (per pellet) --
-		case W_DB:
 		case W_SAWNOFF:
-		case W_TRENCH:
-			weapon_damage = 70;
+			weapon_damage = 100;
 			break;
-		case W_BORE:
-		case W_GUT:
-			weapon_damage = 115;
+		case W_DB:
+			weapon_damage = 150;
+			break;
+		case W_TRENCH:
+			weapon_damage = 250;
 			break;
 		case W_SNUFF:
-			weapon_damage = 140;
+			weapon_damage = 200;
+			break;
+		case W_BORE:
+			weapon_damage = 250;
+			break;
+		case W_GUT:
+			weapon_damage = 400;
 			break;
 		// -- Snipers --
 		case W_PTRS:
@@ -1093,7 +1099,7 @@ float(float wep, float penetration_times) getWeaponPenetration =
 		case W_SNUFF:
 			if (penetration_times >= 3)
 				return 0;
-			return 0.5;
+			return 1;
 		case W_FG:
 		case W_IMPELLER:
 			if (penetration_times >= 2)
@@ -1156,7 +1162,7 @@ float(float wep, float penetration_times) getWeaponPenetration =
 		case W_GUT:
 			if (penetration_times >= 3)
 				return 0;
-			return 0.7;
+			return 1;
 		case W_TYPE:
 		case W_SAMURAI:
 			if (penetration_times >= 2)
@@ -4173,13 +4179,13 @@ float(float weapon, float stance) CrossHairWeapon =
 			break;
 		case W_SAWNOFF:
 		case W_SNUFF:
-			crosshair_spread = 50;
+			crosshair_spread = 20;
 			break;
 		case W_TRENCH:
 		case W_GUT:
 		case W_DB:
 		case W_BORE:
-			crosshair_spread = 35;
+			crosshair_spread = 15;
 			break;
 		case W_GEWEHR:
 		case W_COMPRESSOR:
@@ -4268,12 +4274,14 @@ float(float weapon, float stance) CrossHairMaxSpread =
 			break;
 		case W_SAWNOFF:
 		case W_SNUFF:
-			crosshair_spread = 50;
+			crosshair_spread = 20;
 			break;
 		case W_DB:
 		case W_BORE:
 		case W_TRENCH:
 		case W_GUT:
+			crosshair_spread = 15;
+			break;
 		case W_GEWEHR:
 		case W_COMPRESSOR:
 		case W_M1:
