@@ -82,7 +82,7 @@ void(vector position, string text, vector size, vector rgb, float alpha, float d
     for(int i = 0; i < strlen(text); i++) {
         float chr = str2chr(text, i);
         drawcharacter([x, y], chr, size, rgb, alpha, drawflag);
-        
+
         // Hooray for variable-spacing!
 		if (chr == ' ')
 			x += 4 * (size_x/8);

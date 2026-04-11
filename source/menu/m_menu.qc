@@ -469,7 +469,7 @@ void(float order, float sub_order, string header) Menu_DrawCreditContributor =
 void() Menu_DrawBuildDate =
 {
 	sui_set_align([SUI_ALIGN_END, SUI_ALIGN_START]);
-	sui_text([-6, 8], MENU_TEXT_SMALL, build_datetime, [1, 1, 1], 1, 0);
+	sui_text([-6, 8], MENU_TEXT_SMALL, sprintf("Joe T Edition v%s", JOET_VERSION), [1, 1, 1], 1, 0);
 	sui_text([-6, 22], MENU_TEXT_SMALL, sprintf("Welcome, %s", cvar_string("name")), [0.7, 0.15, 0.15], 1, 0);
 };
 
