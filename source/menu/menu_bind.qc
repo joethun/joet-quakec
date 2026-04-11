@@ -98,8 +98,8 @@ void() Menu_Bindings =
     Menu_Button(1, "bm_jump", "JUMP", "") ? Menu_Bindings_Listen(1, "impulse 10") : 0;
     Menu_Bindings_PrintBindForCommand(1, "impulse 10");
 
-    Menu_Button(2, "bm_spri", "SPRINT", "") ? Menu_Bindings_Listen(2, "impulse 23") : 0;
-    Menu_Bindings_PrintBindForCommand(2, "impulse 23");
+    Menu_Button(2, "bm_spri", "SPRINT", "") ? Menu_Bindings_Listen(2, "+sprint") : 0;
+    Menu_Bindings_PrintBindForCommand(2, "+sprint");
 
     Menu_Button(3, "bm_crou", "CHANGE STANCE", "") ? Menu_Bindings_Listen(3, "impulse 30") : 0;
     Menu_Bindings_PrintBindForCommand(3, "impulse 30");

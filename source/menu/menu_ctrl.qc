@@ -18,12 +18,12 @@ void() Menu_Control_StoreCurrentSettings =
     }
 
     // Figure out Sprint mode.
-    tokenize(findkeysforcommandex("+sprint"));
+    tokenize(findkeysforcommandex("impulse 27"));
 	string sprint_key = strtoupper(argv(0));
 	if (sprint_key == "LSHIFT" || sprint_key == "SHIFT") {
-        current_sprintmode = 0; // Hold
-    } else {
         current_sprintmode = 1; // Toggle
+    } else {
+        current_sprintmode = 0; // Hold
     }
 
     current_invert = (cvar("m_pitch") == 0.022);
