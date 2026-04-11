@@ -67,20 +67,6 @@ void() palm_tree_closed = {remove(self);};
 void() func_model = {remove(self);};
 void() wooden_crate = {remove(self);};
 
-void() change_frame;
-void() change_frame2 =
-{
-	self.frame++;
-	self.think = change_frame;
-	self.nextthink = time + 1;
-}
-void() change_frame =
-{
-	self.frame++;
-	self.think = change_frame2;
-	self.nextthink = time + 1;
-}
-
 #ifdef FTE
 
 void(void() spawnfunc) CheckSpawn =

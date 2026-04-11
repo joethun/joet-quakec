@@ -433,7 +433,7 @@ void(entity client) LastStand_SpawnReviveTrigger =
     revive_trigger.nextthink = time + 1;
     revive_trigger.touch = LastStand_TouchReviveTrigger;
     revive_trigger.solid = SOLID_TRIGGER;
-    
+
     setorigin(revive_trigger, client.origin);
     setsize(revive_trigger, '-52 -52 -16', '52 52 -4');
 };

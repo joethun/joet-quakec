@@ -39,7 +39,6 @@ float tracercounter;
 entity cl_viewent;
 entity cl_viewent2;
 
-float matchmake_enabled;
 float double_tap_version;
 
 float useprint_type;

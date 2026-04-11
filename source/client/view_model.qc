@@ -181,6 +181,14 @@ void(entity viewent) ViewModel_Animate =
     // Update the skin.
     viewent.skin = getstatf(STAT_WEAPONSKIN);
 
+    // Double PaP Destroyer: yellow tint
+    if (viewent.skin == 2) {
+        viewent.skin = 1;
+        viewent.colormod = '1.2 1.1 0.3';
+    } else {
+        viewent.colormod = '1 1 1';
+    }
+
     // Server requested a frame change
     if (new_frame != viewent.frame) {
         viewent.frame2 = viewent.frame;

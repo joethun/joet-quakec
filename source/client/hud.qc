@@ -160,11 +160,10 @@ void() HUD_Health =
 		modifier = -35.0;
     
 		alpha += modifier;
-    
+
 		if(alpha < 0.0)
 			return;
-		float color = 255.0 + modifier;
-    
+
 		drawpic([0,0,0], "gfx/hud/blood.tga", [g_width, g_height, 0], [10,0,0], alpha/2000); // naievil -- alpha factor division here makes it easy to use legacy code
 	}
 	
@@ -184,21 +183,22 @@ void() HUD_Ammo =
 	float ammo, curmag;
 	string ammostring, ammostring_1, ammostring_2;
 	vector color;
-	
-	curmag = getstatf(STAT_CURRENTMAG);		
-	ammo = getstatf(STAT_AMMO);	
-	
-	if (W_IsLowAmmo(getstatf(STAT_ACTIVEWEAPON), getstatf(STAT_CURRENTMAG), true))
+
+	curmag = getstatf(STAT_CURRENTMAG);
+	ammo = getstatf(STAT_AMMO);
+	float active_wpn = getstatf(STAT_ACTIVEWEAPON);
+
+	if (W_IsLowAmmo(active_wpn, curmag, true))
 		color = [215/255, 0, 0];
 	else
 		color = [1, 1, 1];
-	
-	if (W_IsLowAmmo(getstatf(STAT_ACTIVEWEAPON), getstatf(STAT_AMMO), false))
+
+	if (W_IsLowAmmo(active_wpn, ammo, false))
 		vector color_2 = [215/255, 0, 0];
 	else
 		color_2 = [1, 1, 1];
 
-	if (IsDualWeapon(getstatf(STAT_ACTIVEWEAPON))) {
+	if (IsDualWeapon(active_wpn)) {
 		float curmag2 = getstatf(STAT_CURRENTMAG2);
 		
 		ammostring = strcat(ftos(curmag2), " ", ftos(curmag), "/", ftos(ammo));
@@ -229,11 +229,14 @@ void() HUD_AmmoString =
 	float	reserve_is_empty;
 	float	mag_is_low;
 
+	float cur_ammo = getstatf(STAT_AMMO);
+	float cur_mag = getstatf(STAT_CURRENTMAG);
+
 	// Is the Reserve low?
-	reserve_is_empty = getstatf(STAT_AMMO) <= 0;
+	reserve_is_empty = cur_ammo <= 0;
 
 	// Is the Magazine low?
-	mag_is_low = W_IsLowAmmo(getstatf(STAT_ACTIVEWEAPON), getstatf(STAT_CURRENTMAG), true);
+	mag_is_low = W_IsLowAmmo(getstatf(STAT_ACTIVEWEAPON), cur_mag, true);
 
 	// When the mag isn't low, there's nothing to do here.
 	if (mag_is_low == false) {
@@ -242,7 +245,7 @@ void() HUD_AmmoString =
 		return;
 	} else {
 		// Report NO AMMO if both current mag and reserve are empty
-		if (getstatf(STAT_CURRENTMAG) <= 0 && reserve_is_empty == true)
+		if (cur_mag <= 0 && reserve_is_empty == true)
 		{
 			message = "NO AMMO";
 			textcolor = [215/255, 0, 0];
@@ -328,14 +331,9 @@ void(float amount, float playernum) RegisterPointChange =
 	// determine the width of the text string
 	point_elements[index].string_width = getTextWidth(point_elements[index].text_string, 12);
 
-	// generate a velocity
+	// generate a velocity (range 0.33 - 0.70 without spinning)
 	point_elements[index].y_velocity = random()/4;
-	while (point_elements[index].x_velocity < 0.33) {
-		point_elements[index].x_velocity = random();
-	}
-
-	if (point_elements[index].x_velocity > 0.70)
-		point_elements[index].x_velocity -= 0.2;
+	point_elements[index].x_velocity = 0.33 + random() * 0.37;
 
 	// should the vertical velocity be positive or negative?
 	float rng = random();
@@ -398,16 +396,21 @@ void(float pwidth, float playernum) PointUpdate =
 
 void() HUD_Points =
 {
-	float pointlength = 0, increm = 10, pointwidth = 0, x = 0;
-	float backwidth = 0.8*g_width;
+	float pointwidth = 0, x = 0;
 	vector TEXTCOLOR = '0 0 0';
+	float local_playernum = getstatf(STAT_PLAYERNUM);
+	int drawn = 0;
 
 	for (int i = 7; i >= 0; i = i - 1)
 	{
 		float player_number = getplayerkeyfloat(i, "client_index");
+
+		if (player_number <= 0)
+			continue;
+
 		entity client = findfloat(world, playernum, player_number);
 
-		if ((client == world || !client.classname) && !client.is_spectator)
+		if (client == world || !client.classname)
 			continue;
 
 		TEXTCOLOR = HUD_ResolveTextColorForPlayer(i);
@@ -415,15 +418,18 @@ void() HUD_Points =
 		pointwidth = getTextWidth(ftos(client.points), 12);
 		x = (99 - pointwidth)/2 + GetUltraWideOffset();
 
-		if (player_number == getstatf(STAT_PLAYERNUM)) {
-			drawpic([3 + GetUltraWideOffset(), g_height - 97 - (i * 25)], "gfx/hud/moneyback.tga", [96, 24], [1,1,1], 1);
-			HUD_DrawStringWithBackdrop([x, g_height - 92 - (i * 25)], ftos(client.points), [12, 12], TEXTCOLOR, 1, 0);
+		float y_offset = drawn * 25;
+
+		if (player_number == local_playernum) {
+			drawpic([3 + GetUltraWideOffset(), g_height - 97 - y_offset], "gfx/hud/moneyback.tga", [96, 24], [1,1,1], 1);
+			HUD_DrawStringWithBackdrop([x, g_height - 92 - y_offset], ftos(client.points), [12, 12], TEXTCOLOR, 1, 0);
 		} else {
-			drawpic([-7 + GetUltraWideOffset(), g_height - 97 - (i * 25)], "gfx/hud/moneyback_condensed.tga", [96, 24], [1,1,1], 1);
-			HUD_DrawStringWithBackdrop([x - 9, g_height - 92 - (i * 25)], ftos(client.points), [12, 12], TEXTCOLOR, 1, 0);
+			drawpic([-7 + GetUltraWideOffset(), g_height - 97 - y_offset], "gfx/hud/moneyback_condensed.tga", [96, 24], [1,1,1], 1);
+			HUD_DrawStringWithBackdrop([x - 9, g_height - 92 - y_offset], ftos(client.points), [12, 12], TEXTCOLOR, 1, 0);
 		}
 
 		PointUpdate(x + 70, player_number);
+		drawn++;
 	}
 }
 
@@ -498,15 +504,16 @@ float round_center_y;
 //motolegacy -- 'round' text
 float pwidth;
 float rcolor, rinit, ralpha, localpha;
+float round_images_cached;
 
 void() HUD_Rounds =
-{	
+{
 	float roundheight = 65;
 	float roundwidth = 15;
-	
+
 	float roundwidth_4 = 81;
 	float roundheight_4 = 65;
-	
+
 	float roundheight_num = 65;
 	float roundwidth_num = 43; // naievil -- was 32, but more square makes it look better
 
@@ -520,12 +527,14 @@ void() HUD_Rounds =
 	round_colors[1] = hud_round_color[1];
 	round_colors[2] = hud_round_color[2];
 
-	for (float j = 0; j < 10; j++) {
-		if (j < 5) {
-			sb_round[j] = getImage(strcat("r", ftos(j+1), ".tga"));
+	// Cache round image paths once instead of rebuilding every frame
+	if (!round_images_cached) {
+		for (float j = 0; j < 10; j++) {
+			if (j < 5)
+				sb_round[j] = getImage(strcat("r", ftos(j+1), ".tga"));
+			sb_round_num[j] = getImage(strcat("r_num", ftos(j), ".tga"));
 		}
-
-		sb_round_num[j] = getImage(strcat("r_num", ftos(j), ".tga"));
+		round_images_cached = true;
 	}
 
 	if (rounds_change == 1 || rounds_change == 2) {
@@ -1590,6 +1599,10 @@ void() HUD_Crosshair =
 	if (!crosshair_opacity)
 		crosshair_opacity = 1;
 
+	float active_weapon = getstatf(STAT_ACTIVEWEAPON);
+	float player_stance = getstatf(STAT_PLAYERSTANCE);
+	float max_spread = CrossHairMaxSpread(active_weapon, player_stance);
+
 	if ((K_BACKDOWN || K_FORWARDDOWN || K_LEFTDOWN || K_RIGHTDOWN || input_buttons == 2) && crosshair_value == 1) {
 		croshhairmoving = 1;
 
@@ -1597,19 +1610,18 @@ void() HUD_Crosshair =
 
 		if (crosshair_opacity < 0.5)
 			crosshair_opacity = 0.5;
-		
-		if (cur_spread >= CrossHairMaxSpread(getstatf(STAT_ACTIVEWEAPON), getstatf(STAT_PLAYERSTANCE))) {
-			cur_spread = CrossHairMaxSpread(getstatf(STAT_ACTIVEWEAPON), getstatf(STAT_PLAYERSTANCE));
+
+		if (cur_spread >= max_spread) {
+			cur_spread = max_spread;
 		} else {
 			cur_spread += (frametime*160);
-
 		}
 	} else {
 		croshhairmoving = 0;
-		
+
 		if (cur_spread > 0)
 			cur_spread -= (frametime*160);
-		else 
+		else
 			cur_spread = 0;
 
 		crosshair_opacity += frametime;
@@ -1623,7 +1635,7 @@ void() HUD_Crosshair =
 		crosshair_color = TEXT_RED;
 	else
 		crosshair_color = [1, 1, 1];
-	
+
 	if (getstatf(STAT_HEALTH) < 1)
 		return;
 
@@ -1631,11 +1643,11 @@ void() HUD_Crosshair =
 	if (crosshair_value == 1) {
 		int x_value, y_value;
 		int crosshair_offset;
-			
-		crosshair_offset = CrossHairWeapon(getstatf(STAT_ACTIVEWEAPON), getstatf(STAT_PLAYERSTANCE)) + cur_spread;
-			
-		if (CrossHairMaxSpread(getstatf(STAT_ACTIVEWEAPON), getstatf(STAT_PLAYERSTANCE)) < crosshair_offset)
-			crosshair_offset = CrossHairMaxSpread(getstatf(STAT_ACTIVEWEAPON), getstatf(STAT_PLAYERSTANCE));
+
+		crosshair_offset = CrossHairWeapon(active_weapon, player_stance) + cur_spread;
+
+		if (max_spread < crosshair_offset)
+			crosshair_offset = max_spread;
 			
 		if (perks & P_DEAD)
 			crosshair_offset *= 0.65;
@@ -1995,8 +2007,6 @@ string(float powerup_id) HUD_GetToastForPowerUp =
 		default:
 			return "";
 	}
-
-	return "";
 }
 
 //
@@ -2214,8 +2224,7 @@ void() HUD_PlayerNames =
 		else if (client.is_in_menu == 1)
 			text = strcat("[PAUSED] ", text);
 
-		entity plr = findfloat(world, playernum, player_number);
-		vector player_origin = plr.origin + '0 0 48';
+		vector player_origin = client.origin + '0 0 48';
 		vector screen_position = project(player_origin);
 		vector text_color = '1 1 1';
 
@@ -2233,11 +2242,22 @@ void() HUD_PlayerNames =
 
 void() HUD_ReviveIcons =
 {
-	for (float i = 3; i >= 0; i = i - 1) {
-		float player_index = i;
+	float local_playernum = getstatf(STAT_PLAYERNUM);
+
+	for (float i = 7; i >= 0; i = i - 1) {
+		float player_number = getplayerkeyfloat(i, "client_index");
+
+		if (player_number <= 0)
+			continue;
+
+		// Index into revive_icons by playernum, not by player key slot
+		float player_index = player_number - 1;
+
+		if (player_index < 0 || player_index >= MAX_REVIVE_ICONS)
+			continue;
 
 		// Don't render our own Icon.
-		if (player_index + 1 == getstatf(STAT_PLAYERNUM))
+		if (player_number == local_playernum)
 			continue;
 
 		// Player is not in Last Stand.
@@ -2248,18 +2268,14 @@ void() HUD_ReviveIcons =
 		// Revive Icon should grow more and more red over time.
 		if (revive_icons[player_index].state == 1)
 			revive_icons[player_index].timer += frametime;
-		
-		float player_number = getplayerkeyfloat(i, "client_index");
 
-		//string text = getplayerkeyvalue(i, "name");
 		entity client = findfloat(world, playernum, player_number);
 
 		// Client does not exist.
 		if (client == world || !client.classname || client.is_spectator)
 			continue;
 
-		entity plr = findfloat(world, playernum, player_number);
-		vector player_origin = plr.origin + '0 0 32';
+		vector player_origin = client.origin + '0 0 32';
 		vector screen_position = project(player_origin);
 		screen_position_x -= (32)/2;
 
@@ -2268,12 +2284,15 @@ void() HUD_ReviveIcons =
 
 		if (screen_position_z > 0) {
 			// Client is actively being revived, render white.
-			if (revive_icons[i].state == 2) {
+			if (revive_icons[player_index].state == 2) {
 				drawpic(screen_position, "gfx/hud/revive_icon.tga", [32, 32, 1], [1,1,1], 1);
-			} 
-			// Draw with a yellow->red hue.
+			}
+			// Draw with a yellow->red hue, pulse when critical (>20s down).
 			else {
-				drawpic(screen_position, "gfx/hud/revive_icon.tga", [32, 32, 1], [1,1 - (revive_icons[i].timer/30),0], 1);
+				float revive_alpha = 1;
+				if (revive_icons[player_index].timer > 20)
+					revive_alpha = 0.5 + 0.5 * fabs(sin(time * 4));
+				drawpic(screen_position, "gfx/hud/revive_icon.tga", [32, 32, 1], [1,1 - (revive_icons[player_index].timer/30),0], revive_alpha);
 			}
 		}
 	}

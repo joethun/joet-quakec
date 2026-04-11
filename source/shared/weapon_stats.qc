@@ -216,6 +216,9 @@ string(float wep, float weapon_tier) GetWeaponName =
 		case W_PULVERIZER:
 			weapon_name = "Pulverizer";
 			break;
+		case W_DESTROYER:
+			weapon_name = "Tom Autodesk Destroyer 5000";
+			break;
 		default:
 			break;
 	}
@@ -291,6 +294,7 @@ float(float wep) GetFiretype =
 		case W_SPRING:
 			return FIRETYPE_SEMIAUTO;
     	case W_PULVERIZER:
+		case W_DESTROYER:
 			return FIRETYPE_SEMIAUTO;
 		case W_THOMPSON:
 		case W_GIBS:
@@ -386,306 +390,148 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 
 	switch (wep)
 	{
+		// -- Pistols --
 		case W_COLT:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 3; break;
-				case UPPER_TORSO_X: multiplier = 1; break;
-				case LOWER_TORSO_X: multiplier = 0.8; break;
-				case LIMBS_X: 		multiplier = 0.8; break;
-			}
-			break;
-		case W_KAR:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 3.5; break;
-				case UPPER_TORSO_X:	multiplier = 1.8; break;
-				case LOWER_TORSO_X:	multiplier = 1.7; break;
-				case LIMBS_X: 		multiplier = 0.7; break;
-			}
-			break;
-		case W_ARMAGEDDON:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 10; break;
-				case UPPER_TORSO_X:	multiplier = 6; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
-		case W_SPRING:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 2; break;
-				case UPPER_TORSO_X:	multiplier = 1.2; break;
-				case LOWER_TORSO_X:	multiplier = 0.9; break;
-				case LIMBS_X: 		multiplier = 0.8; break;
-			}
-			break;
-		case W_PULVERIZER:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 8; break;
-				case UPPER_TORSO_X:	multiplier = 5; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
-		case W_THOMPSON:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 4; break;
-				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
-		case W_GIBS:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 5; break;
-				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
 		case W_357:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 1.5; break;
-				case UPPER_TORSO_X:	multiplier = 1.1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
 		case W_KILLU:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 3; break;
-				case UPPER_TORSO_X:	multiplier = 1.5; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
+				case HEAD_X: 		multiplier = 2; break;
+				case UPPER_TORSO_X: multiplier = 1; break;
+				case LOWER_TORSO_X: multiplier = 0.9; break;
+				case LIMBS_X: 		multiplier = 0.75; break;
 			}
 			break;
-		case W_BAR:
-		case W_WIDOW:
+		// -- Bolt-Action Rifles: slow fire, higher head reward --
+		case W_KAR:
+		case W_SPRING:
+		case W_ARMAGEDDON:
+		case W_PULVERIZER:
+		case W_DESTROYER:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 2.7; break;
-				case UPPER_TORSO_X:	multiplier = 1.8; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1.5; break;
-			}
-			break;
-		case W_BROWNING:
-		case W_ACCELERATOR:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 3; break;
+				case HEAD_X: 		multiplier = 2.5; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 0.9; break;
+				case LIMBS_X: 		multiplier = 0.75; break;
 			}
 			break;
-		case W_FG:
-		case W_IMPELLER:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 2.7; break;
-				case UPPER_TORSO_X:	multiplier = 2; break;
-				case LOWER_TORSO_X:	multiplier = 1.5; break;
-				case LIMBS_X: 		multiplier = 1.5; break;
-			}
-			break;
-		case W_GEWEHR:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 2.7; break;
-				case UPPER_TORSO_X:	multiplier = 1.25; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
-		case W_COMPRESSOR:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 6; break;
-				case UPPER_TORSO_X:	multiplier = 2; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
+		// -- Scoped Rifles: precision weapons, best head reward --
 		case W_KAR_SCOPE:
 		case W_HEADCRACKER:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 10; break;
-				case UPPER_TORSO_X:	multiplier = 1.5; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
+				case HEAD_X: 		multiplier = 3; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 0.9; break;
+				case LIMBS_X: 		multiplier = 0.75; break;
 			}
 			break;
+		// -- Semi-Auto Rifles --
+		case W_GEWEHR:
 		case W_M1:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 2.7; break;
-				case UPPER_TORSO_X:	multiplier = 1.25; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 0.7; break;
-			}
-			break;
-		case W_M1000:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 6; break;
-				case UPPER_TORSO_X:	multiplier = 2; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
 		case W_M1A1:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 2.7; break;
-				case UPPER_TORSO_X:	multiplier = 1.25; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 0.7; break;
-			}
-			break;
+		case W_COMPRESSOR:
+		case W_M1000:
 		case W_WIDDER:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 6; break;
-				case UPPER_TORSO_X:	multiplier = 2; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
+				case HEAD_X: 		multiplier = 2; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 0.9; break;
+				case LIMBS_X: 		multiplier = 0.75; break;
 			}
 			break;
+		// -- SMGs: fast fire, low head bonus to prevent head-spray dominance --
+		case W_THOMPSON:
 		case W_MP40:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 4; break;
-				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
-		case W_AFTERBURNER:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 5; break;
-				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
 		case W_MP5K:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 4; break;
-				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
+		case W_PPSH:
+		case W_TYPE:
+		case W_GIBS:
+		case W_AFTERBURNER:
 		case W_KOLLIDER:
+		case W_REAPER:
+		case W_SAMURAI:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 5; break;
+				case HEAD_X: 		multiplier = 1.5; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 0.8; break;
 			}
 			break;
+		// -- Assault Rifles / Light MGs --
+		case W_BAR:
+		case W_FG:
+		case W_STG:
+		case W_WIDOW:
+		case W_IMPELLER:
+		case W_SPATZ:
+			switch (type)
+			{
+				case HEAD_X: 		multiplier = 1.75; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 0.8; break;
+			}
+			break;
+		// -- LMGs: spray weapons, minimal head bonus --
+		case W_BROWNING:
+		case W_ACCELERATOR:
 		case W_MG:
 		case W_BARRACUDA:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 3; break;
+				case HEAD_X: 		multiplier = 1.5; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 0.8; break;
 			}
 			break;
-		case W_PPSH:
-		case W_REAPER:
+		// -- Shotguns: per-pellet headshot bonus helps close-range viability --
+		case W_DB:
+		case W_SAWNOFF:
+		case W_BORE:
+		case W_SNUFF:
+		case W_TRENCH:
+		case W_GUT:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 4; break;
+				case HEAD_X: 		multiplier = 2; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 0.8; break;
 			}
 			break;
+		// -- Snipers: already high base damage, moderate head bonus --
 		case W_PTRS:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 3; break;
-				case UPPER_TORSO_X:	multiplier = 2.25; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
 		case W_PENETRATOR:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 3; break;
-				case UPPER_TORSO_X:	multiplier = 3; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
-		case W_STG:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 4; break;
+				case HEAD_X: 		multiplier = 2; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 0.8; break;
+				case LOWER_TORSO_X:	multiplier = 0.9; break;
+				case LIMBS_X: 		multiplier = 0.75; break;
 			}
 			break;
-		case W_SPATZ:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 5; break;
-				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 0.8; break;
-			}
-			break;
-		case W_TYPE:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 4; break;
-				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
-		case W_SAMURAI:
-			switch (type)
-			{
-				case HEAD_X: 		multiplier = 5.5; break;
-				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
-				case LIMBS_X: 		multiplier = 1; break;
-			}
-			break;
+		// -- Ballistic Knife --
 		case W_BK:
 		case W_KRAUS:
 			switch (type)
 			{
-				case HEAD_X:		multiplier = 2; break;
+				case HEAD_X:		multiplier = 1.5; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
 				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
+		// -- Wonder Weapons: already very high base, small head bonus --
 		case W_RAYMK2:
 		case W_PORTERMK2:
 			switch (type)
 			{
-				case HEAD_X:		multiplier = 21.7; break;
+				case HEAD_X:		multiplier = 1.5; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
 				case LIMBS_X: 		multiplier = 1; break;
@@ -714,6 +560,7 @@ float(float wep) getWeaponMag =
 		case W_SPRING:
 			return 5;
     	case W_PULVERIZER:
+		case W_DESTROYER:
 			return 8;
 		case W_THOMPSON:
 			return 20;
@@ -838,6 +685,9 @@ float(float wep) getWeaponAmmo =
     	case W_PULVERIZER:
 			weapon_ammo = 60;
 			break;
+		case W_DESTROYER:
+			weapon_ammo = 100;
+			break;
 		case W_THOMPSON:
 			weapon_ammo = 200;
 			break;
@@ -845,8 +695,10 @@ float(float wep) getWeaponAmmo =
 			weapon_ammo = 250;
 			break;
 		case W_357:
-		case W_KILLU:
 			weapon_ammo = 80;
+			break;
+		case W_KILLU:
+			weapon_ammo = 120;
 			break;
 		case W_BAR:
 			weapon_ammo = 140;
@@ -862,8 +714,10 @@ float(float wep) getWeaponAmmo =
 			break;
 		case W_DB:
 		case W_SAWNOFF:
-		case W_BORE:
 			weapon_ammo = 60;
+			break;
+		case W_BORE:
+			weapon_ammo = 80;
 			break;
 		case W_FG:
 			weapon_ammo = 192;
@@ -903,7 +757,7 @@ float(float wep) getWeaponAmmo =
 			weapon_ammo = 192;
 			break;
 		case W_AFTERBURNER:
-			weapon_ammo = 192;
+			weapon_ammo = 256;
 			break;
 		case W_MP5K:
 			weapon_ammo = 120;
@@ -933,7 +787,7 @@ float(float wep) getWeaponAmmo =
 			weapon_ammo = 60;
 			break;
 		case W_PENETRATOR:
-			weapon_ammo = 60;
+			weapon_ammo = 80;
 			break;
 		case W_RAY:
 			weapon_ammo = 160;
@@ -948,7 +802,7 @@ float(float wep) getWeaponAmmo =
 			weapon_ammo = 201;
 			break;
 		case W_SNUFF:
-			weapon_ammo = 60;
+			weapon_ammo = 80;
 			break;
 		case W_STG:
 			weapon_ammo = 180;
@@ -960,7 +814,7 @@ float(float wep) getWeaponAmmo =
 			weapon_ammo = 60;
 			break;
 		case W_GUT:
-			weapon_ammo = 60;
+			weapon_ammo = 80;
 			break;
 		case W_TYPE:
 			weapon_ammo = 160;
@@ -996,80 +850,66 @@ float(float wep, float weapon_tier) getWeaponDamage =
 
 	switch (wep)
 	{
+		// -- Pistols --
 		case W_COLT:
-			weapon_damage = 20;
+			weapon_damage = 30;
 			break;
 		case W_BIATCH:
 			weapon_damage = 1000;
 			break;
-		case W_KAR:
-			weapon_damage = 100;
-			break;
-		case W_ARMAGEDDON:
-			weapon_damage = 200;
-			break;
-		case W_SPRING:
-			weapon_damage = 105;
-			break;
-		case W_PULVERIZER:
-			weapon_damage = 210;
-			break;
-		case W_THOMPSON:
-			weapon_damage = 120;
-			break;
-		case W_GIBS:
-			weapon_damage = 200;
-			break;
 		case W_357:
+			weapon_damage = 170;
+			break;
 		case W_KILLU:
-			weapon_damage = 1000;
+			weapon_damage = 340;
 			break;
-		case W_BAR:
-			weapon_damage = 100;
-			break;
-		case W_WIDOW:
-			weapon_damage = 200;
-			break;
-		case W_BROWNING:
-		case W_ACCELERATOR:
+		// -- Bolt-Action Rifles --
+		case W_KAR:
 			weapon_damage = 130;
 			break;
-		case W_DB:
-		case W_SAWNOFF:
-			weapon_damage = 200;
+		case W_ARMAGEDDON:
+			weapon_damage = 260;
 			break;
-		case W_BORE:
-			weapon_damage = 380;
+		case W_SPRING:
+			weapon_damage = 130;
 			break;
-		case W_FG:
-			weapon_damage = 100;
+		case W_PULVERIZER:
+			weapon_damage = 260;
 			break;
-		case W_IMPELLER:
-			weapon_damage = 110;
-			break;
-		case W_GEWEHR:
-			weapon_damage = 90;
-			break;
-		case W_COMPRESSOR:
-			weapon_damage = 200;
+		case W_DESTROYER:
+			weapon_damage = 10000;
 			break;
 		case W_KAR_SCOPE:
-			weapon_damage = 800;
+			weapon_damage = 130;
 			break;
 		case W_HEADCRACKER:
-			weapon_damage = 1000;
+			weapon_damage = 260;
+			break;
+		// -- Semi-Auto Rifles --
+		case W_GEWEHR:
+			weapon_damage = 125;
+			break;
+		case W_COMPRESSOR:
+			weapon_damage = 250;
 			break;
 		case W_M1:
-			weapon_damage = 105;
+			weapon_damage = 180;
 			break;
 		case W_M1000:
-			weapon_damage = 200;
+			weapon_damage = 360;
 			break;
 		case W_M1A1:
-			weapon_damage = 120;
+			weapon_damage = 135;
 			break;
 		case W_WIDDER:
-			weapon_damage = 200;
+			weapon_damage = 270;
+			break;
+		// -- SMGs (per-bullet scaled by fire rate) --
+		case W_THOMPSON:
+			weapon_damage = 85;
+			break;
+		case W_GIBS:
+			weapon_damage = 170;
 			break;
 		case W_MP40:
 			weapon_damage = 100;
@@ -1078,64 +918,96 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 200;
 			break;
 		case W_MP5K:
-			weapon_damage = 100;
+			weapon_damage = 85;
 			break;
 		case W_KOLLIDER:
-			weapon_damage = 140;
-			break;
-		case W_MG:
-			weapon_damage = 130;
-			break;
-		case W_BARRACUDA:
-			weapon_damage = 130;
-			break;
-		case W_PANZER:
-			weapon_damage = 600;
-			break;
-		case W_LONGINUS:
-			weapon_damage = 1000;
+			weapon_damage = 170;
 			break;
 		case W_PPSH:
-			weapon_damage = 100;
+			weapon_damage = 55;
 			break;
 		case W_REAPER:
-			weapon_damage = 150;
-			break;
-		case W_PTRS:
-		case W_PENETRATOR:
-			weapon_damage = 1000;
-			break;
-		case W_RAY:
-		case W_PORTER:
-			weapon_damage = 1000;
-			break;
-		case W_RAYMK2:
-			weapon_damage = 2300;
-			break;
-		case W_PORTERMK2:
-			weapon_damage = 4600;
-			break;
-		case W_SNUFF:
-			weapon_damage = 240;
-			break;
-		case W_STG:
-			weapon_damage = 100;
-			break;
-		case W_SPATZ:
-			weapon_damage = 150;
-			break;
-		case W_TRENCH:
-			weapon_damage = 160;
-			break;
-		case W_GUT:
-			weapon_damage = 240;
+			weapon_damage = 110;
 			break;
 		case W_TYPE:
-			weapon_damage = 100;
+			weapon_damage = 75;
 			break;
 		case W_SAMURAI:
+			weapon_damage = 150;
+			break;
+		case W_STG:
+			weapon_damage = 110;
+			break;
+		case W_SPATZ:
+			weapon_damage = 220;
+			break;
+		// -- Assault Rifles / Light MGs --
+		case W_BAR:
+			weapon_damage = 150;
+			break;
+		case W_WIDOW:
+			weapon_damage = 300;
+			break;
+		case W_FG:
+			weapon_damage = 100;
+			break;
+		case W_IMPELLER:
 			weapon_damage = 200;
 			break;
+		// -- LMGs --
+		case W_BROWNING:
+			weapon_damage = 130;
+			break;
+		case W_ACCELERATOR:
+			weapon_damage = 260;
+			break;
+		case W_MG:
+			weapon_damage = 100;
+			break;
+		case W_BARRACUDA:
+			weapon_damage = 200;
+			break;
+		// -- Shotguns (per pellet) --
+		case W_DB:
+		case W_SAWNOFF:
+		case W_TRENCH:
+			weapon_damage = 70;
+			break;
+		case W_BORE:
+		case W_GUT:
+			weapon_damage = 115;
+			break;
+		case W_SNUFF:
+			weapon_damage = 140;
+			break;
+		// -- Snipers --
+		case W_PTRS:
+			weapon_damage = 1000;
+			break;
+		case W_PENETRATOR:
+			weapon_damage = 2000;
+			break;
+		// -- Explosives --
+		case W_PANZER:
+			weapon_damage = 5000;
+			break;
+		case W_LONGINUS:
+			weapon_damage = 10000;
+			break;
+		// -- Wonder Weapons --
+		case W_RAY:
+			weapon_damage = 1500;
+			break;
+		case W_PORTER:
+			weapon_damage = 3000;
+			break;
+		case W_RAYMK2:
+			weapon_damage = 2500;
+			break;
+		case W_PORTERMK2:
+			weapon_damage = 5000;
+			break;
+		// -- Ballistic Knife --
 		case W_BK:
 			weapon_damage = 500;
 			break;
@@ -1191,6 +1063,8 @@ float(float wep, float penetration_times) getWeaponPenetration =
 			return 1;
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
+		case W_DESTROYER:
 			if (penetration_times >= 3)
 				return 0;
 			return 1;
@@ -1337,6 +1211,15 @@ float(float wep, float delaytype) getWeaponDelay =
 				return 2.25;
 			else if (delaytype == FIRE)
 				return 0.33;
+			else if (delaytype == PUTOUT)
+				return 0.45;
+			else if (delaytype == TAKEOUT)
+				return 0.3;
+		case W_DESTROYER:
+			if (delaytype == RELOAD)
+				return 2.25;
+			else if (delaytype == FIRE)
+				return 0.066;
 			else if (delaytype == PUTOUT)
 				return 0.45;
 			else if (delaytype == TAKEOUT)
@@ -1762,6 +1645,7 @@ float GetWeaponWalkSpeed(float perks, float weapon)
 		case W_ARMAGEDDON:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 		case W_KAR_SCOPE:
 		case W_HEADCRACKER:
 		case W_GEWEHR:
@@ -1817,6 +1701,7 @@ vector GetWeaponADSOfs(float wep) =
 			return [-5495.9, 3006.9, -6000];
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			return [-5295.9, 3206.9, -5000];
 		case W_KAR_SCOPE:
 		case W_HEADCRACKER:
@@ -2000,6 +1885,7 @@ float(float wep, float frametype, optional float z) GetFrame =
 			break;
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			switch (frametype)
 			{
 				case FIRE_START:
@@ -2898,6 +2784,7 @@ string(float wep, float gorvmodel) GetWeaponModel =
 				return ("models/weapons/kar/v_kar.mdl");
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			if (gorvmodel)
 				return ("models/weapons/spring/g_spring.mdl");
 			else
@@ -3114,6 +3001,7 @@ string(float wep) GetWeaponSound =
 		case W_ARMAGEDDON:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			return "sounds/weapons/boltaction/shoot.wav";
 		case W_THOMPSON:
 		case W_GIBS:
@@ -3247,6 +3135,7 @@ float(float wep) IsPapWeapon = {
 		case W_SAMURAI:
 		case W_DG3:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 		case W_FIW:
 		case W_KRAUS:
 			return 1;
@@ -3262,6 +3151,8 @@ float(float wep) GetWepSkin = {
 			return 0;
 		case W_SNUFF:
 			return 0;
+		case W_DESTROYER:
+			return 2;
 		default:
 			if (IsPapWeapon(wep)) {
 				return 1;
@@ -3281,6 +3172,7 @@ float(float wep)  EqualNonPapWeapon =
 		case W_ARMAGEDDON:
 			return W_KAR;
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			return W_SPRING;
 		case W_GIBS:
 			return W_THOMPSON;
@@ -3400,6 +3292,8 @@ float(float wep)  EqualPapWeapon =
 			return W_FIW;
 		case W_BK:
 			return W_KRAUS;
+		case W_PULVERIZER:
+			return W_DESTROYER;
 		default:
 			return wep;
 	}
@@ -3467,6 +3361,7 @@ float(float wep, float anim_style, float dualwep, float curweaponframe)	PlayWeap
 		case W_ARMAGEDDON:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			if (curweaponframe == 15) {
 				Sound_PlaySound(self, "sounds/weapons/boltaction/boltup.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 				return true;
@@ -3625,6 +3520,7 @@ float(float wep, float anim_style, float dualwep, float curweaponframe)	PlayWeap
 		case W_HEADCRACKER:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			if (curweaponframe == 15) {
 				Sound_PlaySound(self, "sounds/weapons/boltaction/boltup.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 				return true;
@@ -3897,6 +3793,7 @@ void(float weptype) precache_extra =
 		case W_ARMAGEDDON:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			precache_sound ("sounds/weapons/boltaction/boltup.wav");
 			precache_sound ("sounds/weapons/boltaction/boltback.wav");
 			precache_sound ("sounds/weapons/boltaction/boltforward.wav");
@@ -4125,6 +4022,7 @@ float(float wep) getWeaponRecoilReturn =
 			return 750;
 		case W_ARMAGEDDON:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			return 750;
 		case W_THOMPSON:
 			return 950;
@@ -4246,6 +4144,7 @@ float(float weapon, float stance) CrossHairWeapon =
 		case W_ARMAGEDDON:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			crosshair_spread = 65;
 			break;
 		case W_MP40:
@@ -4364,6 +4263,7 @@ float(float weapon, float stance) CrossHairMaxSpread =
 		case W_ARMAGEDDON:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			crosshair_spread = 75;
 			break;
 		case W_SAWNOFF:
@@ -4425,6 +4325,7 @@ float(float wep) W_HighPrecisionWhenADS =
 		case W_PENETRATOR:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			return true;
 		default:
 			return false;
@@ -4567,6 +4468,7 @@ vector(float wep) GetWeaponRecoil =
 			kick_change = '25 30 25';
 			break;
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			guaranteed = '0 50 0';
 			kick_change = '25 30 25';
 			break;
@@ -4689,6 +4591,7 @@ vector (float wep) GetWeaponFlash_Offset =
 			case W_ARMAGEDDON:
 			case W_SPRING:
 			case W_PULVERIZER:
+			case W_DESTROYER:
 				return [5560, -4582, 75833];
 			case W_THOMPSON:
 			case W_GIBS:
@@ -4771,6 +4674,7 @@ float (float wep) GetWeaponFlash_Size = {
 		case W_ARMAGEDDON:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			return 15;
 		case W_THOMPSON:
 		case W_GIBS:
@@ -4849,6 +4753,7 @@ float(float wep) GetWeaponZoomAmount =
 		case W_ARMAGEDDON:
 		case W_SPRING:
 		case W_PULVERIZER:
+		case W_DESTROYER:
 			return 25;
 		case W_KAR_SCOPE:
 		case W_HEADCRACKER:

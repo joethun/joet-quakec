@@ -16,17 +16,6 @@ vector MENU_TEXT_LARGE = '28 28 0';
 float menu_leftarrow_pressed;
 float menu_rightarrow_pressed;
 
-void() input_tester =
-{
-	float char = 0;
-	float scan = 0;
-	string printme = "";
-	while (sui_get_input(char, scan))
-	{
-		printme = strcat(printme, chr2str(char));
-	}
-};
-
 void(string id, vector pos, vector size, float maxlen, __inout string text, __inout float cursor) text_input_control =
 {
 	vector textsize = [size_y - 4, size_y - 4];

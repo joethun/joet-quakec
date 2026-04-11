@@ -573,12 +573,12 @@ void () W_LoadAmmo =
 		delay = 0.9;
 		endanimfunc = W_LoadAmmoDone;
 	}
-	else if (self.weapon == W_KAR || self.weapon == W_ARMAGEDDON || self.weapon == W_KAR_SCOPE || self.weapon == W_HEADCRACKER || self.weapon == W_SPRING || self.weapon == W_PULVERIZER)
+	else if (self.weapon == W_KAR || self.weapon == W_ARMAGEDDON || self.weapon == W_KAR_SCOPE || self.weapon == W_HEADCRACKER || self.weapon == W_SPRING || self.weapon == W_PULVERIZER || self.weapon == W_DESTROYER)
 	{
 		startframe = 4;
 		endframe = 13;
 		reloadcancelframe = 9;
-		delay = 1.2;
+		delay = (self.weapon == W_DESTROYER) ? 0.24 : 1.2;
 		endanimfunc = W_LoadAmmoDone;
 	}	
 
@@ -1048,7 +1048,7 @@ void(float side) W_Fire =
 	}
 
 	//Dont fire if the gun has to cycle
-	if (self.NeedLoad && (self.weapon == W_TRENCH || self.weapon == W_GUT || self.weapon == W_KAR_SCOPE || self.weapon == W_KAR || self.weapon == W_ARMAGEDDON || self.weapon == W_HEADCRACKER || self.weapon == W_SPRING || self.weapon == W_PULVERIZER))
+	if (self.NeedLoad && (self.weapon == W_TRENCH || self.weapon == W_GUT || self.weapon == W_KAR_SCOPE || self.weapon == W_KAR || self.weapon == W_ARMAGEDDON || self.weapon == W_HEADCRACKER || self.weapon == W_SPRING || self.weapon == W_PULVERIZER || self.weapon == W_DESTROYER))
 	{
 		W_LoadAmmo();
 		return;
@@ -1196,7 +1196,7 @@ void(float side) W_Fire =
 		self.speed_penalty_time = time + delay;
 	}
 
-	if (self.weapon == W_GUT || self.weapon == W_KAR_SCOPE || self.weapon == W_TRENCH || self.weapon == W_KAR || self.weapon == W_ARMAGEDDON || self.weapon == W_HEADCRACKER || self.weapon == W_SPRING || self.weapon == W_PULVERIZER)
+	if (self.weapon == W_GUT || self.weapon == W_KAR_SCOPE || self.weapon == W_TRENCH || self.weapon == W_KAR || self.weapon == W_ARMAGEDDON || self.weapon == W_HEADCRACKER || self.weapon == W_SPRING || self.weapon == W_PULVERIZER || self.weapon == W_DESTROYER)
 	{
 		Set_W_Frame (startframe, endframe, delay, 0, FIRE, W_LoadAmmo, modelname, FALSE, side, false);
 		self.NeedLoad = true;

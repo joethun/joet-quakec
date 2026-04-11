@@ -232,6 +232,7 @@ float 	map_compatibility_mode;
 #define W_PULVERIZER   59
 #define W_RAYMK2	   60
 #define W_PORTERMK2	   61
+#define W_DESTROYER    62
 
 //Custom Weapons
 //FIXME - use array?

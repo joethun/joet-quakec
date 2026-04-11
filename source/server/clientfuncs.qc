@@ -106,7 +106,7 @@ void(entity to, float type, float cost, float weapon) useprint = {
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
 	WriteByte(MSG_MULTICAST, CSQC_EVENT_USEPRINT);
 	WriteByte(MSG_MULTICAST, type);
-	WriteShort(MSG_MULTICAST, cost);
+	WriteLong(MSG_MULTICAST, cost);
 	WriteByte(MSG_MULTICAST, weapon);
 	msg_entity = to;
 	multicast('0 0 0', MULTICAST_ONE);
@@ -644,6 +644,14 @@ float(entity them, entity me) PlayerIsLooking =
 	float ret = false;
 	float old_solid = me.solid;
 	me.solid = SOLID_BBOX;
+
+#ifdef FTE
+	// Temporarily make the target visible to the tracer's dimension_hit
+	// so the traceline can actually collide with them.
+	float old_dimension_solid = me.dimension_solid;
+	me.dimension_solid = HITBOX_DIM_LIMBS | HITBOX_DIM_ZOMBIES | HITBOX_DIM_PLAYERS;
+#endif // FTE
+
 	setorigin(me, me.origin);
 
 	vector source;
@@ -662,6 +670,11 @@ float(entity them, entity me) PlayerIsLooking =
 	}
 
 	me.solid = old_solid;
+
+#ifdef FTE
+	me.dimension_solid = old_dimension_solid;
+#endif // FTE
+
 	setorigin(me, me.origin);
 	return ret;
 

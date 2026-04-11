@@ -326,7 +326,14 @@ float Player_PreDraw() =
 		self.lerpfrac += 1;
 	}
 
-    if (self.entnum == player_localentnum) {
+    if (self.entnum == player_localentnum && self.is_spectator) {
+		// Spectators use MOVETYPE_NOCLIP on the server — don't run
+		// MOVETYPE_WALK prediction or it will fight the server origin.
+		playerOrigin = self.origin;
+		playerVelocity = self.velocity;
+		self.renderflags = RF_EXTERNALMODEL;
+		addentity(self);
+    } else if (self.entnum == player_localentnum) {
         self.movetype = MOVETYPE_WALK;
 		// Prepare rollback
 		vector vOldOrigin = self.origin;
@@ -348,13 +355,13 @@ float Player_PreDraw() =
 			}
 			runstandardplayerphysics(self);
 		}
-				
+
 		// Smooth stair stepping, this has to be done manually!
 		playerOriginOld = playerOrigin;
-				
+
 		if ((self.flags & FL_ONGROUND) && (self.origin_z - playerOriginOld_z > 0)) {
 			playerOriginOld_z += frametime * 150;
-					
+
 			if (playerOriginOld_z > self.origin_z) {
 				playerOriginOld_z = self.origin_z;
 			}
@@ -365,10 +372,10 @@ float Player_PreDraw() =
 		} else {
 			playerOriginOld_z = self.origin_z;
 		}
-			
+
 		playerOrigin = [self.origin_x, self.origin_y, playerOriginOld_z];
 		playerVelocity = self.velocity;
-		
+
 		addentity(self);
 
 		// Time to roll back
@@ -799,6 +806,18 @@ float Camera_YawDot(vector from_origin, vector to_origin, vector client_view_ang
     return dotproduct(dir, v_forward);
 }
 
+// Cached model indices for aim snap - avoids getmodelindex() every frame
+float zombie_snap_modelindices[32];
+float zombie_snap_indices_cached;
+
+void() Camera_AimSnap_CacheIndices =
+{
+    for (int i = 0; i < zombie_snap_struct.length; i++) {
+        zombie_snap_modelindices[i] = getmodelindex(zombie_snap_struct[i].model_path);
+    }
+    zombie_snap_indices_cached = true;
+};
+
 void(vector client_view_angles) Camera_AimSnap =
 {
     float zoom_value = getstatf(STAT_WEAPONZOOM);
@@ -817,23 +836,26 @@ void(vector client_view_angles) Camera_AimSnap =
         return;
     }
 
-    //print("snap start\n");
+    // Cache model indices on first use
+    if (!zombie_snap_indices_cached)
+        Camera_AimSnap_CacheIndices();
 
     entity best_ai = world;
     float best_score = -999999;
     vector best_target_origin = [0, 0, 0];
 
     vector client_origin = getproperty(VF_ORIGIN);
+    float has_deadshot = getstatf(STAT_PERKS) & P_DEAD;
 
     // Iterate over all of our AI meshes.
     for (int i = 0; i < zombie_snap_struct.length; i++) {
-        float model_index = getmodelindex(zombie_snap_struct[i].model_path);
+        float model_index = zombie_snap_modelindices[i];
 
         entity snap_ai = findfloat(world, modelindex, model_index);
         while (snap_ai != world) {
 
             // use the same target point for gating + snapping
-			vector snap_offset = (getstatf(STAT_PERKS) & P_DEAD) ? zombie_snap_struct[i].deadshot_snap_offset : zombie_snap_struct[i].snap_offset;
+			vector snap_offset = has_deadshot ? zombie_snap_struct[i].deadshot_snap_offset : zombie_snap_struct[i].snap_offset;
             vector target_origin = snap_ai.origin + snap_offset;
 
             // Hard max distance cutoff
@@ -863,8 +885,7 @@ void(vector client_view_angles) Camera_AimSnap =
                         best_score = score;
                         best_ai = snap_ai;
                         best_target_origin = target_origin;
-                        //print(sprintf("best score=%f dot=%f dist=%f org=[%v]\n", score, dotp, dist, target_origin));
-                    }
+                        }
                 }
             }
 
@@ -884,10 +905,8 @@ void(vector client_view_angles) Camera_AimSnap =
             return;
 
         cam_snap_difference = distance_angles - client_view_angles;
-        //print(sprintf("cam_snap_difference: [%v]\n", cam_snap_difference));
     }
 
-    //print("snap end\n");
 };
 
 
@@ -908,23 +927,24 @@ noref void(float width, float height, float menushown) CSQC_UpdateView =
 	setviewprop(VF_DRAWCROSSHAIR, 0);
 
 	float sensitivity_factor;
+	float view_zoom = getstatf(STAT_VIEWZOOM);
 
 	if (current_menu != MENU_NONE)
 		sensitivity_factor = 0;
 	else
-		sensitivity_factor = (1 + SCALE_CONSTANT * getstatf(STAT_VIEWZOOM)) / (1 + SCALE_CONSTANT);
+		sensitivity_factor = (1 + SCALE_CONSTANT * view_zoom) / (1 + SCALE_CONSTANT);
 
 	if (gamepad_enabled && getstatf(STAT_FACINGENEMY) && cvar("in_aimassist") == 1)
 		sensitivity_factor *= 0.5;
 
 	setsensitivityscaler(sensitivity_factor);
 
-	setviewprop(VF_AFOV, autocvar(fov,90)*getstatf(STAT_VIEWZOOM));
+	setviewprop(VF_AFOV, autocvar(fov,90)*view_zoom);
 
-	cvar_set("r_viewmodel_fov", ftos(cvar("r_viewmodel_default_fov")*getstatf(STAT_VIEWZOOM)));
+	cvar_set("r_viewmodel_fov", ftos(cvar("r_viewmodel_default_fov")*view_zoom));
 
 	// Increment the stopwatch
-	// FIXME: I don't really liket his being in UpdateView.. this has nothing to do with rendering.
+	// FIXME: I don't really like this being in UpdateView.. this has nothing to do with rendering.
 	stopwatch_sec = time - (stopwatch_min * 60 + (stopwatch_hr * 3600));
 
 	if (stopwatch_sec >= 60) {
@@ -951,35 +971,40 @@ noref void(float width, float height, float menushown) CSQC_UpdateView =
 		stopwatch_round_starttime = time;
 	}
 
-	//autoadd entities received from servers for drawing	
+	//autoadd entities received from servers for drawing
 	addentities(MASK_ENGINE);
 
-	setproperty(VF_ORIGIN, playerOrigin + [ 0, 0, getstatf(STAT_VIEWHEIGHT)]);
-	//setproperty(VF_ANGLES, view_angles);
+	if (getstatf(STAT_SPECTATING)) {
+		// Spectators: fixed view height, no bob or weapon effects
+		setproperty(VF_ORIGIN, playerOrigin + [0, 0, 32]);
+		setviewprop(VF_ANGLES, camang);
+	} else {
+		setproperty(VF_ORIGIN, playerOrigin + [ 0, 0, getstatf(STAT_VIEWHEIGHT)]);
 
-	// Draw the client's viewmodels.
-	ViewModel_Draw();
-	
-	DropRecoilKick();
-	Camera_SniperSway();
+		// Draw the client's viewmodels.
+		ViewModel_Draw();
 
-	camang[0] += gun_kick[0];
-	camang[1] += gun_kick[1];
-	camang[2] += gun_kick[2];
-	camang[0] += sniper_sway[0];
-	camang[1] += sniper_sway[1];
-	camang[2] += sniper_sway[2];
+		DropRecoilKick();
+		Camera_SniperSway();
 
-	Camera_AimSnap(camang);
+		camang[0] += gun_kick[0];
+		camang[1] += gun_kick[1];
+		camang[2] += gun_kick[2];
+		camang[0] += sniper_sway[0];
+		camang[1] += sniper_sway[1];
+		camang[2] += sniper_sway[2];
 
-	camang[0] += cam_snap_difference[0];
-	camang[1] += cam_snap_difference[1];
-	camang[2] += cam_snap_difference[2];
+		Camera_AimSnap(camang);
 
-	setviewprop(VF_ANGLES, camang);
+		camang[0] += cam_snap_difference[0];
+		camang[1] += cam_snap_difference[1];
+		camang[2] += cam_snap_difference[2];
 
-	if (cvar("chase_active")) {
-		Chase_Update();
+		setviewprop(VF_ANGLES, camang);
+
+		if (cvar("chase_active")) {
+			Chase_Update();
+		}
 	}
 
 	//does what you think it does
@@ -1093,7 +1118,6 @@ noref float(float evtype, float scanx, float chary, float devid) CSQC_InputEvent
 	}
 
 	last_input_deviceid = devid;
-	float last_input_storage = last_input_was_gamepad;
 
 	if (last_input_deviceid > 0)
 	{
@@ -1170,7 +1194,6 @@ noref float(float evtype, float scanx, float chary, float devid) CSQC_InputEvent
 			case K_GP_RTHUMB_DOWN:
 			case K_GP_RTHUMB_LEFT:
 			case K_GP_RTHUMB_RIGHT:
-				//print(sprintf("Key: %f Duration: %f\n", scanx, cltime-GPButtonHeldBeginTime[scanx-816]));
 				GPButtonHeldBeginTime[scanx-816] = 0;
 				break;
 
@@ -1219,7 +1242,7 @@ noref void() CSQC_Parse_Event =
 			break;
 		case CSQC_EVENT_USEPRINT:
 			useprint_type = readbyte();
-			useprint_cost = readshort();
+			useprint_cost = readlong();
 			useprint_weapon = readbyte();
 			useprint_time = time + 0.1;
 			break;
