@@ -3100,8 +3100,6 @@ string(float weapon, float has_bowie_knife) GetWeapon2Model =
 		default:
 			return "";
     }
-
-    return ("");
 }
 
 string(float wep) GetWeaponSound =
@@ -3875,8 +3873,6 @@ float(float wep, float anim_style, float dualwep, float curweaponframe)	PlayWeap
 		default:
 			return false;
 	}
-
-	return false;
 }
 
 #endif // CSQC
@@ -4324,8 +4320,6 @@ float(float weapon, float stance) CrossHairWeapon =
 				return crosshair_spread * 0.85;
 			default: return 0;
 	}
-
-	return crosshair_spread;
 }
 
 float(float weapon, float stance) CrossHairMaxSpread =
@@ -4418,8 +4412,6 @@ float(float weapon, float stance) CrossHairMaxSpread =
 				return crosshair_spread * 0.85;
 			default: return 0;
 	}
-
-	return crosshair_spread;
 }
 
 float(float wep) W_HighPrecisionWhenADS =
@@ -4921,8 +4913,6 @@ float(float wep) GetWeaponZoomAmount =
 			return 5;
 		default: return 0;
 	}
-
-	return 0;
 }
 
 //
@@ -4941,8 +4931,6 @@ float(float weapon) WepDef_HasSniperScore =
 		default:
 			return false;
 	}
-
-	return false;
 }
 
 //
@@ -5030,8 +5018,6 @@ float(float weapon) WepDef_DoesNotADS =
 		default:
 			return false;
 	}
-
-	return false;
 }
 
 //
@@ -5049,8 +5035,6 @@ float(float weapon) WepDef_GetWeaponMeleeRange =
 		default:
 			return 88;
 	}
-
-	return 88;
 };
 
 // FIXME -- data-drive these.
@@ -5082,8 +5066,6 @@ float(float weapon) WepDef_IsMeleeWeapon =
 		default:
 			return false;
 	}
-
-	return false;
 }
 
 //
@@ -5132,8 +5114,6 @@ float(float weapon, float did_lunge, float has_bowie) WepDef_GetMeleeFirstFrame 
 		else
 			return MELEE_KNIFE_FIRST_FRAME_NORMAL;
 	}
-
-	return 0;
 };
 
 //
@@ -5166,8 +5146,6 @@ float(float weapon, float did_lunge, float has_bowie) WepDef_GetMeleeLastFrame =
 		else
 			return MELEE_KNIFE_LAST_FRAME_NORMAL;
 	}
-
-	return 0;
 };
 
 //
@@ -5199,8 +5177,6 @@ float(float weapon, float did_lunge, float has_bowie) WepDef_GetMeleeAnimDuratio
 		else
 			return MELEE_KNIFE_DURATION_NORMAL;
 	}
-
-	return 0;
 };
 
 //
@@ -5220,8 +5196,6 @@ float(float weapon) WepDef_DoesNotPlayUpgradedSound =
 		default:
 			return false;
 	}
-
-	return false;
 }
 
 //
@@ -5238,8 +5212,6 @@ float(float weapon) WepDef_OnlyOneAllowed =
 		default:
 			return false;
 	}
-
-	return false;
 }
 
 //
@@ -5281,7 +5253,6 @@ float(string weapon) WepDef_GetWeaponIDFromName =
 		case "ray_gun_2": return W_RAYMK2;
 		default: return W_NOWEP;
 	}
-	return W_COLT;
 }
 
 //
@@ -5297,8 +5268,6 @@ float WepDef_WeaponCanGibEnemy(float weapon)
 		case W_KILLU: return 0;
 		default: return 1;
 	}
-
-	return 1;
 }
 
 //
@@ -5374,8 +5343,6 @@ float(float weapon) WepDef_WeaponSecondaryModelIsAttachment =
 		default:
 			return false;
 	}
-
-	return false;
 }
 
 //

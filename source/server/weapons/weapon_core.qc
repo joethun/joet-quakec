@@ -1309,7 +1309,20 @@ void() WeaponCore_Melee =
 	// Perform the traceline
 	makevectors(self.v_angle);
 	vector trace_source = self.origin + self.view_ofs;
+
+#ifdef FTE
+
+	AI_SetAllEnemiesBBOX();
+
+#endif // FTE
+
 	traceline(trace_source, trace_source + v_forward * melee_range, 0, self);
+
+#ifdef FTE
+
+	AI_RevertEnemySolidState();
+
+#endif // FTE
 
 	if (trace_endpos_z - trace_source_z <= 15) {
 		// Check if this is a Zombie limb, set to the body if so
