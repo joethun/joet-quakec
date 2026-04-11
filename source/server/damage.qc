@@ -192,7 +192,7 @@ void () GetUp =
 	// Take away the ammo that was fired while in last stand.
 	if (self.weapon != W_COLT) {
 		if (self.weapon == self.weaponbk) {
-			self.currentammobk -= self.teslacount;
+			self.currentammobk -= self.downed_shots_fired;
 
 			// Take from the mag if the reserve is empty now
 			if (self.currentammobk < 0) {
@@ -200,7 +200,7 @@ void () GetUp =
 				self.currentammobk = 0;
 			}	
 		} else if (self.weapon == self.weapons[1].weapon_id) {
-			self.weapons[1].weapon_reserve -= self.teslacount;
+			self.weapons[1].weapon_reserve -= self.downed_shots_fired;
 
 			// Take from the mag if the reserve is empty now
 			if (self.weapons[1].weapon_reserve < 0) {
@@ -210,7 +210,7 @@ void () GetUp =
 		}
 	}
 	
-	self.teslacount = 0;
+	self.downed_shots_fired = 0;
 
 	Weapon_AssignWeapon(0, self.weaponbk, self.currentmagbk, self.currentammobk, self.tierbk);
 	Gamemode_GetUp();
@@ -352,13 +352,9 @@ void(entity victim, entity attacker, float damage, float d_style) DamageHandler 
 		vector distance;
 		distance = attacker.angles - victim.angles;
 
-		// just to prevent radical punchangles
-		while(distance_x > 10 || distance_x < -10) {
-			distance_x /= 2;
-		}
-		while(distance_y > 10 || distance_y < -10) {
-			distance_y /= 2;
-		}
+		// Clamp punchangles to [-10, 10] range
+		distance_x = clamp(distance_x, -10, 10);
+		distance_y = clamp(distance_y, -10, 10);
 
 		// apply
 		victim.punchangle_x = distance_x;

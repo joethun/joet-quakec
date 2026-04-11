@@ -1661,6 +1661,11 @@ void() HUD_Crosshair =
 		vector screenSize2 = [g_width, g_height];
 		drawfill(screenSize2 / 2 - [2, 2], [4, 4], crosshair_color, crosshair_opacity, 0); // dot
 	}
+	// Shotgun spread crosshair (larger O)
+	else if (crosshair_value == 5) {
+		float shotgun_circle_offset = getTextWidth("O", 22)/2;
+		Draw_String([g_width/2 - shotgun_circle_offset, g_height/2 - shotgun_circle_offset], "O", [22, 22], crosshair_color, 1, 0);
+	}
 	// Grenade crosshair
 	else if (crosshair_value == 4) {
 		if (crosshair_pulse_grenade) {

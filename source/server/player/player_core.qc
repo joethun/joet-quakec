@@ -580,49 +580,48 @@ void() PlayerPreThink =
 
 #ifdef FTE
 
-			// viewbob when running 
+			// viewbob when running
 			self.punchangle_y = 0.6*sin(time*10);
 
 #endif // FTE
 
-			//playrun1();
-			self.maxspeed *= 1.5; // down from 1.66x, to match WaW
-		} else if (!self.sprinting && !self.zoom) {
+			if (self.perks & P_STAMIN)
+				self.maxspeed *= 1.65;
+			else
+				self.maxspeed *= 1.375;
+		} else if (!self.zoom) {
 
 #ifdef FTE
-				
+
 			if (checkMovement(-1))
-				self.punchangle_x = 0.25*sin(time*15);	
+				self.punchangle_x = 0.25*sin(time*15);
 
 #endif // FTE
 
 		} else if (self.zoom != 3) {
 			self.maxspeed *= 0.5;
-		} 
+		}
 
 		// Speed Penalty
-		if (self.speed_penalty_time > time)
-		{
+		if (self.speed_penalty_time > time) {
 			self.maxspeed *= self.speed_penalty;
 		} else {
 			self.speed_penalty = 1;
 		}
-		
+
 		switch(self.stance) {
-			case 1:
-				self.maxspeed *= 0.65;
-				break;
-			case 0:
-				self.maxspeed *= 0.25;
-				break;		
+			case 1: self.maxspeed *= 0.65; break;
+			case 0: self.maxspeed *= 0.25; break;
 		}
 
 #ifdef FTE
 
-		if (checkMovement(backward)) {
-			self.maxspeed *= 0.7;
-		} else if (checkMovement(left) || checkMovement(right)) {
-			self.maxspeed *= 0.8;
+		// Directional speed penalties (not applied during sprint)
+		if (!self.sprinting) {
+			if (checkMovement(backward))
+				self.maxspeed *= 0.7;
+			else if (checkMovement(left) || checkMovement(right))
+				self.maxspeed *= 0.8;
 		}
 
 #endif // FTE
@@ -744,17 +743,8 @@ void() PlayerPostThink =
 		float movelen = vlen(input_movevalues);
 		if(movelen > 300)
 		{		
-			local float ran = random();
-			if(ran > 0.8)
-				Sound_PlaySound(self, "sounds/player/footstep1.wav", SOUND_TYPE_PLAYER_FOOTSTEP, SOUND_PRIORITY_PLAYALWAYS);
-			else if(ran > 0.6)
-				Sound_PlaySound(self, "sounds/player/footstep2.wav", SOUND_TYPE_PLAYER_FOOTSTEP, SOUND_PRIORITY_PLAYALWAYS);
-			else if(ran > 0.4)
-				Sound_PlaySound(self, "sounds/player/footstep3.wav", SOUND_TYPE_PLAYER_FOOTSTEP, SOUND_PRIORITY_PLAYALWAYS);
-			else if(ran > 0.2)
-				Sound_PlaySound(self, "sounds/player/footstep4.wav", SOUND_TYPE_PLAYER_FOOTSTEP, SOUND_PRIORITY_PLAYALWAYS);
-			else
-				Sound_PlaySound(self, "sounds/player/footstep5.wav", SOUND_TYPE_PLAYER_FOOTSTEP, SOUND_PRIORITY_PLAYALWAYS);
+			float step = floor(random() * 5) + 1;
+			Sound_PlaySound(self, sprintf("sounds/player/footstep%d.wav", step), SOUND_TYPE_PLAYER_FOOTSTEP, SOUND_PRIORITY_PLAYALWAYS);
 			self.lastsound_time = time;
 		}
 	}
@@ -782,7 +772,7 @@ void() PlayerPostThink =
 
 	if (self.downed && self.firer != world) {
 		// Has our revivee left the vicinity of our revive trigger?
-		if (fabs(vlen(self.origin - self.firer.origin)) >= 72) {
+		if (vlen(self.origin - self.firer.origin) >= 72) {
 			LastStand_UnlinkRevivee(self);
 		}
 	}
@@ -792,38 +782,55 @@ void() PlayerPostThink =
 
 	if (self.sprinting) {
 		self.sprint_timer = self.sprint_duration + (time - self.sprint_start_time);
-		
-#ifndef FTE
 
-		if (!self.velocity || self.stance != 2) {
+		// Stance change always cancels sprint immediately
+		if (self.stance != 2) {
+			self.sprint_wall_grace = 0;
 			W_SprintStop();
 		}
 
-#else
+#ifdef FTE
 
-		if (!self.velocity || !checkMovement(0) || self.stance != 2) { //moto (FIXME) -- move me!
+		// On FTE we can check movement input -- releasing keys cancels sprint immediately.
+		// Pure sideways movement (no forward/backward) also cancels sprint.
+		else if (!checkMovement(all_move) ||
+				(!checkMovement(forward) && !checkMovement(backward) && (checkMovement(left) || checkMovement(right)))) {
+			self.sprint_wall_grace = 0;
 			W_SprintStop();
 		}
 
 #endif // FTE
-		
-		if (self.perks & P_STAMIN) {
-			if (self.sprint_timer > sprint_max_time * 2) {
+
+		// Wall collision grace: if velocity is near-zero but player is still
+		// holding movement input, give a short grace period before cancelling.
+		// This prevents sprint from breaking on wall brushes / glancing hits.
+		else if (!self.velocity) {
+			if (!self.sprint_wall_grace)
+				self.sprint_wall_grace = time + 0.15;
+			else if (self.sprint_wall_grace < time)
 				W_SprintStop();
-			}
-		}
-		else
-		{
-			if (self.sprint_timer > sprint_max_time) {
-				W_SprintStop();
-			}
+		} else {
+			// Velocity recovered -- reset grace timer
+			self.sprint_wall_grace = 0;
 		}
 
-	} else if (self.sprint_duration > 0.0) 	{
+
+	} else if (self.sprint_duration > 0.0) {
 		self.sprint_rest_time = (time - self.sprint_stop_time);
 	}
 
 	self.oldvelocity = self.velocity;
+
+	// Clamp horizontal speed so diagonal movement and circling
+	// can never exceed maxspeed.
+	if (!self.is_spectator && (self.flags & FL_ONGROUND)) {
+		float hspeed = vlen([self.velocity_x, self.velocity_y, 0]);
+		if (hspeed > self.maxspeed) {
+			float scale = self.maxspeed / hspeed;
+			self.velocity_x *= scale;
+			self.velocity_y *= scale;
+		}
+	}
 
 	// Perform a traceline to keep track of entities directly
 	// in front of the player.
@@ -979,7 +986,7 @@ void() PlayerSpawn =
 
 	self.is_spectator = false;
 	self.classname = "player";
-	self.solid = SOLID_BBOX;
+	self.solid = SOLID_SLIDEBOX; // Use normal collision for world interaction
 	self.flags = FL_CLIENT;
 	self.last_looked_time = 0;
 
@@ -991,6 +998,7 @@ void() PlayerSpawn =
 #ifdef FTE
 
 	self.dimension_hit = HITBOX_DIM_ZOMBIES;
+	self.dimension_solid = HITBOX_DIM_PLAYERS; // Players only solid in player dimension (not zombie dimension)
 
 #endif // FTE
 

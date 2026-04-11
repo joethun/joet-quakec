@@ -5310,6 +5310,7 @@ float WepDef_WeaponCanGibEnemy(float weapon)
 // 2. Area of Effect (o)
 // 3. Dot crosshair (.) (unused).
 // 4 is reserved for the grenade, do not use.
+// 5. Shotgun spread (O) - larger AoE ring
 //
 float WepDef_GetWeaponCrosshairType(float weapon)
 {
@@ -5319,6 +5320,13 @@ float WepDef_GetWeaponCrosshairType(float weapon)
 		case W_TESLA:
 		case W_DG3:
 			return 2;
+		case W_DB:
+		case W_BORE:
+		case W_SAWNOFF:
+		case W_SNUFF:
+		case W_TRENCH:
+		case W_GUT:
+			return 5;
 		case W_BK:
 		case W_KRAUS:
 			return 3;

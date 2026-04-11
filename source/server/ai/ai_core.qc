@@ -177,10 +177,7 @@ float() avoid_zombies =
 		{
 			local vector vec_b;
 			local float dot;
-			//vec_b = normalize(self.origin - ent.origin);
-			//dot = v_right * vec_b;
-			//dot = self.angles_y - (dot > 0.5) ? 90 :  270;
-			
+
 			vec_b = (self.origin - ent.origin);
 			dot = (v_right_x * vec_b_x) + (v_right_y * vec_b_y);//dot product
 			if(dot > 0)// on right
@@ -258,34 +255,15 @@ void(float dist) walk_to_window =
 	do_walk_to_vec(dist,self.goalorigin);
 };
 
-// unused
-void(vector org, float scale) interpolateToVector =
+float(vector where) nearby =
 {
-	self.origin_x += (org_x - self.origin_x) * scale;
-	self.origin_y += (org_y - self.origin_y) * scale;
-	setorigin(self,self.origin);
-	self.zoom = 1;//value to let engine know to not check for collisions
-}
+	float xdist = fabs(self.origin_x - where_x);
+	float ydist = fabs(self.origin_y - where_y);
 
-float(vector where) nearby = 
-{
-	if(self.classname == "ai_zombie" || self.classname == "ai_dog")
+	if(xdist < 4 && ydist < 4)
 	{
-		float xdist;
-		float ydist;
-		float zdist;
-		xdist = fabs(self.origin_x - where_x);
-		ydist = fabs(self.origin_y - where_y);
-		zdist = fabs(self.origin_z - where_z);
-		
-		if(xdist < 4 && ydist < 4)//horizontal distance is fairly close
-		{
-			if(zdist < 50)//vertical distance just has to be arbitrarily close
-			{
-				return 1;
-			}
-		}
-		return 0;
+		if(fabs(self.origin_z - where_z) < 50)
+			return 1;
 	}
 	return 0;
 };
@@ -342,7 +320,7 @@ void(float dist) Window_Walk =
 			// glaring oversight that's been here since 2014. not my whoops?
 			if(!self.goalentity.box1owner && !self.goalentity.box2owner && !self.goalentity.box3owner)
 			{
-				//self.used = WBOX1;
+	
 				self.goalentity.box1owner = self;
 				self.goalorigin = self.goalentity.box1;
 				self.hop_step = 3;
@@ -350,7 +328,7 @@ void(float dist) Window_Walk =
 			}
 			else if(!self.goalentity.box2owner)
 			{
-				//self.used = WBOX2;
+	
 				self.goalentity.box2owner = self;
 				self.goalorigin = self.goalentity.box2;
 				self.hop_step = 3;
@@ -358,21 +336,18 @@ void(float dist) Window_Walk =
 			}
 			else if(!self.goalentity.box3owner)
 			{
-				//self.used = WBOX3;
+	
 				self.goalentity.box3owner = self;
 				self.goalorigin = self.goalentity.box3;
 				self.hop_step = 3;
 				self.reload_delay = time + 30;
 			}
 			else if(vlen(self.origin - self.goalentity.origin) < 150)
-			{	
-				//we don't claim the idlebox
-				//self.used = WIDLEBOX;
+			{
 				self.goalorigin = self.goalentity.idlebox;
 				self.hop_step = 1;
 				self.reload_delay = time + 30;
 			}
-			//else we continue walking to window until we either find one that's good, or we are close enough to chase idle_spot
 		}
 	}
 	else if(self.hop_step == 1)//walking to the window's idle location
@@ -392,7 +367,7 @@ void(float dist) Window_Walk =
 	{
 		if(self.goalentity.box1owner == world)
 		{
-			//self.used = WBOX1;
+
 			self.goalentity.box1owner = self;
 			self.goalorigin = self.goalentity.box1;
 			self.hop_step = 3;
@@ -401,7 +376,7 @@ void(float dist) Window_Walk =
 		}
 		else if(self.goalentity.box2owner == world)
 		{
-			//self.used = WBOX2;
+
 			self.goalentity.box2owner = self;
 			self.goalorigin = self.goalentity.box2;
 			self.hop_step = 3;
@@ -410,7 +385,7 @@ void(float dist) Window_Walk =
 		}
 		else if(self.goalentity.box3owner == world)
 		{
-			//self.used = WBOX3;
+
 			self.goalentity.box3owner = self;
 			self.goalorigin = self.goalentity.box3;
 			self.hop_step = 3;
@@ -504,9 +479,7 @@ void(float dist) Window_Hop =
 				self.goalentity.box2owner = world;
 			if(self.goalentity.box3owner == self)
 				self.goalentity.box3owner = world;
-				
-			//self.used = WBOX1;
-			
+
 			self.goalorigin = self.goalentity.box1;
 			self.hop_step = 2;
 			self.th_walk();
@@ -547,13 +520,9 @@ void(float dist) Window_Hop =
 		self.goalentity.usedent = world;//free up the window, we're done hopping it
 		self.goalentity = world;
 		self.enemy = find_new_enemy(self);
-		//self.th_die();
 		self.th_walk();
-		//LinkZombiesHitbox();
-		//bprint (PRINT_HIGH, "Linked hitboxes");
 	}
 }
-
 
 //
 // FTE's custom "tracemove" -- no way in hell I'm reimplementing SV_Move
@@ -673,13 +642,6 @@ void() PathfindToEnemy =
 		self.goalentity = self.enemy;
 		self.chase_time = time + 6;
 	} else {
-
-#ifdef FTE
-
-		//bprint(PRINT_HIGH, "FirstPathfind Failure\n");
-
-#endif // FTE
-
 	}
 }
 
@@ -804,10 +766,8 @@ void(float dist) Inside_Walk = {
 void(float dist) Zombie_Walk =  {
 	dist = Gamemode_GetAIWalkSpeed(dist, self.classname);
 
-	//Resetting velocity from last frame (except for vertical)
 	self.velocity_x = 0;
 	self.velocity_y = 0;
-	//self.flags = self.flags | FL_PARTIALGROUND;
 
 	if (!(self.flags & FL_ONGROUND) && self.watertype != CONTENT_WATER) {
 
@@ -815,7 +775,6 @@ void(float dist) Zombie_Walk =  {
 			self.droptime = time + 1;
 		} else if (self.droptime < time) {
 			self.droptime = 0;
-			//bprint(PRINT_HIGH, "not on ground\n");
 			if (self.classname != "ai_dog")
 				self.th_fall();
 			return;

@@ -97,11 +97,6 @@ void() StartFrame =
 		return;
 	}
 
-	// Start completely blacked out
-	//if (time < 5)
-		
-
-
 	if (roundinit) {
 		Round_Core();
 
@@ -495,163 +490,103 @@ void() SpectatorConnect =
 	bprint(PRINT_HIGH, " has joined the spectators.\n");
 }
 
+//
+// UpdateLimbBounds(zombie, limb, do_relink)
+// Shared helper for updating a single zombie limb's bounding box.
+// When do_relink is true, also sets the limb's origin (full relink).
+//
+void(entity zombie, entity limb, float do_relink) UpdateLimbBounds =
+{
+	if (!limb)
+		return;
+
+	if (do_relink)
+		setorigin(limb, zombie.origin);
+
+	limb.angles = zombie.angles;
+
+	if (limb.deadflag)
+		limb.frame = zombie.frame;
+
+	vector ofs = (v_right * limb.view_ofs_x) + (v_forward * limb.view_ofs_y) + (v_up * limb.view_ofs_z);
+	vector mn = limb.bbmins + ofs;
+	vector mx = limb.bbmaxs + ofs;
+
+	// Ensure min < max on each axis
+	float tmpval;
+	if(mn_x > mx_x) { tmpval = mn_x; mn_x = mx_x; mx_x = tmpval; }
+	if(mn_y > mx_y) { tmpval = mn_y; mn_y = mx_y; mx_y = tmpval; }
+	if(mn_z > mx_z) { tmpval = mn_z; mn_z = mx_z; mx_z = tmpval; }
+
+	setsize(limb, mn, mx);
+};
+
 void() RelinkZombies =
 {
-	entity ent,ent2;
-	local float i;
-	local vector min, max;
+	entity ent = world;
 
-
-	//warn
-	ent = ent2 = world;
-
-	while ((ent = find (ent, classname, "ai_zombie")))
+	while ((ent = find(ent, classname, "ai_zombie")))
 	{
-		if(ent.currentHitBoxSetup == 0)//empty bbox, we don't care to update
+		if(ent.currentHitBoxSetup == 0)
 			continue;
 
 #ifdef FTE
-		// This is just a weird hack we do to avoid spamming other clients in co-op with
-		// the update positions for limbs. Brings bandwidth from 90kbps->30kbps without
-		// a tick rate limit. 30kbps->12kbps with a tickrate of 20Hz. Basically, like we
-		// do other platforms for render speedups, if a zombie has all of its limbs dont
-		// bother drawing them all separately. draw one full mesh instead, then when it
-		// has been gibbed, then begin drawing separately -- cypress
-		if (ent.larm.deadflag && ent.rarm.deadflag && ent.head.deadflag) {
+		// Optimized model switching - cache crawling state
+		float is_crawler = (ent.crawling == 1);
+		float all_limbs_dead = (ent.larm.deadflag && ent.rarm.deadflag && ent.head.deadflag);
+
+		if (all_limbs_dead) {
 			setmodel(ent.larm, "");
 			setmodel(ent.rarm, "");
 			setmodel(ent.head, "");
 
-			if (ent.crawling == 1)
-				setmodel(ent, "models/ai/zcfull.mdl");
-			else
-				setmodel(ent, "models/ai/zfull.mdl");
-		} else if (!(ent.crawling == 1 && ent.model == "models/ai/zbc%.mdl") || !(ent.model == "models/ai/zb%.mdl")) {
-			if (ent.crawling == 1)
-				setmodel(ent, "models/ai/zbc%.mdl");
-			else
-				setmodel(ent, "models/ai/zb%.mdl");
+			string full_model = is_crawler ? "models/ai/zcfull.mdl" : "models/ai/zfull.mdl";
+			if (ent.model != full_model)
+				setmodel(ent, full_model);
+		} else {
+			string body_model = is_crawler ? "models/ai/zbc%.mdl" : "models/ai/zb%.mdl";
+			if (ent.model != body_model)
+				setmodel(ent, body_model);
 
-			if (ent.larm.deadflag) {
-				if (ent.crawling == 1)
-					setmodel(ent.larm, "models/ai/zalc(.mdl");
-				else
-					setmodel(ent.larm, "models/ai/zal(.mdl");
-			}
+			if (ent.larm.deadflag && ent.larm.model == "")
+				setmodel(ent.larm, is_crawler ? "models/ai/zalc(.mdl" : "models/ai/zal(.mdl");
 
-			if (ent.rarm.deadflag) {
-				if (ent.crawling == 1)
-					setmodel(ent.rarm, "models/ai/zarc(.mdl");
-				else
-					setmodel(ent.rarm, "models/ai/zar(.mdl");
-			}
+			if (ent.rarm.deadflag && ent.rarm.model == "")
+				setmodel(ent.rarm, is_crawler ? "models/ai/zarc(.mdl" : "models/ai/zar(.mdl");
 
-			if (ent.head.deadflag) {
-				if (ent.crawling == 1)
-					setmodel(ent.head, "models/ai/zhc^.mdl");
-				else
-					setmodel(ent.head, "models/ai/zh^.mdl");
-			}
+			if (ent.head.deadflag && ent.head.model == "")
+				setmodel(ent.head, is_crawler ? "models/ai/zhc^.mdl" : "models/ai/zh^.mdl");
 		}
 #endif // FTE
 
-		makevectors (ent.angles);
-
-		for(i = 0; i < 3; i++)
-		{
-			if(i == 0)
-				ent2 = ent.head;
-			if(i == 1)
-				ent2 = ent.larm;
-			if(i == 2)
-				ent2 = ent.rarm;
-
-
-			if (ent2)
-			{
-				//setorigin (ent.head, ent.origin + v_right * ent.head.view_ofs_x + v_forward * ent.head.view_ofs_y + v_up * ent.head.view_ofs_z);
-				setorigin (ent2, ent.origin);
-				//fixme, move angles set and frame set to below the continue, we only want to update origin (maybe angles too?)
-				ent2.angles = ent.angles;
-
-				if(ent2.deadflag)
-					ent2.frame = ent.frame;
-
-				//if(OnlyOrigin)
-				//	continue;
-				
-				
-				min = ent2.bbmins + (v_right * ent2.view_ofs_x) + (v_forward * ent2.view_ofs_y) + (v_up * ent2.view_ofs_z);
-				max = ent2.bbmaxs + (v_right * ent2.view_ofs_x) + (v_forward * ent2.view_ofs_y) + (v_up * ent2.view_ofs_z);
-
-				if(min_x > max_x) { min_x += max_x; max_x = min_x - max_x; min_x -= max_x; }
-				if(min_y > max_y) { min_y += max_y; max_y = min_y - max_y; min_y -= max_y; }
-				if(min_z > max_z) { min_z += max_z; max_z = min_z - max_z; min_z -= max_z; }
-
-				setsize(ent2,min,max);
-				
-			}
-
-		}
+		makevectors(ent.angles);
+		UpdateLimbBounds(ent, ent.head, true);
+		UpdateLimbBounds(ent, ent.larm, true);
+		UpdateLimbBounds(ent, ent.rarm, true);
 	}
 }
 
 void() LinkZombiesHitbox =
 {
-	entity ent,ent2;
-	local float i;
-	local vector min, max;
+	entity ent = world;
 
-
-	//warn
-	ent = ent2 = world;
-
-	while ((ent = find (ent, classname, "ai_zombie")))
+	while ((ent = find(ent, classname, "ai_zombie")))
 	{
-		if(ent.currentHitBoxSetup == 0)//empty bbox, we don't care to update
+		if(ent.currentHitBoxSetup == 0)
 			continue;
 
-		makevectors (ent.angles);
-
-		for(i = 0; i < 3; i++)
-		{
-			if(i == 0)
-				ent2 = ent.head;
-			if(i == 1)
-				ent2 = ent.larm;
-			if(i == 2)
-				ent2 = ent.rarm;
-
-
-			if (ent2)
-			{
-				ent2.angles = ent.angles;
-
-				if(ent2.deadflag)
-					ent2.frame = ent.frame;
-
-				//if(OnlyOrigin)
-				//	continue;
-				
-				
-				min = ent2.bbmins + (v_right * ent2.view_ofs_x) + (v_forward * ent2.view_ofs_y) + (v_up * ent2.view_ofs_z);
-				max = ent2.bbmaxs + (v_right * ent2.view_ofs_x) + (v_forward * ent2.view_ofs_y) + (v_up * ent2.view_ofs_z);
-
-				if(min_x > max_x) { min_x += max_x; max_x = min_x - max_x; min_x -= max_x; }
-				if(min_y > max_y) { min_y += max_y; max_y = min_y - max_y; min_y -= max_y; }
-				if(min_z > max_z) { min_z += max_z; max_z = min_z - max_z; min_z -= max_z; }
-
-				setsize(ent2,min,max);
-				
-			}
-
-		}
+		makevectors(ent.angles);
+		UpdateLimbBounds(ent, ent.head, false);
+		UpdateLimbBounds(ent, ent.larm, false);
+		UpdateLimbBounds(ent, ent.rarm, false);
 	}
 }
 
 void() EndFrame =
 {
-	RelinkZombies();
+	// Only relink zombies if there are any alive
+	if (Current_Zombies > 0)
+		RelinkZombies();
 
 	if (cheats_have_been_activated == false && cvar("sv_cheats") == 1) {
 		cheats_have_been_activated = true;

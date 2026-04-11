@@ -1,8 +1,9 @@
-string menu_ctrl_buttons[7] = {"cm_adsm", "cm_sens", "cm_invs", "cm_gpad", "cm_bind", "cm_apply", "cm_back"};
+string menu_ctrl_buttons[8] = {"cm_adsm", "cm_sprm", "cm_sens", "cm_invs", "cm_gpad", "cm_bind", "cm_apply", "cm_back"};
 
 float menu_ctrl_init;
 
 float current_adsmode;
+float current_sprintmode;
 float current_invert;
 
 void() Menu_Control_StoreCurrentSettings =
@@ -14,6 +15,15 @@ void() Menu_Control_StoreCurrentSettings =
         current_adsmode = 0;
     } else {
         current_adsmode = 1;
+    }
+
+    // Figure out Sprint mode.
+    tokenize(findkeysforcommandex("+sprint"));
+	string sprint_key = strtoupper(argv(0));
+	if (sprint_key == "LSHIFT" || sprint_key == "SHIFT") {
+        current_sprintmode = 0; // Hold
+    } else {
+        current_sprintmode = 1; // Toggle
     }
 
     current_invert = (cvar("m_pitch") == 0.022);
@@ -39,6 +49,23 @@ void() Menu_Control_ApplyADS =
     } else {
 		localcmd("bind MOUSE2 \"+button8\"\n");
         current_adsmode = 0;
+    }
+};
+
+void() Menu_Control_ApplySprint =
+{
+    Menu_PlaySound(MENU_SND_ENTER);
+
+    tokenize(findkeysforcommandex("+sprint"));
+	string sprint_key = strtoupper(argv(0));
+
+	// Sprint Mode
+	if (sprint_key == "LSHIFT" || sprint_key == "SHIFT") {
+		localcmd("bind LSHIFT \"impulse 27\"\n");
+        current_sprintmode = 1;
+    } else {
+		localcmd("bind LSHIFT \"+sprint\"\n");
+        current_sprintmode = 0;
     }
 };
 
@@ -117,20 +144,29 @@ void() Menu_Control =
     }
     Menu_DrawOptionValue(1, ads_string);
 
-    Menu_Button(2, "cm_sens", "SENSITIVITY", "Alter Look Sensitivity.") ? 0 : 0;
-    Menu_CvarSlider(2, "cm_sens", [1, 10, 10], "sensitivity", false, false, false);
+    Menu_Button(2, "cm_sprm", "SPRINT MODE", "Switch between Hold and Toggle Sprint Modes.") ? Menu_Control_ApplySprint() : 0;
+    string sprint_string = "";
+    switch(current_sprintmode) {
+        case 0: sprint_string = "HOLD"; break;
+        case 1: sprint_string = "TOGGLE"; break;
+        default: break;
+    }
+    Menu_DrawOptionValue(2, sprint_string);
 
-    Menu_Button(3, "cm_invs", "INVERT LOOK", "Invert Y-Axis Camera Input.") ? Menu_Control_InvertLook() : 0;
+    Menu_Button(3, "cm_sens", "SENSITIVITY", "Alter Look Sensitivity.") ? 0 : 0;
+    Menu_CvarSlider(3, "cm_sens", [1, 10, 10], "sensitivity", false, false, false);
+
+    Menu_Button(4, "cm_invs", "INVERT LOOK", "Invert Y-Axis Camera Input.") ? Menu_Control_InvertLook() : 0;
     string invert_string = "";
     switch(current_invert) {
         case 0: invert_string = "ENABLED"; break;
         case 1: invert_string = "DISABLED"; break;
         default: break;
     }
-    Menu_DrawOptionValue(3, invert_string);
+    Menu_DrawOptionValue(4, invert_string);
 
-    Menu_Button(4, "cm_gpad", "GAMEPAD", "Gamepad specific options.") ? current_menu = MENU_GAMEPAD : 0;
-    Menu_Button(5, "cm_bind", "BINDINGS", "Change Input Bindings.") ? current_menu = MENU_BINDINGS : 0;
+    Menu_Button(5, "cm_gpad", "GAMEPAD", "Gamepad specific options.") ? current_menu = MENU_GAMEPAD : 0;
+    Menu_Button(6, "cm_bind", "BINDINGS", "Change Input Bindings.") ? current_menu = MENU_BINDINGS : 0;
 
     Menu_DrawDivider(12.25);
     Menu_Button(-2, "cm_apply", "APPLY", "Save & Apply Settings.") ? Menu_Control_ApplySettings() : 0;

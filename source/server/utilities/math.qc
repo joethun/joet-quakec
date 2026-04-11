@@ -79,12 +79,14 @@ float(float x) sign = {
 float exp(float x) {
     float result = 1;
     float term = 1;
-    
-    for (float i = 1; i < 50; i++) {
+
+    for (float i = 1; i < 20; i++) {
         term *= x / i;
         result += term;
+        if (fabs(term) < 0.0001)
+            break;
     }
-    
+
     return result;
 }
 
@@ -107,8 +109,6 @@ float(float value, float minValue, float maxValue) wrap = {
 
     return mod(value - minValue, range + 1) + minValue;
 };
-
-
 
 float(float a, float b, float mix) lerp =
 {
@@ -175,25 +175,6 @@ vector(vector ang) normalizeAngles = {
     ang_y = ang_y - floor(ang_y/360) * 360;
     ang_z = ang_z - floor(ang_z/360) * 360;
 
-    /*
-    while (ang_x > 360)
-        ang_x = ang_x - 360;
-
-    while (ang_x < 0)
-        ang_x = ang_x + 360;
-
-    while (ang_y > 360)
-        ang_y = ang_y - 360;
-
-    while (ang_y < 0)
-        ang_y = ang_y + 360;
-
-    while (ang_z > 360)
-        ang_z = ang_z - 360;
-
-    while (ang_z < 0)
-        ang_z = ang_z + 360;
-    */
     return ang;
 };
 
@@ -203,32 +184,8 @@ vector(vector ang) normalizeAngles180 = {
     ang_y = ((ang_y+180) - floor((ang_y+180)/360) * 360) - 180;
     ang_z = ((ang_z+180) - floor((ang_z+180)/360) * 360) - 180;
 
-    /*
-    while (ang_x > 180)
-        ang_x = ang_x - 360;
-
-    while (ang_x < -180)
-        ang_x = ang_x + 360;
-
-    while (ang_y > 180)
-        ang_y = ang_y - 360;
-
-    while (ang_y < -180)
-        ang_y = ang_y + 360;
-
-    while (ang_z > 180)
-        ang_z = ang_z - 360;
-
-    while (ang_z < -180)
-        ang_z = ang_z + 360;
-    */
     return ang;
 };
 
-float(float val) abs = {
-    if (val < 0) {
-        val *= -1;
-    }
-
-    return val;
-};
+// Use builtin fabs() instead of custom abs()
+#define abs fabs

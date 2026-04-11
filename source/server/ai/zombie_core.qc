@@ -48,6 +48,57 @@ float JOG_BBOX = 7;
 float RUN_BBOX = 8;
 float CRAWLER_BBOX = 9;
 
+// Sound tables for data-driven zombie audio (replaces large switch blocks)
+var struct { string path; float duration; } zombie_melee_sounds[] = {
+	{"sounds/zombie/a0.wav", 1.1},
+	{"sounds/zombie/a1.wav", 0.8},
+	{"sounds/zombie/a2.wav", 0.9},
+	{"sounds/zombie/a3.wav", 0.8},
+	{"sounds/zombie/a4.wav", 1},
+	{"sounds/zombie/a5.wav", 1},
+	{"sounds/zombie/a6.wav", 1},
+	{"sounds/zombie/a7.wav", 1},
+};
+
+var struct { string path; float duration; } zombie_walk_sounds[] = {
+	{"sounds/zombie/w0.wav", 1.3},
+	{"sounds/zombie/w1.wav", 1.75},
+	{"sounds/zombie/w2.wav", 1.95},
+	{"sounds/zombie/w3.wav", 1.4},
+	{"sounds/zombie/w4.wav", 2.7},
+	{"sounds/zombie/w5.wav", 1.9},
+	{"sounds/zombie/w6.wav", 1.6},
+	{"sounds/zombie/w7.wav", 1.9},
+	{"sounds/zombie/w8.wav", 2.4},
+	{"sounds/zombie/w9.wav", 1.5},
+	{"sounds/zombie/t0.wav", 1.5},
+	{"sounds/zombie/t1.wav", 1.6},
+	{"sounds/zombie/t2.wav", 2.3},
+	{"sounds/zombie/t3.wav", 1.75},
+	{"sounds/zombie/t4.wav", 1.7},
+};
+
+var struct { string path; float duration; } zombie_crawl_sounds[] = {
+	{"sounds/zombie/t0.wav", 1.5},
+	{"sounds/zombie/t1.wav", 1.6},
+	{"sounds/zombie/t2.wav", 2.3},
+	{"sounds/zombie/t3.wav", 1.75},
+	{"sounds/zombie/t4.wav", 1.7},
+};
+
+var struct { string path; float duration; } zombie_sprint_sounds[] = {
+	{"sounds/zombie/r0.wav", 3.1},
+	{"sounds/zombie/r1.wav", 4.6},
+	{"sounds/zombie/r2.wav", 3.4},
+	{"sounds/zombie/r3.wav", 5.1},
+	{"sounds/zombie/r4.wav", 3.5},
+	{"sounds/zombie/r5.wav", 3.2},
+	{"sounds/zombie/r6.wav", 5.1},
+	{"sounds/zombie/r7.wav", 5.1},
+	{"sounds/zombie/r8.wav", 3},
+	{"sounds/zombie/r9.wav", 4.1},
+};
+
 void(float type) Zombie_PlaySoundType =
 {
 	// If we already have ambient groaning type sounds playing, don't allow another.
@@ -59,250 +110,53 @@ void(float type) Zombie_PlaySoundType =
 	{
 		float next_sound_time = 0;
 		float curr_sound_len = 0;
-		float rand = 0;
+		float rand;
 
 		switch(type) {
-			// 8 options.
 			case ZOMBIE_SOUND_TYPE_MELEE:
-				rand = rint(random() * 7) + 1;
-
-				switch(rand) {
-					case 1:
-						Sound_PlaySound(self.head, "sounds/zombie/a0.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						curr_sound_len = 1.1;
-						break;
-					case 2:
-						Sound_PlaySound(self.head, "sounds/zombie/a1.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						curr_sound_len = 0.8;
-						break;
-					case 3:
-						Sound_PlaySound(self.head, "sounds/zombie/a2.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						curr_sound_len = 0.9;
-						break;
-					case 4:
-						Sound_PlaySound(self.head, "sounds/zombie/a3.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						curr_sound_len = 0.8;
-						break;
-					case 5:
-						Sound_PlaySound(self.head, "sounds/zombie/a4.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						curr_sound_len = 1;
-						break;
-					case 6:
-						Sound_PlaySound(self.head, "sounds/zombie/a5.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						curr_sound_len = 1;
-						break;
-					case 7:
-						Sound_PlaySound(self.head, "sounds/zombie/a6.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						curr_sound_len = 1;
-						break;
-					case 8:
-						Sound_PlaySound(self.head, "sounds/zombie/a7.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						curr_sound_len = 1;
-						break;
-					default:
-						break;
-				}
+				rand = floor(random() * zombie_melee_sounds.length);
+				Sound_PlaySound(self.head, zombie_melee_sounds[rand].path, SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
+				curr_sound_len = zombie_melee_sounds[rand].duration;
 				break;
 
-			// 15 options.
 			case ZOMBIE_SOUND_TYPE_WALK:
-				rand = rint(random() * 14) + 1;
 				next_sound_time = rint(random() * 4) + 1;
-
-				// Don't allow overriding current playing sounds.
 				if (self.s_time > time)
 					break;
-				
-				switch(rand) {
-					case 1:
-						Sound_PlaySound(self.head, "sounds/zombie/w0.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.3;
-						break;
-					case 2:
-						Sound_PlaySound(self.head, "sounds/zombie/w1.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.75;
-						break;
-					case 3:
-						Sound_PlaySound(self.head, "sounds/zombie/w2.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.95;
-						break;
-					case 4:
-						Sound_PlaySound(self.head, "sounds/zombie/w3.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.4;
-						break;
-					case 5:
-						Sound_PlaySound(self.head, "sounds/zombie/w4.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 2.7;
-						break;
-					case 6:
-						Sound_PlaySound(self.head, "sounds/zombie/w5.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.9;
-						break;
-					case 7:
-						Sound_PlaySound(self.head, "sounds/zombie/w6.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.6;
-						break;
-					case 8:
-						Sound_PlaySound(self.head, "sounds/zombie/w7.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.9;
-						break;
-					case 9:
-						Sound_PlaySound(self.head, "sounds/zombie/w8.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 2.4;
-						break;
-					case 10:
-						Sound_PlaySound(self.head, "sounds/zombie/w9.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.5;
-						break;
-					case 11:
-						Sound_PlaySound(self.head, "sounds/zombie/t0.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.5;
-						break;
-					case 12:
-						Sound_PlaySound(self.head, "sounds/zombie/t1.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.6;
-						break;
-					case 13:
-						Sound_PlaySound(self.head, "sounds/zombie/t2.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 2.3;
-						break;
-					case 14:
-						Sound_PlaySound(self.head, "sounds/zombie/t3.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.75;
-						break;
-					case 15:
-						Sound_PlaySound(self.head, "sounds/zombie/t4.wav", SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.7;
-						break;
-					default:
-						break;
-				}
+				rand = floor(random() * zombie_walk_sounds.length);
+				Sound_PlaySound(self.head, zombie_walk_sounds[rand].path, SOUND_TYPE_ZOMBIE_QUIET, SOUND_PRIORITY_ALLOWSKIP);
+				curr_sound_len = zombie_walk_sounds[rand].duration;
 				break;
-			
-			// 5 options.
+
 			case ZOMBIE_SOUND_TYPE_CRAWL:
-				rand = rint(random() * 4) + 1;
 				next_sound_time = rint(random() * 4) + 1;
-
-				// Don't allow overriding current playing sounds.
 				if (self.s_time > time)
 					break;
-
-				switch(rand) {
-					case 1:
-						Sound_PlaySound(self.head, "sounds/zombie/t0.wav", SOUND_TYPE_ZOMBIE_CRAWLER, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.5;
-						break;
-					case 2:
-						Sound_PlaySound(self.head, "sounds/zombie/t1.wav", SOUND_TYPE_ZOMBIE_CRAWLER, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.6;
-						break;
-					case 3:
-						Sound_PlaySound(self.head, "sounds/zombie/t2.wav", SOUND_TYPE_ZOMBIE_CRAWLER, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 2.3;
-						break;
-					case 4:
-						Sound_PlaySound(self.head, "sounds/zombie/t3.wav", SOUND_TYPE_ZOMBIE_CRAWLER, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.75;
-						break;
-					case 5:
-						Sound_PlaySound(self.head, "sounds/zombie/t4.wav", SOUND_TYPE_ZOMBIE_CRAWLER, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 1.7;
-						break;
-					default:
-						break;
-				}
+				rand = floor(random() * zombie_crawl_sounds.length);
+				Sound_PlaySound(self.head, zombie_crawl_sounds[rand].path, SOUND_TYPE_ZOMBIE_CRAWLER, SOUND_PRIORITY_ALLOWSKIP);
+				curr_sound_len = zombie_crawl_sounds[rand].duration;
 				break;
 
-			// 10 options.
 			case ZOMBIE_SOUND_TYPE_SPRINT:
-				rand = rint(random() * 9) + 1;
 				next_sound_time = rint(random() * 4) + 1;
-
-				// Don't allow overriding current playing sounds.
 				if (self.s_time > time)
 					break;
-				
-				switch(rand) {
-					case 1:
-						Sound_PlaySound(self.head, "sounds/zombie/r0.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 3.1;
-						break;
-					case 2:
-						Sound_PlaySound(self.head, "sounds/zombie/r1.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 4.6;
-						break;
-					case 3:
-						Sound_PlaySound(self.head, "sounds/zombie/r2.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 3.4;
-						break;
-					case 4:
-						Sound_PlaySound(self.head, "sounds/zombie/r3.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 5.1;
-						break;
-					case 5:
-						Sound_PlaySound(self.head, "sounds/zombie/r4.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 3.5;
-						break;
-					case 6:
-						Sound_PlaySound(self.head, "sounds/zombie/r5.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 3.2;
-						break;
-					case 7:
-						Sound_PlaySound(self.head, "sounds/zombie/r6.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 5.1;
-						break;
-					case 8:
-						Sound_PlaySound(self.head, "sounds/zombie/r7.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 5.1;
-						break;
-					case 9:
-						Sound_PlaySound(self.head, "sounds/zombie/r8.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 3;
-						break;
-					case 10:
-						Sound_PlaySound(self.head, "sounds/zombie/r9.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
-						curr_sound_len = 4.1;
-						break;
-					default:
-						break;
-				}
+				rand = floor(random() * zombie_sprint_sounds.length);
+				Sound_PlaySound(self.head, zombie_sprint_sounds[rand].path, SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_ALLOWSKIP);
+				curr_sound_len = zombie_sprint_sounds[rand].duration;
 				break;
 
-			// 8 options.
 			case ZOMBIE_SOUND_TYPE_DEATH:
-				rand = rint(random() * 7) + 1;
 				next_sound_time = 0.1;
 				curr_sound_len = 2;
-
-				switch(rand) {
-					case 1:
-						Sound_PlaySound(self.head, "sounds/zombie/d0.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						break;
-					case 2:
-						Sound_PlaySound(self.head, "sounds/zombie/d1.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						break;
-					case 3:
-						Sound_PlaySound(self.head, "sounds/zombie/d2.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						break;
-					case 4:
-						Sound_PlaySound(self.head, "sounds/zombie/d3.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						break;
-					case 5:
-						Sound_PlaySound(self.head, "sounds/zombie/d4.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						break;
-					case 6:
-						Sound_PlaySound(self.head, "sounds/zombie/d5.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						break;
-					case 7:
-						Sound_PlaySound(self.head, "sounds/zombie/d6.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						break;
-					case 8:
-						Sound_PlaySound(self.head, "sounds/zombie/d7.wav", SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
-						break;
-					default:
-						break;
-				}
+				string zombie_death_sounds[8] = {
+					"sounds/zombie/d0.wav", "sounds/zombie/d1.wav",
+					"sounds/zombie/d2.wav", "sounds/zombie/d3.wav",
+					"sounds/zombie/d4.wav", "sounds/zombie/d5.wav",
+					"sounds/zombie/d6.wav", "sounds/zombie/d7.wav",
+				};
+				rand = floor(random() * 8);
+				Sound_PlaySound(self.head, zombie_death_sounds[rand], SOUND_TYPE_ZOMBIE_LOUD, SOUND_PRIORITY_PLAYALWAYS);
 				break;
 		}
 

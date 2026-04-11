@@ -1,11 +1,11 @@
-vector MENU_BG = '0.2 0.3 0.4';
-vector MENU_BG_DARK = '0.1 0.15 0.2';
-vector MENU_BORDER = '0.3 0.4 0.5';
-vector MENU_BUTTON = '0.3 0.4 0.5';
-vector MENU_BUTTON_BORDER = '0.35 0.45 0.55';
+vector MENU_BG = '0.08 0.05 0.05';
+vector MENU_BG_DARK = '0.04 0.02 0.02';
+vector MENU_BORDER = '0.4 0.1 0.1';
+vector MENU_BUTTON = '0.1 0.05 0.05';
+vector MENU_BUTTON_BORDER = '0.5 0.12 0.12';
 vector MENU_TEXT_1 = '1 1 1';
-vector MENU_TEXT_2 = '0.7 0.75 0.75';
-vector MENU_HIGHLIGHT = '1 1 1';
+vector MENU_TEXT_2 = '0.6 0.45 0.45';
+vector MENU_HIGHLIGHT = '0.9 0.15 0.15';
 vector MENU_DARKEN = '1 1 1';
 
 vector MENU_TEXT_SUPERSMALL = '10 10 0';
@@ -98,7 +98,7 @@ void() Menu_DrawMapPreview =
 	sui_fill([150, 100], [228, 130], [0.4, 0.4, 0.4], 1, 0);
 	sui_pic([150, 100], [225, 127], strcat("menu/custom/", current_selected_bsp, ".png"), [1, 1, 1], 1, 0);
 
-	sui_text([150, 152], MENU_TEXT_MEDIUM, map_preview_name, [1, 1, 0], 1, 0);
+	sui_text([150, 152], MENU_TEXT_MEDIUM, map_preview_name, [0.7, 0.15, 0.15], 1, 0);
 };
 
 #endif // MENU
@@ -127,7 +127,7 @@ void(float order, string id, string text, float index) Menu_SocialBadge =
 
 	if (sui_is_hovered(id)) {
 		sui_fill(position - [36, 8], [getTextWidth(text, MENU_TEXT_SUPERSMALL_x) + 1, 10], [0, 0, 0], 0.9, 0);
-		sui_text(position - [35, 8], MENU_TEXT_SUPERSMALL, text, [1, 1, 0], 1, 0);
+		sui_text(position - [35, 8], MENU_TEXT_SUPERSMALL, text, [0.7, 0.15, 0.15], 1, 0);
 	}
 
 	sui_action_element(position, [28, 28], id, sui_noop);
@@ -141,14 +141,14 @@ void(float order, string id, string text, float index) Menu_SocialBadge =
 void(string line_1, string line_2) Menu_DrawYesNoPanel =
 {
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
-	sui_fill([0, 0], sui_current_frame_size(), [0.01, 0, 0], 0.5, 0);
+	sui_fill([0, 0], sui_current_frame_size(), [0, 0, 0], 0.5, 0);
 
 	// Black Fill
 	sui_fill([0, 160], [sui_current_frame_size()[0], 160], [0, 0, 0], 1, 0);
 
 	// Yellow borders
-	sui_fill([0, 160], [sui_current_frame_size()[0], 3], [1, 1, 0], 0.9, 0);
-	sui_fill([0, sui_current_frame_size()[1] - 160], [sui_current_frame_size()[0], 3], [1, 1, 0], 0.9, 0);
+	sui_fill([0, 160], [sui_current_frame_size()[0], 3], [0.7, 0.15, 0.15], 0.9, 0);
+	sui_fill([0, sui_current_frame_size()[1] - 160], [sui_current_frame_size()[0], 3], [0.7, 0.15, 0.15], 0.9, 0);
 
 	sui_set_align([SUI_ALIGN_CENTER, SUI_ALIGN_START]);
 	sui_text([0, 170], MENU_TEXT_MEDIUM, line_1, [1, 1, 1], 1, 0);
@@ -166,7 +166,7 @@ void() Menu_DrawMapPanel =
 {
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
 	sui_fill([300, 55], [sui_current_frame_size()[0], sui_current_frame_size()[1] - 55 - 58], [0, 0, 0], 0.9, 0);
-	sui_fill([300, 55], [3, sui_current_frame_size()[1] - 55 - 58], [1, 1, 0], 0.9, 0);
+	sui_fill([300, 55], [3, sui_current_frame_size()[1] - 55 - 58], [0.7, 0.15, 0.15], 0.9, 0);
 };
 
 //
@@ -218,7 +218,7 @@ void(float order, string bind) Menu_DrawOptionKey =
 		sui_subpic([position_x, position_y - 2], [MENU_TEXT_MEDIUM_x + 5, MENU_TEXT_MEDIUM_x + 5], sprintf("gfx/controller_glyphs/%s.tga", cvar_string("cl_controllerglyphs")), [1, 1, 1], tilemap_position, [0.125, 0.125], 1, 0);
 	}
 	else {
-		sui_text(position, MENU_TEXT_MEDIUM, bind, [1, 1, 0], 1, 0);
+		sui_text(position, MENU_TEXT_MEDIUM, bind, [0.7, 0.15, 0.15], 1, 0);
 	}
 };
 
@@ -233,7 +233,7 @@ float(float order, string id, string bsp_name, float map_category, float usermap
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
 
 	float is_hovered = sui_is_hovered(id);
-	vector text_color = is_hovered ? [1, 0, 0] : [1, 1, 1];
+	vector text_color = is_hovered ? [0.9, 0.15, 0.15] : [0.95, 0.93, 0.85];
 	vector position = [6, 50 + (order * 25)];
 	vector bbox_pos = position - [6, 5, 0];
 	vector bbox_size = [290, 22];
@@ -242,11 +242,11 @@ float(float order, string id, string bsp_name, float map_category, float usermap
 		// Background
 		sui_fill(bbox_pos, bbox_size, [0, 0, 0], 0.9, 0);
 		// Top
-		sui_fill(bbox_pos, [bbox_size_x, 2], [0.4, 0, 0], 1, 0);
+		sui_fill(bbox_pos, [bbox_size_x, 2], [0.6, 0.1, 0.1], 1, 0);
 		// Bottom
-		sui_fill(bbox_pos + [0, bbox_size_y - 2], [bbox_size_x, 2], [0.4, 0, 0], 1, 0);
+		sui_fill(bbox_pos + [0, bbox_size_y - 2], [bbox_size_x, 2], [0.6, 0.1, 0.1], 1, 0);
 		// Right
-		sui_fill(bbox_pos + [bbox_size_x - 2, 0], [2, bbox_size_y], [0.4, 0, 0], 1, 0);
+		sui_fill(bbox_pos + [bbox_size_x - 2, 0], [2, bbox_size_y], [0.6, 0.1, 0.1], 1, 0);
 	}
 
 	int i;
@@ -297,7 +297,7 @@ float(float order, string id, string bsp_name, float map_category, float usermap
 			case MAP_CATEGORY_USER: coords_pos = [0.5, 0]; badge_name = "USERMAP"; break;
 		}
 
-		sui_text([30 + (getTextWidth(badge_name, MENU_TEXT_SUPERSMALL_x)/2), 5], MENU_TEXT_SUPERSMALL, badge_name, [1, 1, 0], 1, 0);
+		sui_text([30 + (getTextWidth(badge_name, MENU_TEXT_SUPERSMALL_x)/2), 5], MENU_TEXT_SUPERSMALL, badge_name, [0.7, 0.15, 0.15], 1, 0);
 		sui_subpic([12, 4], [20, 20], "gfx/menu/map_badges", [1, 1, 1], coords_pos, coords_size, 1, 0);
 
 		// Author/Description
@@ -306,7 +306,7 @@ float(float order, string id, string bsp_name, float map_category, float usermap
 			string author = user_maps[index].map_author;
 
 			sui_text([0, -30], MENU_TEXT_MEDIUM, title, [1, 1, 1], 1, 0);
-			sui_text([0, -15], MENU_TEXT_MEDIUM, author, [1, 1, 0], 1, 0);
+			sui_text([0, -15], MENU_TEXT_MEDIUM, author, [0.7, 0.15, 0.15], 1, 0);
 		}
 	
 		sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
@@ -358,7 +358,7 @@ float(float order, string id, string title, string description) Menu_Button =
 	sui_set_align(alignment);
 
 	float is_hovered = sui_is_hovered(id);
-	vector text_color = is_hovered ? [1, 0, 0] : [1, 1, 1];
+	vector text_color = is_hovered ? [0.9, 0.15, 0.15] : [0.95, 0.93, 0.85];
 	vector position, bbox_pos;
 	
 	if (order > 0) {
@@ -382,18 +382,18 @@ float(float order, string id, string title, string description) Menu_Button =
 
 		if (order > 0) {
 			// Top
-			sui_fill(bbox_pos, [bbox_size_x, 2], [0.4, 0, 0], 1, 0);
+			sui_fill(bbox_pos, [bbox_size_x, 2], [0.6, 0.1, 0.1], 1, 0);
 			// Bottom
-			sui_fill(bbox_pos + [0, bbox_size_y - 2], [bbox_size_x, 2], [0.4, 0, 0], 1, 0);
+			sui_fill(bbox_pos + [0, bbox_size_y - 2], [bbox_size_x, 2], [0.6, 0.1, 0.1], 1, 0);
 		} else {
 			// Top
-			sui_fill(bbox_pos - [0, bbox_size_y], [bbox_size_x, 2], [0.4, 0, 0], 1, 0);
+			sui_fill(bbox_pos - [0, bbox_size_y], [bbox_size_x, 2], [0.6, 0.1, 0.1], 1, 0);
 			// Bottom
-			sui_fill(bbox_pos, [bbox_size_x, 2], [0.4, 0, 0], 1, 0);
+			sui_fill(bbox_pos, [bbox_size_x, 2], [0.6, 0.1, 0.1], 1, 0);
 		}
 
 		// Right
-		sui_fill(bbox_pos + [bbox_size_x - 2, 0], [2, bbox_size_y], [0.4, 0, 0], 1, 0);
+		sui_fill(bbox_pos + [bbox_size_x - 2, 0], [2, bbox_size_y], [0.6, 0.1, 0.1], 1, 0);
 	}
 
 	sui_text(position  - [getTextWidth(title, MENU_TEXT_MEDIUM_x), 0, 0] + [275, 0, 0], MENU_TEXT_MEDIUM, title, text_color, 1, 0);
@@ -445,7 +445,7 @@ void(float order, string header) Menu_DrawCreditHeader =
 {
 	vector position = [8, 60 + (order * 60)];
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
-	sui_text(position - [getTextWidth(header, MENU_TEXT_SMALL_x), 0, 0] + [275, 0, 0], MENU_TEXT_SMALL, header, [1, 1, 0], 1, 0);
+	sui_text(position - [getTextWidth(header, MENU_TEXT_SMALL_x), 0, 0] + [275, 0, 0], MENU_TEXT_SMALL, header, [0.7, 0.15, 0.15], 1, 0);
 };
 
 //
@@ -470,7 +470,7 @@ void() Menu_DrawBuildDate =
 {
 	sui_set_align([SUI_ALIGN_END, SUI_ALIGN_START]);
 	sui_text([-6, 8], MENU_TEXT_SMALL, build_datetime, [1, 1, 1], 1, 0);
-	sui_text([-6, 22], MENU_TEXT_SMALL, sprintf("Welcome, %s", cvar_string("name")), [1, 1, 0], 1, 0);
+	sui_text([-6, 22], MENU_TEXT_SMALL, sprintf("Welcome, %s", cvar_string("name")), [0.7, 0.15, 0.15], 1, 0);
 };
 
 //
@@ -518,12 +518,13 @@ void() Menu_DrawBackground =
 #endif // MENU
 
 	// Top Bars
-	sui_fill([0, 0], [sui_current_frame_size()[0], 55], [0, 0, 0], 0.9, 0);
-	sui_fill([0, 52], [sui_current_frame_size()[0], 3], [0.2, 0.2, 0.2], 1, 0);
+	sui_fill([0, 0], [sui_current_frame_size()[0], 55], [0.04, 0.02, 0.02], 0.95, 0);
+	sui_fill([0, 52], [sui_current_frame_size()[0], 3], [0.6, 0.1, 0.1], 1, 0);
 
 	// Bottom Bars
-	sui_fill([0, sui_current_frame_size()[1] - 55], [sui_current_frame_size()[0], 55], [0, 0, 0], 0.9, 0);
-	sui_fill([0, sui_current_frame_size()[1] - 58], [sui_current_frame_size()[0], 3], [0.2, 0.2, 0.2], 1, 0);
+	sui_fill([0, sui_current_frame_size()[1] - 55], [sui_current_frame_size()[0], 55], [0.04, 0.02, 0.02], 0.95, 0);
+	sui_fill([0, sui_current_frame_size()[1] - 58], [sui_current_frame_size()[0], 3], [0.6, 0.1, 0.1], 1, 0);
+
 };
 
 //
@@ -534,7 +535,7 @@ void() Menu_DrawBackground =
 void(string menu_title) Menu_DrawTitle =
 {
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
-	sui_text([6, 18], MENU_TEXT_LARGE, menu_title, [1, 1, 1], 1, 0);
+	sui_text([6, 18], MENU_TEXT_LARGE, menu_title, [0.9, 0.15, 0.15], 1, 0);
 };
 
 void(string id, vector pos, vector size, vector minmaxsteps, __inout float value) my_slider =
@@ -544,8 +545,8 @@ void(string id, vector pos, vector size, vector minmaxsteps, __inout float value
 	value = sui_slidercontrol(id, [0, 0], size, minmaxsteps, value, sui_slider_noop);
 	float maxval = minmaxsteps[1];
 	float sliderx = (value / maxval) * size_x;
-	sui_fill([0, size_y * 0.25], [size_x, size_y * 0.5], [0.5, 0.1, 0.1], 1.0, 0);
-	sui_fill([sliderx - 2, 0], [4, size_y], [0.6, 0.4, 0.4], 1.0, 0);
+	sui_fill([0, size_y * 0.25], [size_x, size_y * 0.5], [0.06, 0.03, 0.03], 1.0, 0);
+	sui_fill([sliderx - 2, 0], [4, size_y], [0.7, 0.15, 0.15], 1.0, 0);
 	
 	sui_pop_frame();
 };
@@ -641,7 +642,7 @@ static void(string id, vector pos, vector size, string text, float cursor) draw_
 	sui_text([6, 0], MENU_TEXT_SMALL, text, MENU_TEXT_1, 1, 0);
 	float cursor_x = getTextWidth(substring(text, 0, cursor), MENU_TEXT_SMALL.x);
 	if (sui_is_hovered(id))
-		sui_text([6 + cursor_x, 0], MENU_TEXT_SMALL, "|", [1.0, 0.25, 0.25], 1, 0);
+		sui_text([6 + cursor_x, 0], MENU_TEXT_SMALL, "|", [0.9, 0.15, 0.15], 1, 0);
 	sui_pop_frame();
 };
 
@@ -719,60 +720,86 @@ void(string id, vector pos, vector size, __inout vector scrollofs, float num_ser
 	int map_display_x = 0;
 	int player_display_x = 0;
 
-	sui_list_view_begin(strcat(id, "scrl"), pos, size, rowsize, num_servers, scrollofs, [0, 16]);
-	for (float index = sui_list_item(listitem_pos); index > -1; index = sui_list_item(listitem_pos))
+	// Build deduplicated index list (servers can appear multiple times via
+	// different protocols or master servers)
+	#define MAX_DEDUP_SERVERS 64
+	float deduped_indices[MAX_DEDUP_SERVERS];
+	float deduped_count = 0;
+	float name_key = gethostcacheindexforkey("name");
+	float map_key = gethostcacheindexforkey("map");
+	for (float i = 0; i < num_servers && deduped_count < MAX_DEDUP_SERVERS; i++) {
+		string srv_name = gethostcachestring(name_key, i);
+		string srv_map = gethostcachestring(map_key, i);
+		float is_dupe = false;
+		for (float j = 0; j < deduped_count; j++) {
+			if (gethostcachestring(name_key, deduped_indices[j]) == srv_name &&
+				gethostcachestring(map_key, deduped_indices[j]) == srv_map) {
+				is_dupe = true;
+				break;
+			}
+		}
+		if (!is_dupe) {
+			deduped_indices[deduped_count] = i;
+			deduped_count++;
+		}
+	}
+
+	sui_list_view_begin(strcat(id, "scrl"), pos, size, rowsize, deduped_count, scrollofs, [0, 0]);
+	for (float visual_index = sui_list_item(listitem_pos); visual_index > -1; visual_index = sui_list_item(listitem_pos))
 	{
+		float cache_index = deduped_indices[visual_index];
+
 		sui_push_frame(listitem_pos, rowsize);
 
-		string listitem_id = strcat(id, "scrl", ftos(index));
+		string listitem_id = strcat(id, "scrl", ftos(visual_index));
 		sui_action_element([0, 0], rowsize, listitem_id, sui_noop);
 
 		// bg
 		vector bpos = [0, 0];
 		vector bsize = [(rowsize.x / 8) * 5, rowsize.y];
-		sui_fill(bpos, rowsize, [0.25, 0.1, 0.1], 0.5, 0);
+		sui_fill(bpos, rowsize, [0.06, 0.03, 0.03], 0.5, 0);
 
 		// hovered bg
 		if (sui_is_hovered(listitem_id))
-			sui_fill(bpos, rowsize, [0.25, 0.1, 0.1], 0.5, 0);
+			sui_fill(bpos, rowsize, [0.06, 0.03, 0.03], 0.5, 0);
 
 #ifdef MENU
 		// do it
 		if (sui_is_clicked(listitem_id)) {
 			Menu_PlaySound(MENU_SND_ENTER);
 			m_toggle(false);
-			map_name_override = gethostcachestring(gethostcacheindexforkey("map"), index);
-			
-			string server_address = Menu_CleanUpServerAddress(gethostcachestring(gethostcacheindexforkey("cname"), index));
+			map_name_override = gethostcachestring(gethostcacheindexforkey("map"), cache_index);
+
+			string server_address = Menu_CleanUpServerAddress(gethostcachestring(gethostcacheindexforkey("cname"), cache_index));
 			localcmd("connect ", server_address, "\n");
 		}
 #endif // MENU
 
 		// name
 		server_display_x = bpos.x;
-		sui_fill(bpos, bsize, [0.25, 0.1, 0.1], 0.5, 0);
-		sui_text(bpos + [8, 2], MENU_TEXT_SMALL, str2ascii(gethostcachestring(gethostcacheindexforkey("name"), index)), MENU_TEXT_1, 1, 0);
+		sui_fill(bpos, bsize, [0.06, 0.03, 0.03], 0.5, 0);
+		sui_text(bpos + [8, 2], MENU_TEXT_SMALL, str2ascii(gethostcachestring(gethostcacheindexforkey("name"), cache_index)), MENU_TEXT_1, 1, 0);
 
 		// map
 		bsize.x = (rowsize.x / 8);
 		bpos.x = bsize.x * 5;
 		map_display_x = bpos.x;
-		sui_text(bpos + [8, 2], MENU_TEXT_SMALL, gethostcachestring(gethostcacheindexforkey("map"), index), MENU_TEXT_1, 1, 0);
+		sui_text(bpos + [8, 2], MENU_TEXT_SMALL, gethostcachestring(gethostcacheindexforkey("map"), cache_index), MENU_TEXT_1, 1, 0);
 
 		// players
 		bpos.x = bsize.x * 7;
 		player_display_x = bpos.x;
 		string s = sprintf("%d/%d",
-			stof(gethostcachestring(gethostcacheindexforkey("numhumans"), index)),
-			stof(gethostcachestring(gethostcacheindexforkey("maxplayers"), index))
+			stof(gethostcachestring(gethostcacheindexforkey("numhumans"), cache_index)),
+			stof(gethostcachestring(gethostcacheindexforkey("maxplayers"), cache_index))
 		);
-		sui_fill(bpos, bsize, [0.25, 0.1, 0.1], 0.5, 0);
+		sui_fill(bpos, bsize, [0.06, 0.03, 0.03], 0.5, 0);
 		sui_text(bpos + [8, 2], MENU_TEXT_SMALL, s, MENU_TEXT_1, 1, 0);
 
 		// hovered border
 		bpos = [0, 0];
 		if (sui_is_hovered(listitem_id))
-			sui_border_box(bpos, rowsize, 1, [0.4, 0.4, 0], 1, 0);
+			sui_border_box(bpos, rowsize, 1, [0.6, 0.1, 0.1], 1, 0);
 
 		sui_pop_frame();
 	}
@@ -781,7 +808,7 @@ void(string id, vector pos, vector size, __inout vector scrollofs, float num_ser
 	// Table
 	if (map_display_x == 0)
 		return;
-	
+
 	sui_text([server_display_x, pos.y] + [8, -135], MENU_TEXT_SMALL, "Server Name", MENU_TEXT_1, 1, 0);
 	sui_text([map_display_x, pos.y] + [8, -135], MENU_TEXT_SMALL, "Map", MENU_TEXT_1, 1, 0);
 	sui_text([player_display_x, pos.y] + [8, -135], MENU_TEXT_SMALL, "Players", MENU_TEXT_1, 1, 0);

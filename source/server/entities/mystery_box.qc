@@ -138,15 +138,34 @@ entity() MBOX_GetFreeEnt =
 //
 float(entity user) MBOX_GetRandomBoxWeapon =
 {
-    float weapon_index = rint((random() * (MAX_BOX_WEAPONS - 1)));
-    float weapon_id = mystery_box_weapons[weapon_index].weapon_id;
-    float weapon_allowed = mystery_box_weapons[weapon_index].allowed && 
-							!mystery_box_weapons[weapon_index].already_obtained;
+    // First, count how many valid weapons are available to avoid
+    // infinite recursion when all weapons are held/disallowed.
+    float available_count = 0;
+    float i;
+    for (i = 0; i < MAX_BOX_WEAPONS; i++) {
+        if (mystery_box_weapons[i].allowed &&
+            !mystery_box_weapons[i].already_obtained &&
+            !Weapon_PlayerHasWeapon(user, mystery_box_weapons[i].weapon_id, true))
+            available_count++;
+    }
 
-    if (weapon_allowed == true && !Weapon_PlayerHasWeapon(user, weapon_id, true))
-        return weapon_id;
-    else
-        return MBOX_GetRandomBoxWeapon(user);
+    // Fallback: if no weapons are available, return W_COLT.
+    if (available_count == 0)
+        return W_COLT;
+
+    // Pick a random weapon from the available pool.
+    float pick = floor(random() * available_count);
+    for (i = 0; i < MAX_BOX_WEAPONS; i++) {
+        if (mystery_box_weapons[i].allowed &&
+            !mystery_box_weapons[i].already_obtained &&
+            !Weapon_PlayerHasWeapon(user, mystery_box_weapons[i].weapon_id, true)) {
+            if (pick <= 0)
+                return mystery_box_weapons[i].weapon_id;
+            pick--;
+        }
+    }
+
+    return W_COLT;
 };
 
 //
@@ -185,15 +204,17 @@ void() Float_Decrease =
 // a tp_spot.
 //
 void() findboxspot =
-{	
+{
 	local entity newspot;
 	local float box = rint(random(mystery_box_count));
 	newspot = mystery_boxes[box];
 
-	// Ensure the spot we choose is valid.
+	// Ensure the spot we choose is valid, with iteration guard.
+	float attempts = 0;
 	while(newspot == world || newspot == self.owner) {
 		box = rint(random(mystery_box_count));
 		newspot = mystery_boxes[box];
+		if (++attempts > 100) break;
 	}
 
 	// Make our current spot a tp_spot
@@ -264,10 +285,12 @@ void() MBOX_FindNewSpot =
 {
 	entity new_box = world;
 
-	// Find a new Mystery Box location
+	// Find a new Mystery Box location, with iteration guard.
+	float find_attempts = 0;
 	while(new_box == world || new_box == self) {
 		float box_index = rint(random(mystery_box_count));
 		new_box = mystery_boxes[box_index];
+		if (++find_attempts > 100) break;
 	}
 
 	// Stupid Teddy Bear being rotated!!

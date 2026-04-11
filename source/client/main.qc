@@ -170,8 +170,9 @@ noref void(float apiver, string enginename, float enginever) CSQC_Init =
 	else
 		platform_is_web = false;
 
+	cvar_set("com_protocolname", "NZP-JOET");
+
 	if (platform_is_web) {
-		cvar_set("com_protocolname", "NZP-REBOOT-WEB");
 		hud_round_color = '107 0 0';
 	}
 
@@ -367,6 +368,7 @@ float Player_PreDraw() =
 			
 		playerOrigin = [self.origin_x, self.origin_y, playerOriginOld_z];
 		playerVelocity = self.velocity;
+		
 		addentity(self);
 
 		// Time to roll back
@@ -431,8 +433,10 @@ noref void(float isnew) CSQC_Ent_Update =
 
 		if (self.is_spectator)
 			self.solid = SOLID_NOT;
+		else if (self.entnum == player_localentnum)
+			self.solid = SOLID_SLIDEBOX; // Local player needs collision for prediction
 		else
-			self.solid = SOLID_SLIDEBOX;
+			self.solid = SOLID_NOT; // Other players are non-solid to prevent client-side collision
 
 		RegisterPointChange(self.points - old_points, self.playernum);
 

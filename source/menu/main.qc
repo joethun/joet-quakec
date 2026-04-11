@@ -133,6 +133,77 @@ void() Menu_MapFinder =
 	}
 
 	search_end(maps);
+
+	// Sort maps alphabetically by display name (insertion sort)
+	float i, j;
+	for (i = 1; i < user_maps_count; i++) {
+		// Save entry i
+		float t_occupied = user_maps[i].occupied;
+		float t_allow = user_maps[i].map_allow_game_settings;
+		float t_thumb = user_maps[i].map_use_thumbnail;
+		string t_name = user_maps[i].map_name;
+		string t_pretty = user_maps[i].map_name_pretty;
+		string t_author = user_maps[i].map_author;
+		string t_desc0 = user_maps[i].map_desc[0];
+		string t_desc1 = user_maps[i].map_desc[1];
+		string t_desc2 = user_maps[i].map_desc[2];
+		string t_desc3 = user_maps[i].map_desc[3];
+		string t_desc4 = user_maps[i].map_desc[4];
+		string t_desc5 = user_maps[i].map_desc[5];
+		string t_desc6 = user_maps[i].map_desc[6];
+		string t_desc7 = user_maps[i].map_desc[7];
+
+		// Sort key: pretty name if available, otherwise bsp name
+		string sort_key_i = t_pretty;
+		if (sort_key_i == "") sort_key_i = t_name;
+		sort_key_i = strtolower(sort_key_i);
+
+		j = i - 1;
+		string sort_key_j = user_maps[j].map_name_pretty;
+		if (sort_key_j == "") sort_key_j = user_maps[j].map_name;
+		sort_key_j = strtolower(sort_key_j);
+
+		while (j >= 0 && strcmp(sort_key_j, sort_key_i) > 0) {
+			// Shift entry j forward
+			user_maps[j + 1].occupied = user_maps[j].occupied;
+			user_maps[j + 1].map_allow_game_settings = user_maps[j].map_allow_game_settings;
+			user_maps[j + 1].map_use_thumbnail = user_maps[j].map_use_thumbnail;
+			user_maps[j + 1].map_name = user_maps[j].map_name;
+			user_maps[j + 1].map_name_pretty = user_maps[j].map_name_pretty;
+			user_maps[j + 1].map_author = user_maps[j].map_author;
+			user_maps[j + 1].map_desc[0] = user_maps[j].map_desc[0];
+			user_maps[j + 1].map_desc[1] = user_maps[j].map_desc[1];
+			user_maps[j + 1].map_desc[2] = user_maps[j].map_desc[2];
+			user_maps[j + 1].map_desc[3] = user_maps[j].map_desc[3];
+			user_maps[j + 1].map_desc[4] = user_maps[j].map_desc[4];
+			user_maps[j + 1].map_desc[5] = user_maps[j].map_desc[5];
+			user_maps[j + 1].map_desc[6] = user_maps[j].map_desc[6];
+			user_maps[j + 1].map_desc[7] = user_maps[j].map_desc[7];
+
+			j--;
+			if (j >= 0) {
+				sort_key_j = user_maps[j].map_name_pretty;
+				if (sort_key_j == "") sort_key_j = user_maps[j].map_name;
+				sort_key_j = strtolower(sort_key_j);
+			}
+		}
+
+		// Insert saved entry at j+1
+		user_maps[j + 1].occupied = t_occupied;
+		user_maps[j + 1].map_allow_game_settings = t_allow;
+		user_maps[j + 1].map_use_thumbnail = t_thumb;
+		user_maps[j + 1].map_name = t_name;
+		user_maps[j + 1].map_name_pretty = t_pretty;
+		user_maps[j + 1].map_author = t_author;
+		user_maps[j + 1].map_desc[0] = t_desc0;
+		user_maps[j + 1].map_desc[1] = t_desc1;
+		user_maps[j + 1].map_desc[2] = t_desc2;
+		user_maps[j + 1].map_desc[3] = t_desc3;
+		user_maps[j + 1].map_desc[4] = t_desc4;
+		user_maps[j + 1].map_desc[5] = t_desc5;
+		user_maps[j + 1].map_desc[6] = t_desc6;
+		user_maps[j + 1].map_desc[7] = t_desc7;
+	}
 };
 
 //
@@ -208,9 +279,7 @@ void() m_init =
 	// Get Platform Information
 	running_platform = Menu_GetPlatform();
 
-	if (running_platform == PLATFORM_WEB) {
-		localcmd("com_protocolname NZP-REBOOT-WEB\n");
-	}
+	localcmd("com_protocolname NZP-JOET\n");
 
 	// Init Cvars
 	autocvar(cl_cinematic, 0);

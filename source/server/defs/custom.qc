@@ -152,6 +152,7 @@ float sprint_max_time;
 .float sprint_start_time;
 .float sprint_stop_time;
 .float sprint_rest_time;
+.float sprint_wall_grace;    // grace period before wall collision cancels sprint
 .float tp_anim_time;
 .float tp_anim_type;
 void() W_SprintStop;
@@ -321,7 +322,7 @@ float zombie_spawn_timer; // the actual timer for spawn delay
 .vector hop_spot;//used for windows (zombies hop to these)
 .vector goalorigin;
 
-.float teslacount; // TODO - Remove this
+.float downed_shots_fired; // Tracks shots fired while in last stand for ammo deduction on revive
 
 .float tesla_n_kills; // Player - Number of kills remaining for the current tesla shot
 .float tesla_next_arc_time; // Zombie - Time at which zombie should try arcing
@@ -329,8 +330,6 @@ float zombie_spawn_timer; // the actual timer for spawn delay
 .entity tesla_arc_parent; // Zombie - Track the entity that we arced from
 .entity tesla_arc_owner; // Zombie - Player ent that fired the tesla
 void(vector pos) tesla_spark;
-
-
 
 .float iszomb;
 .float onfire;
@@ -349,18 +348,17 @@ float zombie_spawn_points;
 // Used to let limbs be non-solid to player bbox but still be hit by player tracelines
 #define HITBOX_DIM_LIMBS 1
 #define HITBOX_DIM_ZOMBIES 2
+#define HITBOX_DIM_PLAYERS 4  // Players are solid in this dimension (for world collision only)
 
 //we're using usedent for who is currently hopping the window
 //Used for windows to keep track of what zombies are at windows
 .entity box1owner, box2owner, box3owner;
 
 .entity usedent;
-//.float used;//used for the window boxes//not anymore
-.float outside;//used for knowing if a zomibe has hopped window yet
+.float outside;//used for knowing if a zombie has hopped window yet
 .float chase_enemy_time;
 .float chase_time;
 .float enemy_timeout;
-//.float pathing;
 .float calc_time; 									// used as a delay thing (so zombie ai doesn't run
 													// 100% of the time
 .string zappername;									// An identifier similar to targetname used to link
@@ -381,7 +379,6 @@ entity lastspawn;									// last spawn point used by spawning code
 .float walktype;									// decides animations and moving speeds for zombies
 .float spawn_id;									// assigned to spawn point ents, for grabbing one at random.
 .void() th_walk;
-//.void() th_run;
 .void() th_die;
 .void() th_melee;
 .void() th_idle;
@@ -418,8 +415,6 @@ float tracemove(vector start, vector min, vector max, vector end, float nomonste
 .float s_time;
 
 .float fall;
-//.vector lastOrg;//Zombie's last origin, for checking stuckness
-//.float OrgStuckCount;
 .float crawling;
 
 #define HIT_REGION_HEAD 		1
@@ -433,7 +428,6 @@ float tracemove(vector start, vector min, vector max, vector end, float nomonste
 
 .float laststep;
 void(entity who) makeCrawler;
-.float state;//used to delay making a crawler, ex) when zombie is rising from ground or climbing over barrier, turn zombie into a crawler afterwards
 
 void() spawnAllZombEnts;
 void() set_z_health;
@@ -459,7 +453,6 @@ float crandom();
 .vector finalangle;
 .float distance;
 .float sequence;
-.entity active_door;
 .string door_model_target;
 .string door_model_name;
 
@@ -653,7 +646,6 @@ waypoint_ai waypoints[MAX_WAYPOINTS];
 .string oldmodel;
 .vector oldorigin;
 .float oldstate;
-.float state;
 .float isopen;
 
 //world

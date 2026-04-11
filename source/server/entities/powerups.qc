@@ -212,7 +212,7 @@ string(float id) PU_ModelPath =
 {
 	if (id == -1)
 		return "";
-	for(float i = 0; i < MAX_POWERUPS - 1; i++) {
+	for(float i = 0; i < powerup_count; i++) {
 		if (powerup_array[i].id == id)
 			return powerup_array[i].model_path;
 	}
@@ -228,7 +228,7 @@ string(float id) PU_VoiceoverPath =
 	if (id == -1)
 		return "";
 
-	for(float i = 0; i < MAX_POWERUPS - 1; i++) {
+	for(float i = 0; i < powerup_count; i++) {
 		if (powerup_array[i].id == id)
 			return powerup_array[i].voiceover_path;
 	}
@@ -244,9 +244,11 @@ void(float id) PU_LogicFunction =
 	if (id == -1)
 		return;
 
-	for(float i = 0; i < MAX_POWERUPS - 1; i++) {
-		if (powerup_array[i].id == id)
+	for(float i = 0; i < powerup_count; i++) {
+		if (powerup_array[i].id == id) {
 			powerup_array[i].function();
+			return;
+		}
 	}
 };
 
@@ -621,7 +623,7 @@ void() PU_MaxAmmo =
 			if (players.grenades & 2) players.secondary_grenades = 2;
 		} else {
 			// Reset shots fired, fill 2 mags into reserve.
-			players.teslacount = 0;
+			players.downed_shots_fired = 0;
 			players.weapons[0].weapon_reserve = getWeaponMag(players.weapon) * 2;
 		}	
 

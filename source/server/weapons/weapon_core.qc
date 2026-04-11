@@ -73,10 +73,7 @@ void(entity person) W_ShowCrosshair =
 	} else
 	 	crosshair_type = WepDef_GetWeaponCrosshairType(person.weapon);
 
-	string crosshair_string = "crosshair ";
-	crosshair_string = strzone(strcat(crosshair_string, ftos(crosshair_type)));
-	stuffcmd(person, strcat(crosshair_string, "\n"));
-	strunzone(crosshair_string);
+	stuffcmd(person, strcat(strcat("crosshair ", ftos(crosshair_type)), "\n"));
 }
 
 void() ReturnWeaponModel =
@@ -90,13 +87,13 @@ void() ReturnWeaponModel =
 	}
 
 	if (WepDef_WeaponModelIsUnlit(self.weapon)) {
-		self.viewmodel_effects += EF_FULLBRIGHT;
+		self.viewmodel_effects = EF_FULLBRIGHT;
 	} else {
 		self.viewmodel_effects = 0;
 	}
 
 	if (WepDef_Weapon2ModelIsUnlit(self.weapon)) {
-		self.viewmodel2_effects += EF_FULLBRIGHT;
+		self.viewmodel2_effects = EF_FULLBRIGHT;
 	} else {
 		self.viewmodel2_effects = 0;
 	}
@@ -203,6 +200,7 @@ void() W_SprintStop =
 	self.tp_anim_time = 0;
 	self.sprinting = 0;
 	self.into_sprint = 0;
+	self.sprint_wall_grace = 0;
 	self.reload_delay2 = self.fire_delay2 = self.reload_delay = self.fire_delay = 0;
 	self.sprint_stop_time = time;
 	self.sprint_duration = self.sprint_timer;
@@ -238,8 +236,9 @@ void W_SprintStart () {
 	Weapon_PlayViewModelAnimation(ANIM_SPRINT_START, ContinueRun, 0);
 
 	self.zoom = 3;
-	self.sprint_delay = time + 1;
+	self.sprint_delay = time + 0.4;
 	self.sprinting = true;
+	self.sprint_wall_grace = 0;
 	self.reload_delay2 = self.fire_delay2 = self.reload_delay = self.fire_delay = 0;
 }
 
@@ -632,8 +631,6 @@ SpawnBlood
 */
 void(vector org, vector vel, float damage) SpawnBlood =
 {
-	local entity f;
-  
 #ifdef FTE
 
 	FTE_RunParticleEffect(world, CSQC_PART_BLOODIMPACT, org, 0, world);
@@ -644,8 +641,9 @@ void(vector org, vector vel, float damage) SpawnBlood =
 
 #endif // FTE
 
-	f = find (world, classname, "player");
-	f.hitcount = f.hitcount + 1;
+	entity f = find(world, classname, "player");
+	if (f)
+		f.hitcount = f.hitcount + 1;
 };
 
 void(vector where) spawn_gibs = {
@@ -1178,7 +1176,7 @@ void(float side) W_Fire =
 
 	// Increment the amount of shots fired while downed
 	if (self.downed == true)
-		self.teslacount++;
+		self.downed_shots_fired++;
 
 	// Cypress -- sources suggest Double Tap decreases fire rate
 	// by 33% (meaning 66%), but testing has concluded it is instead
@@ -1728,10 +1726,31 @@ void () Impulse_Functions =
 			self.ads_release = !self.ads_release;
 			self.has_ads_toggle = true;
 			break;
+		case 27:
+			// Toggle sprint: if sprinting, stop; if not, start.
+			if (self.sprinting) {
+				self.sprintflag = false;
+				W_SprintStop();
+			} else {
+
+#ifdef FTE
+
+				if (!checkMovement(forward))
+					return;
+
+#endif // FTE
+
+				if (self.dive || self.downed || !Player_CanStandHere(self))
+					return;
+
+				Player_SetStance(self, PLAYER_STANCE_STAND, false);
+				self.sprintflag = true;
+				W_SprintStart();
+			}
+			break;
 		case 33:
 			W_PrimeBetty();
 			break;
-		case 26:
 		case 30:
 			if (self.sprinting)
 				dolphin_dive();
@@ -1800,23 +1819,33 @@ void() CheckPlayer =
 	if (self.sprinting) {
 		makevectors(self.angles);
 
-		// We should stop sprinting if we are falling, technically
-		// CoD continues the animation but applies a move speed
-		// penalty, however, that makes no sense! This also applies
-		// as a better implementation to stop sprinting while jumping.
-		if (fabs(self.velocity_z) >= 150)
+		// Stop sprinting if airborne with significant vertical velocity
+		// (jumping/falling). Only check when off the ground so walking
+		// down stairs doesn't cancel sprint.
+		if (!(self.flags & FL_ONGROUND) && fabs(self.velocity_z) >= 150)
 			W_SprintStop();
-		// Otherwise, also stop sprinting if we are moving at a base below
-		// predicted for our slowest possible weapon. This removes the need
-		// for an engine-side hack for toggle sprinting turning off when
-		// you're applying less pressure to the analog stick.
-		else if (vlen(self.velocity) <= 130 && self.sprint_delay <= time + 0.75)
-			W_SprintStop();
-		// Another sprinting caveat -- if we are moving a considerabe distance
-		// horizontally, much more than reasonable, it is very obviously impossible
-		// to actually sprint.
-		else if (fabs(self.velocity * v_right) >= fabs(self.velocity * v_forward) * 0.75)
-			W_SprintStop();
+		// Stop sprinting if we are moving at a base below predicted
+		// for our slowest possible weapon. Use a grace window so
+		// momentary wall bumps don't immediately cancel sprint.
+		else if (vlen(self.velocity) <= 80 && self.sprint_delay <= time + 0.75) {
+			if (!self.sprint_wall_grace)
+				self.sprint_wall_grace = time + 0.15;
+			else if (self.sprint_wall_grace < time)
+				W_SprintStop();
+		}
+		// Sprinting caveat -- only stop if moving purely sideways/backward
+		// with no meaningful forward component. Uses the same grace timer
+		// so a quick diagonal tap doesn't instantly cancel sprint.
+		else if (self.velocity * v_forward <= 0) {
+			if (!self.sprint_wall_grace)
+				self.sprint_wall_grace = time + 0.15;
+			else if (self.sprint_wall_grace < time)
+				W_SprintStop();
+		}
+		else {
+			// All checks passed, reset grace timer
+			self.sprint_wall_grace = 0;
+		}
 	}
 
 	// FIXME - can't do frame independent stance changing.. ofs starts spazzing..
