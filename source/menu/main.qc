@@ -255,7 +255,7 @@ float() Menu_GetPlatform =
 void() m_init =
 {
 	registercommand("togglemenu2");
-	setcursormode(TRUE,"gfx/xhair", [16, 16], cvar("vid_conautoscale"));
+	setcursormode(TRUE,"", [16, 16], cvar("vid_conautoscale"));
 	current_menu = last_menu = MENU_MAIN;
 
 	// Cvars for controlable/modifiable menu music
@@ -340,8 +340,12 @@ void(vector screensize) m_draw =
 	sui_begin(screensize_x, screensize_y);
 
 	root_menu(screensize);
-	
+
 	sui_end();
+
+	// Draw cursor manually with forced white to prevent color tinting
+	vector cursor_size = [32, 32] * cvar("vid_conautoscale");
+	drawpic(_cursor_position - (cursor_size * 0.5), "gfx/xhair", cursor_size, '1 1 1', 1, 0);
 };
 
 void() m_close =

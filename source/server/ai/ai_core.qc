@@ -920,6 +920,17 @@ void() AI_SetAllEnemiesBBOX =
 		
 		zombies = find(zombies, classname, "ai_zombie");
 	}
+
+	entity dogs = find(world, classname, "ai_dog");
+
+	while(dogs != world) {
+		if (dogs.aistatus == "1") {
+			dogs.last_solid = dogs.solid;
+			dogs.solid = SOLID_BBOX;
+		}
+
+		dogs = find(dogs, classname, "ai_dog");
+	}
 }
 
 void() AI_RevertEnemySolidState =
@@ -939,6 +950,16 @@ void() AI_RevertEnemySolidState =
 		}
 
 		zombies = find(zombies, classname, "ai_zombie");
+	}
+
+	entity dogs = find(world, classname, "ai_dog");
+
+	while(dogs != world) {
+		if (dogs.aistatus == "1") {
+			dogs.solid = dogs.last_solid;
+		}
+
+		dogs = find(dogs, classname, "ai_dog");
 	}
 }
 
