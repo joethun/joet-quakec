@@ -1389,8 +1389,6 @@ void() zombieRise =
 	self.frame ++;
 	self.think = zombieRise;
 	self.nextthink = time + 0.1;
-	//LinkZombiesHitbox();
-	//bprint (PRINT_HIGH, "Linked hitboxes");
 };
 void() spawn_zombie =
 {
@@ -1409,10 +1407,7 @@ void() spawn_zombie =
 		self.spawn_id = zombie_spawn_points;
 		zombie_spawn_points++;
 	}
-	
-	//self.think = zombie_spawn_think;
-	//self.nextthink = time + 0.5;
-	
+
 	self.solid = SOLID_NOT;
 };
 
@@ -1691,11 +1686,7 @@ void(entity where) spawn_a_zombieB =
 	
 	szombie = getFreeZombieEnt();
 	if(szombie == world || zombie_spawn_timer > time)
-	{
-		//bprint(PRINT_HIGH, "STOPPED AT B\n");
-		//dprint("Out of zombie entities \n");
 		return;
-	}
 
 #ifdef FTE
 	szombie.head = spawn();
@@ -1712,8 +1703,6 @@ void(entity where) spawn_a_zombieB =
 	
 	szombie.target = where.target;
 	//blubsvel
-	//szombie.movetype = MOVETYPE_STEP;
-
 	szombie.head.deadflag = 1;
 	szombie.larm.deadflag = 1;
 	szombie.rarm.deadflag = 1;
@@ -1820,18 +1809,9 @@ void(entity where) spawn_a_zombieB =
 	szombie.th_land = zombie_land1;
 
 	szombie.th_diewunder = Zombie_Tesla_Death;
-	
-	//szombie.th_jump = zombie_jump1;
-	//szombie.th_grabledge = zombie_grabledge1;
-	
 
-	//==================================================================================================
 	SetZombieWalk(szombie);
-	//==================================================================================================
-	
-	SetUpHitBoxes(szombie); 
-	//szombie.walktype = 5;
-	////////////////////////////////////////////////////
+	SetUpHitBoxes(szombie);
 	szombie.reload_delay = 30 + time;//save  floats, equals respawn time.
 	local entity old_self;
 	old_self = self;

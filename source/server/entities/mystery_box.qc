@@ -136,32 +136,62 @@ entity() MBOX_GetFreeEnt =
 // Returns a weapon from the Mystery Box allow-list
 // that the user is not holding.
 //
+// MBOX_IsWonderWeapon(weapon_id)
+// Returns true if the weapon is a wonder weapon (rare box pull).
+float(float weapon_id) MBOX_IsWonderWeapon =
+{
+    switch(weapon_id) {
+        case W_RAY:
+        case W_RAYMK2:
+        case W_TESLA:
+        case W_PANZER:
+            return true;
+        default:
+            return false;
+    }
+};
+
 float(entity user) MBOX_GetRandomBoxWeapon =
 {
-    // First, count how many valid weapons are available to avoid
-    // infinite recursion when all weapons are held/disallowed.
-    float available_count = 0;
+    // Build total weight from available weapons.
+    // Wonder weapons get a weight of 1, normal weapons get 10.
+    // rarity field overrides if set (not -1).
+    float total_weight = 0;
     float i;
     for (i = 0; i < MAX_BOX_WEAPONS; i++) {
         if (mystery_box_weapons[i].allowed &&
             !mystery_box_weapons[i].already_obtained &&
-            !Weapon_PlayerHasWeapon(user, mystery_box_weapons[i].weapon_id, true))
-            available_count++;
+            !Weapon_PlayerHasWeapon(user, mystery_box_weapons[i].weapon_id, true)) {
+            if (mystery_box_weapons[i].rarity >= 0)
+                total_weight += mystery_box_weapons[i].rarity;
+            else if (MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id))
+                total_weight += 1;
+            else
+                total_weight += 10;
+        }
     }
 
     // Fallback: if no weapons are available, return W_COLT.
-    if (available_count == 0)
+    if (total_weight == 0)
         return W_COLT;
 
-    // Pick a random weapon from the available pool.
-    float pick = floor(random() * available_count);
+    // Weighted random pick.
+    float pick = random() * total_weight;
     for (i = 0; i < MAX_BOX_WEAPONS; i++) {
         if (mystery_box_weapons[i].allowed &&
             !mystery_box_weapons[i].already_obtained &&
             !Weapon_PlayerHasWeapon(user, mystery_box_weapons[i].weapon_id, true)) {
+            float w;
+            if (mystery_box_weapons[i].rarity >= 0)
+                w = mystery_box_weapons[i].rarity;
+            else if (MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id))
+                w = 1;
+            else
+                w = 10;
+
+            pick -= w;
             if (pick <= 0)
                 return mystery_box_weapons[i].weapon_id;
-            pick--;
         }
     }
 
@@ -795,7 +825,7 @@ float MBOX_GetWeaponIDFromMB1(float mbox_id) =
 void() MBOX_PrecacheWeaponContent =
 {
     for (float i = 0; i < MAX_BOX_WEAPONS; i++) {
-        if (mystery_box_weapons[i].allowed == true) {
+        if (mystery_box_weapons[i].allowed) {
             precache_model(GetWeaponModel(mystery_box_weapons[i].weapon_id, 0));
 		    precache_model(GetWeaponModel(mystery_box_weapons[i].weapon_id, 1));
 		    precache_extra(mystery_box_weapons[i].weapon_id);
@@ -949,7 +979,7 @@ void(float mbox_file) MBOX_ParseMB2File =
 //
 void() MBOX_LoadData =
 {
-	if (mystery_box_file_parsed == true)
+	if (mystery_box_file_parsed)
 		return;
 
     float mbox_file;

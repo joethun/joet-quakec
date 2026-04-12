@@ -72,8 +72,6 @@ void() multi_trigger =
 
 void() multi_killed =
 {
-	// motolegacy - FIXME
-	//self.enemy = damage_attacker;
 	multi_trigger();
 };
 
@@ -348,7 +346,6 @@ void() trigger_relay =
 void() trigger_atroundend =
 {
 	self.classname = "trigger_atroundend";
-	//self.use = multi_use;
 }
 
 #define SPAWNFLAG_TRIGGERFIRE_PLAYER 		1

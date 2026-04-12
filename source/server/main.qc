@@ -111,8 +111,9 @@ void() StartFrame =
 
 #ifdef FTE
 
-			// On FTE, resources are available to make this super short (0.01s,
-			// meaning all 24 ai update 4 times a second).
+			// On FTE, Do_Zombie_AI processes up to 8 zombies per call,
+			// cycling through the list. At 0.01s intervals, each zombie
+			// updates roughly every 0.03-0.08s depending on total count.
 			ai_delay_time = time + 0.01;
 
 #else

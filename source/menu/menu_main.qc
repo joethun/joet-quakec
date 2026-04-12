@@ -78,7 +78,7 @@ void() Menu_Main =
     Menu_DrawDivider(4.25);
     Menu_Button(4.50, "mm_credits", "CREDITS", "NZ:P Team + Special Thanks.") ? current_menu = MENU_CREDITS : 0;
 
-    // Don't have a Quit Game button on WASM 
+    // Don't have a Quit Game button on WASM
     if (running_platform != PLATFORM_WEB) {
         Menu_DrawDivider(5.50);
         Menu_Button(5.75, "mm_quit", "QUIT GAME", sprintf("Return to %s.", Menu_Main_GetDashboardName())) ? localcmd("quit\n") : 0;

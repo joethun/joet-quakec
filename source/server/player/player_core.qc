@@ -566,6 +566,13 @@ void(float override) JumpCheck =
 
 void() PlayerPreThink =
 {
+	if (self.is_spectator)
+	{
+		self.movetype = MOVETYPE_NOCLIP;
+		self.punchangle = '0 0 0';
+		return;
+	}
+
 	if (self.downed) {
 		self.maxspeed = 30;
 	} else {
@@ -629,12 +636,6 @@ void() PlayerPreThink =
 		if (!self.isBuying)
 			self.maxspeed *= GetWeaponWalkSpeed(self.perks, self.weapon);
 	}
-	if (self.is_spectator)
-	{
-		self.movetype = MOVETYPE_NOCLIP;
-		return;
-	}
-	
 	if (cvar("waypoint_mode")) {
 		Waypoint_Logic();
 	} else {

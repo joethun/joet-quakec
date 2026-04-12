@@ -838,23 +838,22 @@ void() Hellhound_AI =
 
 //
 // Do_Zombie_AI()
-// Behaves differently based on platform -- in FTE,
-// all AI can afford to be executed at once. However,
-// on every other platform there is a timed delay in
-// place and only one zombie AI can be updated at a time.
+// Processes zombie AI in batches to spread CPU load across frames.
+// Non-FTE: one zombie per call. FTE: up to 8 per call, cycling
+// through the list with lastzombie as the iterator.
 //
-void() Do_Zombie_AI = 
+void() Do_Zombie_AI =
 {
 	entity z;
 	entity old_self;
-	
+
 #ifndef FTE
 
 	z = find(lastzombie,aistatus,"1");
 	if(z == world) {
 		z = find(world,aistatus,"1");
 		if(z == world) {
-			return;//no zombies alive.
+			return;
 		}
 	}
 
@@ -871,20 +870,26 @@ void() Do_Zombie_AI =
 
 #else
 
-	z = find(world, aistatus, "1");
+	float batch = 8;
+	z = find(lastzombie, aistatus, "1");
 
-	while(z != world) {
+	// Wrap around to the beginning if we've reached the end.
+	if (z == world)
+		z = find(world, aistatus, "1");
+
+	while(z != world && batch > 0) {
 		old_self = self;
 		self = z;
 
-		// Execute AI
 		if (z.classname == "ai_zombie")
 			Zombie_AI();
 		else if (z.classname == "ai_dog")
 			Hellhound_AI();
 
 		self = old_self;
+		lastzombie = z;
 		z = find(z, aistatus, "1");
+		batch--;
 	}
 
 #endif // FTE

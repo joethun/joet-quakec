@@ -164,7 +164,7 @@ void () WallWeapon_TouchTrigger =
 
 			// Set the cost and weapon value (for useprint).
 			wcost = (is_pap) ? self.pap_cost : self.cost2;
-			wcost = Gamemode_GetCostForWeaponAmmo(wcost, self.cost, other.weapons[slot].weapon_id, is_pap, other.weapons[slot - 1].weapon_tier);
+			wcost = Gamemode_GetCostForWeaponAmmo(wcost, self.cost, other.weapons[slot - 1].weapon_id, is_pap, other.weapons[slot - 1].weapon_tier);
 			wcost *= game_modifier_cost_multiplier;
 			float wep = (is_pap) ? EqualPapWeapon(self.weapon) : self.weapon;
 

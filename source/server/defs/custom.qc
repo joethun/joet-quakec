@@ -307,11 +307,7 @@ void Z_ElectroShock();
 .float death_timer_activated; 						// To prevent Zombies just dying because of this..
 .float is_attacking; 								// Returns true if Zombie is in the middle of an attack.
 
-#ifndef FTE
-
-entity lastzombie;									// Used by non-FTE to update zombie AI one ent at a time.
-
-#endif // FTE
+entity lastzombie;									// Used to cycle through zombie AI updates one batch at a time.
 
 .string aistatus;
 float zombie_spawn_delay; // time before spawning, in seconds.

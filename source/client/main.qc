@@ -191,8 +191,11 @@ noref void(float apiver, string enginename, float enginever) CSQC_Init =
 	autocvar(snd_channel5volume, 1);
 	autocvar(snd_channel6volume, 1);
 
-	// FTE is overriding cl_bobup values.. so be evil
-	// and force it to 0.02.
+	// FTE is overriding cl_bob/cl_bobup values.. so be evil
+	// and force them to our values. cl_bob must be 0 because
+	// camera bob is handled in CSQC (ViewModel_CalcBob), not
+	// the engine — engine bob causes unwanted bob for spectators.
+	cvar_set("cl_bob", "0");
 	cvar_set("cl_bobup", "0.02");
 
 	// force nearest filtering for hud elements to avoid blur
@@ -326,15 +329,8 @@ float Player_PreDraw() =
 		self.lerpfrac += 1;
 	}
 
-    if (self.entnum == player_localentnum && self.is_spectator) {
-		// Spectators use MOVETYPE_NOCLIP on the server — don't run
-		// MOVETYPE_WALK prediction or it will fight the server origin.
-		playerOrigin = self.origin;
-		playerVelocity = self.velocity;
-		self.renderflags = RF_EXTERNALMODEL;
-		addentity(self);
-    } else if (self.entnum == player_localentnum) {
-        self.movetype = MOVETYPE_WALK;
+    if (self.entnum == player_localentnum) {
+        self.movetype = self.is_spectator ? MOVETYPE_NOCLIP : MOVETYPE_WALK;
 		// Prepare rollback
 		vector vOldOrigin = self.origin;
 		vector vOldVelocity = self.velocity;
@@ -408,7 +404,7 @@ noref void(float isnew) CSQC_Ent_Update =
 		}
 
 		float old_points = self.points;
-			
+
 		self.origin_x = readcoord();
 		self.origin_y = readcoord();
 		self.origin_z = readcoord();
@@ -462,7 +458,8 @@ noref void(float isnew) CSQC_Ent_Update =
 		} else {
 			self.classname = "player";
 		}
-	} 
+
+	}
 	// Power-Up
 	else if (ent_type == 2) {
 		if (isnew == TRUE) {

@@ -84,7 +84,7 @@ void() Power_Touch =
 	if (other.classname != "player" || other.downed)
 		return;
 
-	if (isPowerOn == true || self.activated == true)
+	if (isPowerOn || self.activated)
     	return;
 	
 	entity tempe;

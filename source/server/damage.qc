@@ -473,11 +473,7 @@ void(entity inflictor, entity attacker, float damage2, float mindamage, float ra
 				if (final_damage > radius * 0.75)
 					final_damage = 100;
 			
-				if (final_damage < other.health)
-				{
-					Player_AddScore(self, Gamemode_ScoreForDamage(DMG_SCORE_STDDAMAGE, 0), false);
-				}
-				else if (final_damage > other.health)
+				if (final_damage != ent.health)
 				{
 					Player_AddScore(self, Gamemode_ScoreForDamage(DMG_SCORE_STDDAMAGE, 0), false);
 				}
@@ -495,13 +491,8 @@ void(entity inflictor, entity attacker, float damage2, float mindamage, float ra
 			vector distance;
 			distance = inflictor.angles - ent.angles;
 
-			// just to prevent radical punchangles
-			while(distance_x > 10 || distance_x < -10) {
-				distance_x /= 2;
-			}
-			while(distance_y > 10 || distance_y < -10) {
-				distance_y /= 2;
-			}
+			distance_x = clamp(distance_x, -10, 10);
+			distance_y = clamp(distance_y, -10, 10);
 
 			// Give a heavy rumble for feedback of being in explosion vicinity.
 			nzp_rumble(ent, 1400, 2000, 200);
@@ -569,8 +560,6 @@ void(entity inflictor, entity attacker, float damage2, float mindamage, float ra
 				final_damage = (rounds * rint(random() * 100)) * damage2/500;
 				damage_style = DMG_TYPE_EXPLOSIVE;
 			} else if (inflictor.classname == "projectile_raybeam") {
-				//final_damage = calculate_proximity_value(mindamage, damage2, inflictor.origin, ent.origin, radius);
-				//bprint(PRINT_HIGH, strcat("damage: ", ftos(final_damage), "\n"));
 				final_damage = damage2;
 				damage_style = DMG_TYPE_GRENADE;
 			} else if (inflictor.classname == "player") {
