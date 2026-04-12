@@ -1078,7 +1078,7 @@ void(float scanx, float setval) Input_Movecheck =
 	if (scanx == stof(argv(0)))
 		K_BACKDOWN = setval;
 
-	float argc = tokenize(findkeysforcommand("impulse 23"));
+	float argc = tokenize(findkeysforcommand("+sprint"));
     for (int i = 0; i < argc; i++) {
 		if (scanx == stof(argv(i))) {
 			Sniper_HoldBreath(setval);

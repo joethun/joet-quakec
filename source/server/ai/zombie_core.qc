@@ -1823,8 +1823,6 @@ void(entity where) spawn_a_zombieB =
 	else
 		self.th_walk();
 	self = old_self;
-	
-	//LinkZombiesHitbox();
 
 	//
 	// Zombie skin setting

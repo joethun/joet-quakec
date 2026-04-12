@@ -1552,7 +1552,7 @@ void() HUD_Crosshair =
 			string breath_button = "";
 			string space_width = "";
 
-			float argc = tokenize(findkeysforcommandex("impulse 23"));
+			float argc = tokenize(findkeysforcommandex("+sprint"));
 			for (int i = 0; i < argc; i++) {
 				string temp_button = strtoupper(argv(i));
 				float bind_is_gamepad = Key_IsControllerGlyph(temp_button);
