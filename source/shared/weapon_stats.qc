@@ -969,22 +969,22 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			break;
 		// -- Shotguns (per pellet) --
 		case W_SAWNOFF:
-			weapon_damage = 90;
+			weapon_damage = 80;
 			break;
 		case W_DB:
-			weapon_damage = 120;
+			weapon_damage = 90;
 			break;
 		case W_TRENCH:
-			weapon_damage = 150;
+			weapon_damage = 100;
 			break;
 		case W_SNUFF:
-			weapon_damage = 180;
+			weapon_damage = 160;
 			break;
 		case W_BORE:
-			weapon_damage = 240;
+			weapon_damage = 180;
 			break;
 		case W_GUT:
-			weapon_damage = 300;
+			weapon_damage = 200;
 			break;
 		// -- Snipers --
 		case W_PTRS:
@@ -4180,7 +4180,7 @@ float(float weapon, float stance) CrossHairWeapon =
 			break;
 		case W_SAWNOFF:
 		case W_SNUFF:
-			crosshair_spread = 25;
+			crosshair_spread = 20;
 			break;
 		case W_TRENCH:
 		case W_GUT:
@@ -4275,7 +4275,7 @@ float(float weapon, float stance) CrossHairMaxSpread =
 			break;
 		case W_SAWNOFF:
 		case W_SNUFF:
-			crosshair_spread = 25;
+			crosshair_spread = 20;
 			break;
 		case W_DB:
 		case W_BORE:

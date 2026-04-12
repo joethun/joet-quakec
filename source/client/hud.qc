@@ -1095,7 +1095,7 @@ void() HUD_Useprint =
 			usestring = strcat("Hold  ",usespace, " to Rebuild Barrier");
 			break;
 		case 6://box
-			usestring = strcat("Hold  ",usespace, " for Mystery Box");
+			usestring = strcat("Hold  ",usespace, " for Mystery Machine");
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 7://box take
