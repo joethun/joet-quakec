@@ -396,7 +396,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_KILLU:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 2; break;
+				case HEAD_X: 		multiplier = 1.5; break;
 				case UPPER_TORSO_X: multiplier = 1; break;
 				case LOWER_TORSO_X: multiplier = 0.9; break;
 				case LIMBS_X: 		multiplier = 0.75; break;
@@ -410,7 +410,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_DESTROYER:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 2.5; break;
+				case HEAD_X: 		multiplier = 1.75; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 0.9; break;
 				case LIMBS_X: 		multiplier = 0.75; break;
@@ -421,7 +421,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_HEADCRACKER:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 3; break;
+				case HEAD_X: 		multiplier = 2; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 0.9; break;
 				case LIMBS_X: 		multiplier = 0.75; break;
@@ -436,7 +436,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_WIDDER:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 2; break;
+				case HEAD_X: 		multiplier = 1.5; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 0.9; break;
 				case LIMBS_X: 		multiplier = 0.75; break;
@@ -455,7 +455,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_SAMURAI:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 1.5; break;
+				case HEAD_X: 		multiplier = 1.25; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
 				case LIMBS_X: 		multiplier = 0.8; break;
@@ -470,7 +470,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_SPATZ:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 1.75; break;
+				case HEAD_X: 		multiplier = 1.25; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
 				case LIMBS_X: 		multiplier = 0.8; break;
@@ -483,7 +483,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_BARRACUDA:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 1.5; break;
+				case HEAD_X: 		multiplier = 1.25; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
 				case LIMBS_X: 		multiplier = 0.8; break;
@@ -498,7 +498,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_GUT:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 2; break;
+				case HEAD_X: 		multiplier = 1.5; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
 				case LIMBS_X: 		multiplier = 0.8; break;
@@ -520,7 +520,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_KRAUS:
 			switch (type)
 			{
-				case HEAD_X:		multiplier = 1.5; break;
+				case HEAD_X:		multiplier = 1.25; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
 				case LIMBS_X: 		multiplier = 1; break;
@@ -531,7 +531,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_PORTERMK2:
 			switch (type)
 			{
-				case HEAD_X:		multiplier = 1.5; break;
+				case HEAD_X:		multiplier = 1.25; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
 				case LIMBS_X: 		multiplier = 1; break;

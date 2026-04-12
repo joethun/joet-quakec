@@ -87,9 +87,9 @@ void() Menu_Pause =
         Menu_Button(1, "pm_resum", "RESUME CARNAGE", "Return to Game.") ? ToggleMenu() : 0;
 
         if (player_count == 1)
-            Menu_Button(2, "pm_reloa", "RESTART LEVEL", "Tough luck? Give things another go.") ? Menu_Pause_EnterSubMenu(1) : 0;
+            Menu_Button(2, "pm_reloa", "RESTART", "Tough luck? Give things another go.") ? Menu_Pause_EnterSubMenu(1) : 0;
         else
-            Menu_GreyButton(2, "RESTART LEVEL");
+            Menu_GreyButton(2, "RESTART");
 
         Menu_Button(3, "pm_opts", "OPTIONS", "Tweak Game related Options.") ? current_menu = MENU_OPTIONS : 0;
         Menu_Button(4, "pm_quit", "END GAME", "Return to Main Menu.") ? Menu_Pause_EnterSubMenu(2) : 0;
@@ -102,7 +102,7 @@ void() Menu_Pause =
     else
     {
         Menu_GreyButton(1, "RESUME CARNAGE");
-        Menu_GreyButton(2, "RESTART LEVEL");
+        Menu_GreyButton(2, "RESTART");
         Menu_GreyButton(3, "OPTIONS");
         Menu_GreyButton(4, "END GAME");
 
@@ -112,7 +112,8 @@ void() Menu_Pause =
         else if (menu_paus_submenu == 2)
             Menu_DrawYesNoPanel("Are you sure you want to quit?", "You will lose any progress that you have made.");
 
-        Menu_Button(8, "pm_yes", "GET ME OUTTA HERE!", "") ? Menu_Pause_Yes() : 0;
+        string yes_label = (menu_paus_submenu == 1) ? "YES, DO AS I SAY!" : "GET ME OUTTA HERE!";
+        Menu_Button(8, "pm_yes", yes_label, "") ? Menu_Pause_Yes() : 0;
         Menu_Button(9, "pm_no", "I WILL PERSEVERE", "") ? Menu_Pause_No() : 0;
 
         menu_paus_buttons[0] = "pm_yes";

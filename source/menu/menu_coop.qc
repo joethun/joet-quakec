@@ -84,6 +84,7 @@ void() Menu_Coop_RefreshCache =
 	if (refreshtime > time)
 		return;
 
+	Menu_PlaySound(MENU_SND_ENTER);
 	refreshtime = time + 0.5;
 
 	// reset cache masks

@@ -135,7 +135,7 @@ void(string line_1, string line_2) Menu_DrawYesNoPanel =
 	// Black Fill
 	sui_fill([0, 160], [sui_current_frame_size()[0], 160], [0, 0, 0], 1, 0);
 
-	// Yellow borders
+	// Red borders
 	sui_fill([0, 160], [sui_current_frame_size()[0], 3], [0.7, 0.15, 0.15], 0.9, 0);
 	sui_fill([0, sui_current_frame_size()[1] - 160], [sui_current_frame_size()[0], 3], [0.7, 0.15, 0.15], 0.9, 0);
 
@@ -940,14 +940,12 @@ void(vector size) root_menu =
 
 		case MENU_MAIN: Menu_Main(); break;
 		case MENU_SOLO: menu_map_mode = MAP_SOLOSTOCK; Menu_Maps(); break;
-		case MENU_SOLOUSER: menu_map_mode = MAP_SOLOUSER; Menu_Maps(); break;
 		case MENU_COOP: Menu_Coop(); break;
 		case MENU_COOPJOIN: Menu_Coop_Join(); break;
 		case MENU_COOPBROWSE: Menu_Coop_Browse(); break;
 		case MENU_COOPDIRECT: Menu_Coop_Direct(); break;
 		case MENU_COOPCREATE: Menu_Coop_Create(); break;
 		case MENU_COOPSTOCK: menu_map_mode = MAP_COOPSTOCK; Menu_Maps(); break;
-		case MENU_COOPUSER: menu_map_mode = MAP_COOPUSER; Menu_Maps(); break;
 		case MENU_CREDITS: Menu_Credits(); break;
 		case MENU_LOBBY: Menu_Lobby(); break;
 		case MENU_GAMESETTINGS: Menu_GameSettings(); break;

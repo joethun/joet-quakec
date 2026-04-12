@@ -112,7 +112,7 @@ void(vector screensize, float opaque) m_drawloading =
     drawfill([0, screensize_y - 36], [screensize_x, 36], [0, 0, 0], 175/255);
 
     // Map Title
-    Draw_String([10, 5], map_name_pretty, MENU_TEXT_LARGE, [1, 1, 0], 1, 0);
+    Draw_String([10, 5], map_name_pretty, MENU_TEXT_LARGE, [0.9, 0.15, 0.15], 1, 0);
 
     // Notice for how to end server connecting
     if (loading_into_server == true) {

@@ -226,9 +226,9 @@ void W_SprintStart () {
 		self.fire_delay2 > time ||
 		self.new_anim_stop ||
 		self.new_anim2_stop ||
-		self.isBuying || 
+		self.isBuying ||
 		self.downed ||
-		!(self.flags & FL_ONGROUND) || 
+		!(self.flags & FL_ONGROUND) ||
 		self.sprint_delay > time) {
 		return;
 	}
@@ -1833,15 +1833,14 @@ void() CheckPlayer =
 	if (self.sprinting) {
 		makevectors(self.angles);
 
-		// Stop sprinting if airborne with significant vertical velocity
-		// (jumping/falling). Only check when off the ground so walking
-		// down stairs doesn't cancel sprint.
-		if (!(self.flags & FL_ONGROUND) && fabs(self.velocity_z) >= 150)
+		// Stop sprinting if falling from a large height.
+		// Jumps and small drops (stairs) are fine.
+		if (!(self.flags & FL_ONGROUND) && self.velocity_z < -300)
 			W_SprintStop();
 		// Stop sprinting if we are moving at a base below predicted
 		// for our slowest possible weapon. Use a grace window so
 		// momentary wall bumps don't immediately cancel sprint.
-		else if (vlen(self.velocity) <= 80 && self.sprint_delay <= time + 0.75) {
+		if (vlen(self.velocity) <= 80 && self.sprint_delay <= time + 0.75) {
 			if (!self.sprint_wall_grace)
 				self.sprint_wall_grace = time + 0.15;
 			else if (self.sprint_wall_grace < time)

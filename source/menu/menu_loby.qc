@@ -142,31 +142,31 @@ void() Menu_Lobby =
     else fast_rounds = "DISABLED";
 
     sui_text([80, -160], MENU_TEXT_MEDIUM, "Game Mode", [1, 1, 1], 1, 0);
-    sui_text([80, -145], MENU_TEXT_SMALL, gamemode, [1, 1, 0], 1, 0);
+    sui_text([80, -145], MENU_TEXT_SMALL, gamemode, [0.9, 0.15, 0.15], 1, 0);
     sui_fill([80, -135], [90, 2], [0.2, 0.2, 0.2], 1, 0);
 
     sui_text([220, -160], MENU_TEXT_MEDIUM, "Difficulty", [1, 1, 1], 1, 0);
-    sui_text([220, -145], MENU_TEXT_SMALL, difficulty, [1, 1, 0], 1, 0);
+    sui_text([220, -145], MENU_TEXT_SMALL, difficulty, [0.9, 0.15, 0.15], 1, 0);
     sui_fill([220, -135], [90, 2], [0.2, 0.2, 0.2], 1, 0);
 
     sui_text([80, -120], MENU_TEXT_MEDIUM, "Start Round", [1, 1, 1], 1, 0);
-    sui_text([80, -105], MENU_TEXT_SMALL, start_round, [1, 1, 0], 1, 0);
+    sui_text([80, -105], MENU_TEXT_SMALL, start_round, [0.9, 0.15, 0.15], 1, 0);
     sui_fill([80, -95], [90, 2], [0.2, 0.2, 0.2], 1, 0);
 
     sui_text([220, -120], MENU_TEXT_MEDIUM, "Magic", [1, 1, 1], 1, 0);
-    sui_text([220, -105], MENU_TEXT_SMALL, magic, [1, 1, 0], 1, 0);
+    sui_text([220, -105], MENU_TEXT_SMALL, magic, [0.9, 0.15, 0.15], 1, 0);
     sui_fill([220, -95], [90, 2], [0.2, 0.2, 0.2], 1, 0);
 
     sui_text([80, -80], MENU_TEXT_MEDIUM, "Headshots Only", [1, 1, 1], 1, 0);
-    sui_text([80, -65], MENU_TEXT_SMALL, headshots, [1, 1, 0], 1, 0);
+    sui_text([80, -65], MENU_TEXT_SMALL, headshots, [0.9, 0.15, 0.15], 1, 0);
     sui_fill([80, -55], [90, 2], [0.2, 0.2, 0.2], 1, 0);
 
     sui_text([220, -80], MENU_TEXT_MEDIUM, "Horde Size", [1, 1, 1], 1, 0);
-    sui_text([220, -65], MENU_TEXT_SMALL, sprintf("%d", cvar("sv_maxai")), [1, 1, 0], 1, 0);
+    sui_text([220, -65], MENU_TEXT_SMALL, sprintf("%d", cvar("sv_maxai")), [0.9, 0.15, 0.15], 1, 0);
     sui_fill([220, -55], [90, 2], [0.2, 0.2, 0.2], 1, 0);
 
     sui_text([80, -40], MENU_TEXT_MEDIUM, "Fast Rounds", [1, 1, 1], 1, 0);
-    sui_text([80, -25], MENU_TEXT_SMALL, fast_rounds, [1, 1, 0], 1, 0);
+    sui_text([80, -25], MENU_TEXT_SMALL, fast_rounds, [0.9, 0.15, 0.15], 1, 0);
     sui_fill([80, -15], [90, 2], [0.2, 0.2, 0.2], 1, 0);
 
     float lobby_delta = menu_loby_countdown - time;

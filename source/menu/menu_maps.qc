@@ -115,9 +115,7 @@ void() Menu_Maps =
 
     switch(menu_map_mode) {
         case MAP_SOLOSTOCK: Menu_DrawTitle("SELECT MAP: SOLO"); back_string = "Return to Main Menu."; back_menudest = MENU_MAIN; break;
-        case MAP_SOLOUSER: Menu_DrawTitle("USER MAPS: SOLO"); back_string = "Return to Stock Map selection."; back_menudest = MENU_SOLO; break;
         case MAP_COOPSTOCK: Menu_DrawTitle("SELECT MAP: COOP"); back_string = "Return to Create Game Menu."; back_menudest = MENU_COOPCREATE; break;
-        case MAP_COOPUSER: Menu_DrawTitle("USER MAPS: COOP"); back_string = "Return to Stock Map selection."; back_menudest = MENU_COOPSTOCK; break;
         default: break;
     }
 
@@ -130,93 +128,55 @@ void() Menu_Maps =
         menu_maps_buttons[h] = "";
     }
 
-    // Stock Maps
-    if (menu_map_mode == MAP_SOLOSTOCK || menu_map_mode == MAP_COOPSTOCK) {
-        int blank_map_spots = 0;
+    // Calculate the amount of maps we can display on this page.
+    int maps_on_page = 10; // default to 10, all that will fit on the UI.
+    int maps_start_position = (user_maps_page * 10);
 
-        for(i = 0; i < stock_maps.length; i++) {
-            if (stock_maps[i].bsp_name == "") {
-                blank_map_spots++;
-                Menu_DrawDivider(i + 1.25);
-                continue;
+    // Not all 10 slots can be filled..
+    if (maps_on_page > user_maps_count - maps_start_position)
+        maps_on_page = user_maps_count - maps_start_position;
+
+    for (i = maps_start_position; i < maps_on_page + maps_start_position; i++) {
+        int menu_position = (i + 1) - (user_maps_page * 10);
+        string bsp_name = user_maps[i].map_name;
+
+        // Build the map strings
+        menu_maps_buttons[menu_position - 1] = sprintf("map_%s", bsp_name);
+
+        // Resolve the category badge for stock maps.
+        float map_category = MAP_CATEGORY_USER;
+        for(int j = 0; j < stock_maps.length; j++) {
+            if (user_maps[i].map_name == stock_maps[j].bsp_name) {
+                map_category = stock_maps[j].map_category;
             }
-
-            // Build the map strings
-            menu_maps_buttons[i - blank_map_spots] = sprintf("map_%s", stock_maps[i].bsp_name);
-
-            Menu_MapButton(i + 1, sprintf("map_%s", stock_maps[i].bsp_name), stock_maps[i].bsp_name, stock_maps[i].map_category, -1) ? Menu_Maps_LoadMap(stock_maps[i].bsp_name) : 0;
-        }
-        Menu_DrawDivider(i + 1.25);
-
-		if (menu_map_mode == MAP_SOLOSTOCK) {
-			Menu_Button(i + 1.5, "map_nzpusermaps", "USER MAPS", "View User-Created Maps.") ? current_menu = MENU_SOLOUSER : 0;
-		} else if (menu_map_mode == MAP_COOPSTOCK) {
-			Menu_Button(i + 1.5, "map_nzpusermaps", "USER MAPS", "View User-Created Maps.") ? current_menu = MENU_COOPUSER : 0;
-		}
-
-        if (Menu_Button(i + 2.5, "map_randommap", "RANDOM", "Feeling indecisive? Try rolling the dice."))
-        {
-            int random_map_index = rint(random() * user_maps_count);
-            Menu_Maps_LoadMap(user_maps[random_map_index].map_name);
         }
 
-        // Usermaps and back button registry
-        menu_maps_buttons[i] = "map_nzpusermaps";
-        menu_maps_buttons[i + 1] = "map_randommap";
-        menu_maps_buttons[i + 2] = "map_back";
-    } else {
-        // calculate the amount of usermaps we can display on this page.
-        int maps_on_page = 10; // default to 10, all that will fit on the UI.
-        int maps_start_position = (user_maps_page * 10);
-
-        // Not all 10 slots can be filled..
-        if (maps_on_page > user_maps_count - maps_start_position)
-            maps_on_page = user_maps_count - maps_start_position;
-
-        for (i = maps_start_position; i < maps_on_page + maps_start_position; i++) {
-            int menu_position = (i + 1) - (user_maps_page * 10);
-            string bsp_name = user_maps[i].map_name;
-
-            // Build the map strings
-            menu_maps_buttons[menu_position - 1] = sprintf("map_%s", bsp_name);
-
-            // Kind of a hack but whatever..
-            // Make sure we keep the correct badge when viewing
-            // official maps in the user maps menu.
-            float map_category = MAP_CATEGORY_USER;
-            for(int j = 0; j < stock_maps.length; j++) {
-                if (user_maps[i].map_name == stock_maps[j].bsp_name) {
-                    map_category = stock_maps[j].map_category;
-                }
-            }
-
-            Menu_MapButton(menu_position, sprintf("map_%s", bsp_name), bsp_name, map_category, i) ? Menu_Maps_LoadMap(bsp_name) : 0;
-        }
-
-        int current_registry_position = ((i + 1) - (user_maps_page * 10)) - 1;
-
-        Menu_DrawDivider(11.25);
-
-        if (maps_on_page + maps_start_position < user_maps_count) {
-            menu_maps_buttons[current_registry_position] = "map_usernext";
-            current_registry_position++;
-            Menu_Button(-3, "map_usernext", "NEXT PAGE", "Advance to next User Map page.") ? Menu_Maps_NextPage() : 0;
-        } else {
-            Menu_GreyButton(-3, "NEXT PAGE");
-        }
-
-        if (user_maps_page != 0) {
-            menu_maps_buttons[current_registry_position] = "map_userprev";
-            current_registry_position++;
-            Menu_Button(-2, "map_userprev", "PREVIOUS PAGE", "Return to last User Map page.") ? Menu_Maps_PrevPage() : 0;
-        } else {
-            Menu_GreyButton(-2, "PREVIOUS PAGE");
-        }
-
-        menu_maps_buttons[current_registry_position] = "map_back";
+        Menu_MapButton(menu_position, sprintf("map_%s", bsp_name), bsp_name, map_category, i) ? Menu_Maps_LoadMap(bsp_name) : 0;
     }
+
+    int current_registry_position = ((i + 1) - (user_maps_page * 10)) - 1;
+
+    Menu_DrawDivider(11.25);
+
+    if (maps_on_page + maps_start_position < user_maps_count) {
+        menu_maps_buttons[current_registry_position] = "map_usernext";
+        current_registry_position++;
+        Menu_Button(-3, "map_usernext", "NEXT PAGE", "Advance to next page.") ? Menu_Maps_NextPage() : 0;
+    } else {
+        Menu_GreyButton(-3, "NEXT PAGE");
+    }
+
+    if (user_maps_page != 0) {
+        menu_maps_buttons[current_registry_position] = "map_userprev";
+        current_registry_position++;
+        Menu_Button(-2, "map_userprev", "PREVIOUS PAGE", "Return to last page.") ? Menu_Maps_PrevPage() : 0;
+    } else {
+        Menu_GreyButton(-2, "PREVIOUS PAGE");
+    }
+
+    menu_maps_buttons[current_registry_position] = "map_back";
 
     Menu_Button(-1, "map_back", "BACK", back_string) ? current_menu = back_menudest : 0;
 
-	sui_pop_frame();	
+	sui_pop_frame();
 };
