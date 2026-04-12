@@ -817,10 +817,10 @@ float(float wep) getWeaponAmmo =
 			weapon_ammo = 80;
 			break;
 		case W_TYPE:
-			weapon_ammo = 160;
+			weapon_ammo = 220;
 			break;
 		case W_SAMURAI:
-			weapon_ammo = 220;
+			weapon_ammo = 290;
 			break;
 		case W_TESLA:
 			weapon_ammo = 15;
