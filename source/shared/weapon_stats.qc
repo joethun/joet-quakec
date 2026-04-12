@@ -498,7 +498,7 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_GUT:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 1.5; break;
+				case HEAD_X: 		multiplier = 1.25; break;
 				case UPPER_TORSO_X:	multiplier = 1; break;
 				case LOWER_TORSO_X:	multiplier = 1; break;
 				case LIMBS_X: 		multiplier = 0.8; break;
@@ -906,60 +906,60 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			break;
 		// -- SMGs (per-bullet scaled by fire rate) --
 		case W_THOMPSON:
-			weapon_damage = 85;
+			weapon_damage = 110;
 			break;
 		case W_GIBS:
-			weapon_damage = 170;
+			weapon_damage = 220;
 			break;
 		case W_MP40:
-			weapon_damage = 100;
+			weapon_damage = 120;
 			break;
 		case W_AFTERBURNER:
-			weapon_damage = 200;
+			weapon_damage = 240;
 			break;
 		case W_MP5K:
-			weapon_damage = 85;
+			weapon_damage = 105;
 			break;
 		case W_KOLLIDER:
-			weapon_damage = 170;
+			weapon_damage = 210;
 			break;
 		case W_PPSH:
-			weapon_damage = 55;
+			weapon_damage = 80;
 			break;
 		case W_REAPER:
-			weapon_damage = 110;
+			weapon_damage = 160;
 			break;
 		case W_TYPE:
-			weapon_damage = 75;
+			weapon_damage = 100;
 			break;
 		case W_SAMURAI:
-			weapon_damage = 150;
+			weapon_damage = 200;
 			break;
 		case W_STG:
-			weapon_damage = 110;
+			weapon_damage = 135;
 			break;
 		case W_SPATZ:
-			weapon_damage = 220;
+			weapon_damage = 270;
 			break;
 		// -- Assault Rifles / Light MGs --
 		case W_BAR:
-			weapon_damage = 150;
+			weapon_damage = 175;
 			break;
 		case W_WIDOW:
-			weapon_damage = 300;
+			weapon_damage = 350;
 			break;
 		case W_FG:
-			weapon_damage = 100;
+			weapon_damage = 110;
 			break;
 		case W_IMPELLER:
-			weapon_damage = 200;
+			weapon_damage = 220;
 			break;
 		// -- LMGs --
 		case W_BROWNING:
-			weapon_damage = 130;
+			weapon_damage = 150;
 			break;
 		case W_ACCELERATOR:
-			weapon_damage = 260;
+			weapon_damage = 300;
 			break;
 		case W_MG:
 			weapon_damage = 100;
@@ -969,22 +969,22 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			break;
 		// -- Shotguns (per pellet) --
 		case W_SAWNOFF:
-			weapon_damage = 100;
+			weapon_damage = 90;
 			break;
 		case W_DB:
-			weapon_damage = 150;
+			weapon_damage = 120;
 			break;
 		case W_TRENCH:
-			weapon_damage = 250;
+			weapon_damage = 150;
 			break;
 		case W_SNUFF:
-			weapon_damage = 200;
+			weapon_damage = 180;
 			break;
 		case W_BORE:
-			weapon_damage = 250;
+			weapon_damage = 240;
 			break;
 		case W_GUT:
-			weapon_damage = 400;
+			weapon_damage = 300;
 			break;
 		// -- Snipers --
 		case W_PTRS:
@@ -1039,8 +1039,9 @@ float(float wep) GetWeaponShotcount =
 		case W_BORE:
 			return 10;
 		case W_SAWNOFF:
+			return 10;
 		case W_SNUFF:
-			return 8;
+			return 12;
 		case W_TRENCH:
 			return 8;
 		case W_GUT:
@@ -4179,7 +4180,7 @@ float(float weapon, float stance) CrossHairWeapon =
 			break;
 		case W_SAWNOFF:
 		case W_SNUFF:
-			crosshair_spread = 20;
+			crosshair_spread = 25;
 			break;
 		case W_TRENCH:
 		case W_GUT:
@@ -4274,7 +4275,7 @@ float(float weapon, float stance) CrossHairMaxSpread =
 			break;
 		case W_SAWNOFF:
 		case W_SNUFF:
-			crosshair_spread = 20;
+			crosshair_spread = 25;
 			break;
 		case W_DB:
 		case W_BORE:
