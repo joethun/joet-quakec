@@ -425,8 +425,7 @@ void() Perk_Jingle =
 	if (self.perk_purchase_count >= perk_purchase_limit)
 		return;
 
-	local float jinglewaittime;
-	jinglewaittime = rint((random() * 30)) + 30;
+	float jinglewaittime = rint((random() * 30)) + 30;
 
 	// Just try again later if the Power isn't Activated
 	if ((self.requirespower == true && !isPowerOn) || self.ltime > time) {

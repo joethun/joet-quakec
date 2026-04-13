@@ -68,26 +68,19 @@ void SetUpdate(entity client, float type, float val1, float val2, float val3)
 {
 #ifdef FTE
 
-	if (type != 2)
-	{
-		WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-		WriteByte(MSG_MULTICAST, EVENT_UPDATE);
-		WriteByte(MSG_MULTICAST, type); // UT_HUD
-		WriteByte(MSG_MULTICAST, val1);
-		WriteByte(MSG_MULTICAST, val2);
-		WriteByte(MSG_MULTICAST, val3); // misc flags/vars for later if needed
+	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
+	WriteByte(MSG_MULTICAST, EVENT_UPDATE);
+	WriteByte(MSG_MULTICAST, type);
+	WriteByte(MSG_MULTICAST, val1);
+	WriteByte(MSG_MULTICAST, val2);
+	WriteByte(MSG_MULTICAST, val3);
+
+	// UT_ROUNDS_CHANGE (type 2) broadcasts to all clients; everything else is per-client.
+	if (type == 2) {
+		multicast('0 0 0', MULTICAST_ALL);
+	} else {
 		msg_entity = client;
 		multicast('0 0 0', MULTICAST_ONE);
-	}
-	else
-	{
-		WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-		WriteByte(MSG_MULTICAST, EVENT_UPDATE);
-		WriteByte(MSG_MULTICAST, type); // UT_ROUNDS_CHANGE
-		WriteByte(MSG_MULTICAST, val1);
-		WriteByte(MSG_MULTICAST, val2);
-		WriteByte(MSG_MULTICAST, val3); // misc flags/vars for later if needed
-		multicast('0 0 0', MULTICAST_ALL);
 	}
 
 #endif // FTE
@@ -308,13 +301,11 @@ void(float count) UpdatePlayerCount = {
 #ifdef FTE
 	if (count == 0)
 		return;
-	else {
-		WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-		WriteByte(MSG_MULTICAST, EVENT_PLAYERUPDATE);
-		WriteByte(MSG_MULTICAST, count);
-		multicast('0 0 0', MULTICAST_ALL);
-	}
 
+	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
+	WriteByte(MSG_MULTICAST, EVENT_PLAYERUPDATE);
+	WriteByte(MSG_MULTICAST, count);
+	multicast('0 0 0', MULTICAST_ALL);
 #endif // FTE
 }
 
@@ -462,22 +453,17 @@ void(entity target, string player_name) nzp_setplayername =
 };
 
 void(string chaptertitle, string location, string date, string person, entity who) WorldText = {
+	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
+	WriteByte(MSG_MULTICAST, EVENT_WORLDDATA);
+	WriteString(MSG_MULTICAST, chaptertitle);
+	WriteString(MSG_MULTICAST, location);
+	WriteString(MSG_MULTICAST, date);
+	WriteString(MSG_MULTICAST, person);
+
 	if (player_count == 1) {
-		WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-		WriteByte(MSG_MULTICAST, EVENT_WORLDDATA);
-		WriteString(MSG_MULTICAST, chaptertitle);
-		WriteString(MSG_MULTICAST, location);
-		WriteString(MSG_MULTICAST, date);
-		WriteString(MSG_MULTICAST, person);
 		msg_entity = who;
 		multicast('0 0 0', MULTICAST_ONE);
 	} else {
-		WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-		WriteByte(MSG_MULTICAST, EVENT_WORLDDATA);
-		WriteString(MSG_MULTICAST, chaptertitle);
-		WriteString(MSG_MULTICAST, location);
-		WriteString(MSG_MULTICAST, date);
-		WriteString(MSG_MULTICAST, person);
 		multicast('0 0 0', MULTICAST_ALL);
 	}
 }

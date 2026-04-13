@@ -226,18 +226,10 @@ string(float wep, float weapon_tier) GetWeaponName =
 	if (game_modifier_packapunch_uses_tiers == true && weapon_tier > 0) {
 		// Append the Pack-A-Punch tier to the name if tiers are enabled.
 		if (EqualPapWeapon(wep) == wep) {
-			string tier_numeral = "";
-
-			switch(weapon_tier) {
-				case 1: tier_numeral = "I"; break;
-				case 2: tier_numeral = "II"; break;
-				case 3: tier_numeral = "III"; break;
-				default: break;
-			}
-
-			weapon_name = strcat(weapon_name, " (Tier ");
-			weapon_name = strcat(weapon_name, tier_numeral);
-			weapon_name = strcat(weapon_name, ")");
+			// Roman numerals for tiers 1-3
+			string tier_numerals[] = { "", "I", "II", "III" };
+			string tier_numeral = (weapon_tier <= 3) ? tier_numerals[weapon_tier] : ftos(weapon_tier);
+			weapon_name = strcat(strcat(weapon_name, strcat(" (Tier ", tier_numeral)), ")");
 		}
 	}
 

@@ -165,13 +165,6 @@ void(float type) Zombie_PlaySoundType =
 	}
 };
 
-void(__inout vector what, float howmuch) vector_scale_hack =
-{
-	what_x *= howmuch;
-	what_y *= howmuch;
-	what_z *= howmuch;
-}
-
 void(float which) SetZombieHitBox =
 {
 
@@ -298,17 +291,17 @@ void(float which) SetZombieHitBox =
 	self.currentHitBoxSetup = which;
 
 	if (map_compatibility_mode == MAP_COMPAT_BETA) {
-		vector_scale_hack(self.head.bbmins, self.head.scale);
-		vector_scale_hack(self.head.bbmaxs, self.head.scale);
-		vector_scale_hack(self.head.view_ofs, self.head.scale);
+		self.head.bbmins  *= self.head.scale;
+		self.head.bbmaxs  *= self.head.scale;
+		self.head.view_ofs *= self.head.scale;
 
-		vector_scale_hack(self.larm.bbmins, self.larm.scale);
-		vector_scale_hack(self.larm.bbmaxs, self.larm.scale);
-		vector_scale_hack(self.larm.view_ofs, self.larm.scale);
+		self.larm.bbmins  *= self.larm.scale;
+		self.larm.bbmaxs  *= self.larm.scale;
+		self.larm.view_ofs *= self.larm.scale;
 
-		vector_scale_hack(self.rarm.bbmins, self.rarm.scale);
-		vector_scale_hack(self.rarm.bbmaxs, self.rarm.scale);
-		vector_scale_hack(self.rarm.view_ofs, self.rarm.scale);
+		self.rarm.bbmins  *= self.rarm.scale;
+		self.rarm.bbmaxs  *= self.rarm.scale;
+		self.rarm.view_ofs *= self.rarm.scale;
 	}
 };
 
@@ -503,15 +496,14 @@ void()	zombie_run8		=[	$run8,		zombie_run9	] 	{Zombie_Walk(13); self.frame = 99;
 void()	zombie_run9		=[	$run9,		zombie_run10	] 	{Zombie_Walk(13); self.frame = 100;Zombie_Think();};
 void()	zombie_run10		=[	$run10,	Zombie_Walk_Setup	] 	{Zombie_Walk(13); self.frame = 101;Zombie_Think();};
 
+// Round threshold at which the last zombie starts running, per difficulty (0=easy, 1=normal, 2=hard, 3=nightmare)
+float zombie_run_round_thresholds[] = { 4, 10, 2, 1 };
+
 float() Zombie_RunAtEndOfRound =
 {
-	switch(cvar("sv_difficulty")) {
-		case 0: return 4;
-		case 1: return 10;
-		case 2: return 2;
-		case 3: return 1;
-	}
-
+	float diff = cvar("sv_difficulty");
+	if (diff >= 0 && diff <= 3)
+		return zombie_run_round_thresholds[diff];
 	return 4;
 };
 

@@ -95,18 +95,16 @@ entity() PU_GetFreeEnt =
 //
 string(string file) PU_ResolveVOPath =
 {
-	string path = "";
-
+	string prefix = "sounds/pu/";
 	switch(cvar("sv_gamemode")) {
-		case GAMEMODE_GUNGAME: path = strcat("sounds/modes/gungame/", file); break;
-		case GAMEMODE_HARDCORE: path = strcat("sounds/modes/hardcore/", file); break;
-		case GAMEMODE_STICKSNSTONES: path = strcat("sounds/modes/sticks/", file); break;
-		case GAMEMODE_WILDWEST: path = strcat("sounds/modes/wildwest/", file); break;
-		case GAMEMODE_FESTIVE: path = strcat("sounds/modes/festive/", file); break;
-		default: path = strcat("sounds/pu/", file); break;
+		case GAMEMODE_GUNGAME:       prefix = "sounds/modes/gungame/"; break;
+		case GAMEMODE_HARDCORE:      prefix = "sounds/modes/hardcore/"; break;
+		case GAMEMODE_STICKSNSTONES: prefix = "sounds/modes/sticks/"; break;
+		case GAMEMODE_WILDWEST:      prefix = "sounds/modes/wildwest/"; break;
+		case GAMEMODE_FESTIVE:       prefix = "sounds/modes/festive/"; break;
+		default: break;
 	}
-
-	return path;
+	return strcat(prefix, file);
 };
 
 //

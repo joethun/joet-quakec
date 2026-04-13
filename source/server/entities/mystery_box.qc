@@ -235,8 +235,8 @@ void() Float_Decrease =
 //
 void() findboxspot =
 {
-	local entity newspot;
-	local float box = rint(random(mystery_box_count));
+	entity newspot;
+	float box = rint(random(mystery_box_count));
 	newspot = mystery_boxes[box];
 
 	// Ensure the spot we choose is valid, with iteration guard.
@@ -810,10 +810,9 @@ float MBOX_GetWeaponIDFromMB1(float mbox_id) =
         case 24: return W_TYPE;
         case 25: return W_MP5K;
         case 26: return W_SPRING;
-		case 27: return W_RAYMK2;
+        case 27: return W_RAYMK2;
         default: return W_COLT;
     }
-    return W_COLT;
 }
 
 //

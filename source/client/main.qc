@@ -76,18 +76,21 @@ float() GenerateAlphaTransparencyQ3Shaders =
 		if (special_character != "$")
 			continue;
 
-		// Isolate its basename.. manually :(
+		// Isolate its basename from the full path using strstrofs to find the last slash
 		string basename = "";
-		for (float j = strlen(full_path); j > 0; j--) {
-			if (str2chr(full_path, j) == str2chr("/", 0)) {
-				// Strip path
-				basename = substring(full_path, j + 1, strlen(full_path) - (j + 1));
-
-				// Strip extension
-				basename = substring(basename, 0, strlen(basename) - 4);
-				break;
-			}
+		float slash_pos = -1;
+		float search_pos = 0;
+		float found;
+		while ((found = strstrofs(full_path, "/", search_pos)) != -1) {
+			slash_pos = found;
+			search_pos = found + 1;
 		}
+		if (slash_pos >= 0)
+			basename = substring(full_path, slash_pos + 1, strlen(full_path) - (slash_pos + 1));
+		else
+			basename = full_path;
+		// Strip the .mdl extension
+		basename = substring(basename, 0, strlen(basename) - 4);
 
 		if (basename == "") {
 			print(sprintf("[ERROR]: Unable to calculate basename for [%s]!\n", full_path));
@@ -255,7 +258,35 @@ noref void() CSQC_WorldLoaded =
 	huddir = "gfx/hud/";
 };
 
-vector weapon_bob_factor;
+void() Stopwatch_Update =
+{
+	stopwatch_sec = time - (stopwatch_min * 60 + stopwatch_hr * 3600);
+	if (stopwatch_sec >= 60) {
+		stopwatch_min += floor(stopwatch_sec / 60);
+		stopwatch_sec -= floor(stopwatch_sec / 60) * 60;
+	}
+	if (stopwatch_min >= 60) {
+		stopwatch_hr += floor(stopwatch_min / 60);
+		stopwatch_min -= floor(stopwatch_min / 60) * 60;
+	}
+
+	if (stopwatch_round_isactive) {
+		float elapsed = time - stopwatch_round_starttime;
+		stopwatch_round_sec = elapsed - (stopwatch_round_min * 60 + stopwatch_round_hr * 3600);
+		if (stopwatch_round_sec >= 60) {
+			stopwatch_round_min += floor(stopwatch_round_sec / 60);
+			stopwatch_round_sec -= floor(stopwatch_round_sec / 60) * 60;
+		}
+		if (stopwatch_round_min >= 60) {
+			stopwatch_round_hr += floor(stopwatch_round_min / 60);
+			stopwatch_round_min -= floor(stopwatch_round_min / 60) * 60;
+		}
+	} else {
+		stopwatch_round_starttime = time;
+	}
+}
+
+
 float weapon_bob_factor_z_coef;
 vector dampening_factor;
 float vaccel;
@@ -274,42 +305,34 @@ float 	last_puframetime;
 void() PU_UpdateAngles =
 {
 	// Don't update more than once per frame.
-	if (last_puframetime != frametime) {
-		// New cycle, dictate new rotation time and target angle. 
-		if (mdlflag_poweruprotate_duration <= time) {
-			mdlflag_poweruprotate_starttime = time;
-			mdlflag_poweruprotate_duration = time + (random() * 25 + 25)/10; // Take between 2.5 and 5 seconds.
+	if (last_puframetime == frametime)
+		return;
 
-			mdlflag_poweruprotate_startangles[0] = mdlflag_poweruprotate_currentangles[0];
-			mdlflag_poweruprotate_startangles[1] = mdlflag_poweruprotate_currentangles[1];
-			mdlflag_poweruprotate_startangles[2] = mdlflag_poweruprotate_currentangles[2];
+	// New cycle: pick a new rotation target and duration.
+	if (mdlflag_poweruprotate_duration <= time) {
+		mdlflag_poweruprotate_starttime = time;
+		mdlflag_poweruprotate_duration = time + (random() * 25 + 25) / 10; // 2.5 to 5 seconds
 
-			float target_pitch = (random() * 120) - 60;
-			float target_yaw = (random() * 240) + 60;
-			float target_roll = (random() * 90) - 45;
+		mdlflag_poweruprotate_startangles = mdlflag_poweruprotate_currentangles;
 
-			vector target_angles;
-			target_angles[0] = target_pitch;
-			target_angles[1] = target_yaw;
-			target_angles[2] = target_roll;
+		vector target_angles;
+		target_angles[0] = (random() * 120) - 60;
+		target_angles[1] = (random() * 240) + 60;
+		target_angles[2] = (random() * 90) - 45;
 
-			// Calculate the difference from our start to our target.
-			for(float i = 0; i < 2; i++) {
-				if (mdlflag_poweruprotate_currentangles[i] > target_angles[i])
-					mdlflag_poweruprotate_differenceangles[i] = (mdlflag_poweruprotate_currentangles[i] - target_angles[i]) * -1;
-				else
-					mdlflag_poweruprotate_differenceangles[i] = fabs(mdlflag_poweruprotate_currentangles[i] - target_angles[i]);
-			}
+		// Calculate signed delta from current to target for pitch and yaw
+		for (float i = 0; i < 2; i++) {
+			float delta = target_angles[i] - mdlflag_poweruprotate_currentangles[i];
+			mdlflag_poweruprotate_differenceangles[i] = delta;
 		}
-
-		float percentage_complete = (time - mdlflag_poweruprotate_starttime) / (mdlflag_poweruprotate_duration - mdlflag_poweruprotate_starttime);
-
-		for(float j = 0; j < 2; j++) {
-			mdlflag_poweruprotate_currentangles[j] = mdlflag_poweruprotate_startangles[j] + (mdlflag_poweruprotate_differenceangles[j] * percentage_complete);
-		}
-
-		last_puframetime = frametime;
 	}
+
+	float t = (time - mdlflag_poweruprotate_starttime) / (mdlflag_poweruprotate_duration - mdlflag_poweruprotate_starttime);
+	for (float j = 0; j < 2; j++) {
+		mdlflag_poweruprotate_currentangles[j] = mdlflag_poweruprotate_startangles[j] + (mdlflag_poweruprotate_differenceangles[j] * t);
+	}
+
+	last_puframetime = frametime;
 };
 
 float() PU_PreDraw =
@@ -940,33 +963,8 @@ noref void(float width, float height, float menushown) CSQC_UpdateView =
 
 	cvar_set("r_viewmodel_fov", ftos(cvar("r_viewmodel_default_fov")*view_zoom));
 
-	// Increment the stopwatch
-	// FIXME: I don't really like this being in UpdateView.. this has nothing to do with rendering.
-	stopwatch_sec = time - (stopwatch_min * 60 + (stopwatch_hr * 3600));
-
-	if (stopwatch_sec >= 60) {
-		stopwatch_min += stopwatch_sec/60;
-	}
-
-	if (stopwatch_min >= 60) {
-		stopwatch_hr += stopwatch_min/60;
-		stopwatch_min = 0;
-	}
-
-	if (stopwatch_round_isactive) {
-		stopwatch_round_sec = (time - stopwatch_round_starttime) - (stopwatch_round_min * 60 + (stopwatch_round_hr * 3600));
-
-		if (stopwatch_round_sec >= 60) {
-			stopwatch_round_min += stopwatch_round_sec/60;
-		}
-
-		if (stopwatch_round_min >= 60) {
-			stopwatch_round_hr += stopwatch_round_min/60;
-			stopwatch_round_min = 0;
-		}
-	} else {
-		stopwatch_round_starttime = time;
-	}
+	// Update in-game stopwatches
+	Stopwatch_Update();
 
 	//autoadd entities received from servers for drawing
 	addentities(MASK_ENGINE);
@@ -1307,11 +1305,10 @@ noref void() CSQC_Parse_Event =
 			hud_perk_orientation = readbyte();
 			break;
 		case EVENT_WEAPONRECOIL:
-			local vector rec;
-            rec_x = readcoord()/5;
-            rec_y = readcoord()/5;
-            rec_z = readcoord()/5;
-
+			vector rec;
+			rec[0] = readcoord() / 5;
+			rec[1] = readcoord() / 5;
+			rec[2] = readcoord() / 5;
 			gun_kick += rec;
 			break;
 		case EVENT_CHATMESSAGE:

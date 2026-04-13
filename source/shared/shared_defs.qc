@@ -380,10 +380,7 @@ float in_endgame_sequence;
 // invert float takes in float value between 0 and 1, inverts position
 // eg: 0.1 returns 0.9, 0.34 returns 0.66
 float invertfloat(float input) {
-    if (input < 0)
-        return 0; // adjust to lower boundary
-    else if (input > 1)
-        return 1; // adjust to upper boundary
-    else
-        return (1 - input);
+    if (input < 0) return 0;
+    if (input > 1) return 1;
+    return (1 - input);
 }

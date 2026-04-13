@@ -511,14 +511,11 @@ float(entity who, entity active_ent) Player_UseButtonPressed =
 float(entity who) Player_GetNumPerks =
 {
 	float num_perks = 0;
-	if (who.perks & 0x01) num_perks++;
-    if (who.perks & 0x02) num_perks++;
-    if (who.perks & 0x04) num_perks++;
-    if (who.perks & 0x08) num_perks++;
-    if (who.perks & 0x10) num_perks++;
-    if (who.perks & 0x20) num_perks++;
-    if (who.perks & 0x40) num_perks++;
-    if (who.perks & 0x80) num_perks++;
+	float bits = who.perks;
+	while (bits) {
+		num_perks += (bits & 1);
+		bits = floor(bits / 2);
+	}
 	return num_perks;
 };
 

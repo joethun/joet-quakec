@@ -45,8 +45,6 @@ float() Gamemode_IsPartyMode =
         case GAMEMODE_STICKSNSTONES: return true;
         default: return false;
     }
-
-    return false;
 };
 
 //

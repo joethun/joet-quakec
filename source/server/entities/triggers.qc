@@ -129,90 +129,33 @@ void() InitTrigger =
 entity last_act_trigger;
 void() trigger_activator_touch =
 {
-	other.cost = other.cost +1; //hack, we can only touch one of thease at the time
+	other.cost = other.cost + 1; //hack, we can only touch one of these at the time
 	if (other.classname != "player" || last_act_trigger == self || other.cost > 1)
 		return;
 	last_act_trigger = self;
 
-	entity t;
-	float tempcount, temptotal,breakthis;
-	string tempstring;
-	temptotal = 0;
-	breakthis = 0;
-	tempcount = 1;
-	tempstring = "";
-	t = world;
-	
-	if (self.target2 != "")
-		tempcount =+ 1;
-	if (self.target3 != "")
-		tempcount =+ 1;
-	if (self.target4 != "")
-		tempcount =+ 1;
-	if (self.target5 != "")
-		tempcount =+ 1;
-	if (self.target6 != "")
-		tempcount =+ 1;
-	if (self.target7 != "")
-		tempcount =+ 1;
-	if (self.target8 != "")
-		tempcount =+ 1;
-	if (self.target2 != "")
-		tempcount = tempcount + 1;
-	if (self.target3 != "")
-		tempcount = tempcount + 1;
-	if (self.target4 != "")
-		tempcount = tempcount + 1;
-	if (self.target5 != "")
-		tempcount = tempcount + 1;
-	if (self.target6 != "")
-		tempcount = tempcount + 1;
-	if (self.target7 != "")
-		tempcount = tempcount + 1;
-	if (self.target8 != "")
-		tempcount = tempcount + 1;
+	// Collect all non-empty target strings and activate matching spawns
+	string targets[8];
+	targets[0] = self.target;  targets[1] = self.target2;
+	targets[2] = self.target3; targets[3] = self.target4;
+	targets[4] = self.target5; targets[5] = self.target6;
+	targets[6] = self.target7; targets[7] = self.target8;
 
-	while(tempcount > temptotal)
-	{
-		temptotal = temptotal + 1;
-		if (temptotal == 1)
-			tempstring = self.target;
-		if (temptotal == 2)
-			tempstring = self.target2;
-		if (temptotal == 3)
-			tempstring = self.target3;
-		if (temptotal == 4)
-			tempstring = self.target4;
-		if (temptotal == 5)
-			tempstring = self.target5;
-		if (temptotal == 6)
-			tempstring = self.target6;
-		if (temptotal == 7)
-			tempstring = self.target7;
-		if (temptotal == 8)
-			tempstring = self.target8;
-		if (tempstring != "")
-		{
-			t = find (world, targetname, tempstring);
-			breakthis = 0;
-			while (!breakthis)
-			{
-				if (!t)
-				{
-					breakthis = true;
-				}
-				if (t.classname == "spawn_zombie_away")
-				{
-					t.classname = "spawn_zombie";
-					t.spawn_id = zombie_spawn_points;
-					zombie_spawn_points++;
-					/*if (cvar("developer"))
-						setmodel(t, "progs/ai/zfull.mdl");*/
-				}
-				t = find (t, targetname, tempstring);
-			} 
+	for (float idx = 0; idx < 8; idx++) {
+		if (targets[idx] == "")
+			continue;
+
+		entity t = find(world, targetname, targets[idx]);
+		while (t != world) {
+			if (t.classname == "spawn_zombie_away") {
+				t.classname = "spawn_zombie";
+				t.spawn_id = zombie_spawn_points;
+				zombie_spawn_points++;
+			}
+			t = find(t, targetname, targets[idx]);
 		}
 	}
+
 	Zombie_ReassignSpawnIDs();
 }
 
@@ -262,10 +205,9 @@ void() trigger_interact =
 
 void() teddy_react =
 {
-  	local entity t;
+	entity t;
 	if (self.spawnflags & 1) {
-		t = find (world, teddyremovetarget, self.target);
-    
+		t = find(world, teddyremovetarget, self.target);
 		if (t)
 			Ent_FakeRemove(t);
 	} else if (self.target != "") {

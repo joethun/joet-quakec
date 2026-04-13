@@ -185,8 +185,7 @@ void() GameRestart_ResetMysteryBox =
 		if (mystery_box.boxweapon)
 			MBOX_FreeEnt(mystery_box.boxweapon);
 
-		// If the Mystery Box is not in its original
-		// location.
+		// If the Mystery Box is not in its original location.
 		if (mystery_box.origin != mystery_box_start_origin) {
 			mystery_box.model = "models/props/teddy.mdl";
 			mystery_box.frame = 2;
@@ -197,42 +196,38 @@ void() GameRestart_ResetMysteryBox =
 			if (mystery_box.goaldummy != world)
 				MBOX_FreeEnt(mystery_box.goaldummy);
 
-			// This isn't the normal spawn position
-			if (mystery_box.origin != mystery_box_start_origin) {
-				// Find the original spot
-				entity original_box = find(world, classname, "mystery_box_tp_spot");
-				while (original_box != world) {
-					if (original_box.origin == mystery_box_start_origin)
-						break;
-					
-					original_box = find(original_box, classname, "mystery_box_tp_spot");
-				}
+			// Find the original spot and restore it
+			entity original_box = find(world, classname, "mystery_box_tp_spot");
+			while (original_box != world) {
+				if (original_box.origin == mystery_box_start_origin)
+					break;
+				original_box = find(original_box, classname, "mystery_box_tp_spot");
+			}
 
-				// Spawn the Box Glow if permitted
-				if (!(mystery_box.spawnflags & 2)) {
-					entity light = MBOX_GetFreeEnt();
-					light.classname = "mystery_glow";
-					original_box.goaldummy = light;
+			// Spawn the Box Glow if permitted
+			if (!(mystery_box.spawnflags & 2)) {
+				entity light = MBOX_GetFreeEnt();
+				light.classname = "mystery_glow";
+				original_box.goaldummy = light;
 
-					setmodel(light, mystery_box_glow_model);
-					setorigin(light, original_box.origin);
-					light.angles = original_box.angles;
+				setmodel(light, mystery_box_glow_model);
+				setorigin(light, original_box.origin);
+				light.angles = original_box.angles;
 
 #ifdef FTE
 
-					light.alpha = 0.5;
+				light.alpha = 0.5;
 
 #endif // FTE
 
-				}
-
-				original_box.touch = MBOX_Touch;
-				original_box.solid = SOLID_TRIGGER;
-				original_box.classname = "mystery";
-				setorigin(original_box, original_box.origin);
-				setmodel(original_box, mystery_box_model);
-				setsize (original_box, VEC_HULL2_MIN, VEC_HULL2_MAX);
 			}
+
+			original_box.touch = MBOX_Touch;
+			original_box.solid = SOLID_TRIGGER;
+			original_box.classname = "mystery";
+			setorigin(original_box, original_box.origin);
+			setmodel(original_box, mystery_box_model);
+			setsize(original_box, VEC_HULL2_MIN, VEC_HULL2_MAX);
 
 			Light_None(mystery_box);
 			setmodel(mystery_box, mystery_box.model);
@@ -308,7 +303,7 @@ void() GameRestart_ResetPower =
 };
 
 void() Soft_Restart = {
-	entity who, oldself, endgame, game_over;
+	entity who, oldself;
 	self = find(world,classname,"player");
 	oldself = self;
 	
@@ -346,20 +341,17 @@ void() Soft_Restart = {
 	GameRestart_ResetPower();			// Turns off Power and resets Power Switch state.
 
 	//reset buyable ending
-	endgame = find(world, classname, "func_ending");
-	if (endgame) {
+	entity endgame = find(world, classname, "func_ending");
+	if (endgame)
 		endgame.activated = false;
-	}
 
 	// Restart End Game sequence
-	game_over = find(world, classname, "gameover_watcher");
-	if (game_over) {
+	entity game_over = find(world, classname, "gameover_watcher");
+	if (game_over)
 		remove(game_over);
-	}
 
 	//reset teleporters
-	local entity tp;
-	tp = find(world, classname, "func_teleporter_entrance");
+	entity tp = find(world, classname, "func_teleporter_entrance");
 
 	if (tp) {
 		tp.activated = false;

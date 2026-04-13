@@ -26,13 +26,8 @@ float(float value, float minValue, float maxValue) wrap;
  * Returns: A number within the given range.
  */
 float(float value, float minValue, float maxValue) clamp = {
-    if (value < minValue) {
-        return minValue;
-    }
-    else if (value > maxValue) {
-        return maxValue;
-    }
-
+    if (value < minValue) return minValue;
+    if (value > maxValue) return maxValue;
     return value;
 };
 
@@ -105,8 +100,7 @@ float exp(float x) {
  * Returns: A number within the given range.
  */
 float(float value, float minValue, float maxValue) wrap = {
-    local float range = maxValue - minValue;
-
+    float range = maxValue - minValue;
     return mod(value - minValue, range + 1) + minValue;
 };
 
@@ -129,13 +123,9 @@ float(float a, float b, float mix) lerpHermite =
 {
     if (mix <= 0) return a;
     if (mix >= 1) return b;
-    
-    local float h01;
-    
-    h01 = mix * mix;
-    h01 *= 3 - 2 * mix;
-    
-    return (b * h01 + a * ( 1 - h01 ) );
+
+    float h01 = mix * mix * (3 - 2 * mix);
+    return (b * h01 + a * (1 - h01));
 }
 
 vector(vector a, vector b, float mix) lerpVectorHermite =
@@ -143,12 +133,8 @@ vector(vector a, vector b, float mix) lerpVectorHermite =
     if (mix <= 0) return a;
     if (mix >= 1) return b;
 
-    local float h01;
-    
-    h01 = mix * mix;
-    h01 *= 3 - 2 * mix;
-    
-    return (b * h01 + a * ( 1 - h01 ) );
+    float h01 = mix * mix * (3 - 2 * mix);
+    return (b * h01 + a * (1 - h01));
 }
 
 float(float anga, float angb) angledif =

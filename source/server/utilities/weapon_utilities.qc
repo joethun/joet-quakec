@@ -57,12 +57,9 @@ void(entity person) W_HideCrosshair;
 //
 float(entity person, float slot) Weapon_GetPlayerAmmoInSlot =
 {
-	switch(slot) {
-		case 1: return person.weapons[0].weapon_reserve;
-		case 2: return person.weapons[1].weapon_reserve;
-		case 3: return person.weapons[2].weapon_reserve;
-		default: return 0;
-	}
+	if (slot < 1 || slot > MAX_PLAYER_WEAPONS)
+		return 0;
+	return person.weapons[slot - 1].weapon_reserve;
 };
 
 //
@@ -71,12 +68,9 @@ float(entity person, float slot) Weapon_GetPlayerAmmoInSlot =
 //
 void(entity person, float slot, float ammo) Weapon_SetPlayerAmmoInSlot =
 {
-	switch(slot) {
-		case 1: person.weapons[0].weapon_reserve = ammo; break;
-		case 2: person.weapons[1].weapon_reserve = ammo; break;
-		case 3: person.weapons[2].weapon_reserve = ammo; break;
-		default: return; break;
-	}
+	if (slot < 1 || slot > MAX_PLAYER_WEAPONS)
+		return;
+	person.weapons[slot - 1].weapon_reserve = ammo;
 };
 
 //
@@ -239,25 +233,16 @@ void Weapon_SwapWeapons(float play_animation)
 		}
 	}
 
-	// Iterate over the player inventory and shift the array around!
+	// Rotate the array: each slot shifts up by one, last wraps to slot 0
 	for(float j = 0; j < weapon_count; j++) {
-		if (j != weapon_count - 1) {
-			self.weapons[j + 1].weapon_id = weapons_storage[j].weapon_id;
-			self.weapons[j + 1].weapon_magazine = weapons_storage[j].weapon_magazine;
-			self.weapons[j + 1].weapon_magazine_left = weapons_storage[j].weapon_magazine_left;
-			self.weapons[j + 1].weapon_reserve = weapons_storage[j].weapon_reserve;
-			self.weapons[j + 1].weapon_skin = weapons_storage[j].weapon_skin;
-			self.weapons[j + 1].weapon_tier = weapons_storage[j].weapon_tier;
-			self.weapons[j + 1].is_mulekick_weapon = weapons_storage[j].is_mulekick_weapon;
-		} else {
-		 	self.weapons[0].weapon_id = weapons_storage[j].weapon_id;
-			self.weapons[0].weapon_magazine = weapons_storage[j].weapon_magazine;
-			self.weapons[0].weapon_magazine_left = weapons_storage[j].weapon_magazine_left;
-			self.weapons[0].weapon_reserve = weapons_storage[j].weapon_reserve;
-			self.weapons[0].weapon_skin = weapons_storage[j].weapon_skin;
-			self.weapons[0].weapon_tier = weapons_storage[j].weapon_tier;
-			self.weapons[0].is_mulekick_weapon = weapons_storage[j].is_mulekick_weapon;
-		}
+		float dst = (j != weapon_count - 1) ? j + 1 : 0;
+		self.weapons[dst].weapon_id = weapons_storage[j].weapon_id;
+		self.weapons[dst].weapon_magazine = weapons_storage[j].weapon_magazine;
+		self.weapons[dst].weapon_magazine_left = weapons_storage[j].weapon_magazine_left;
+		self.weapons[dst].weapon_reserve = weapons_storage[j].weapon_reserve;
+		self.weapons[dst].weapon_skin = weapons_storage[j].weapon_skin;
+		self.weapons[dst].weapon_tier = weapons_storage[j].weapon_tier;
+		self.weapons[dst].is_mulekick_weapon = weapons_storage[j].is_mulekick_weapon;
 	}
 
 	if (play_animation == true) {
@@ -381,29 +366,17 @@ void Weapon_GiveWeapon(float weapon_id, float weapon_mag, float weapon_reserve, 
 {
 	W_HideCrosshair(self);
 
-	float should_leave = false;
-
 	// Find next available weapon slot
-	float weapon_slots;
-
-	if ((self.perks & P_MULE))
-		weapon_slots = MULEKICK_WEAPON_SLOT;
-	else
-		weapon_slots = MULEKICK_WEAPON_SLOT - 1;
+	float weapon_slots = (self.perks & P_MULE) ? MULEKICK_WEAPON_SLOT : MULEKICK_WEAPON_SLOT - 1;
 
 	for(float i = 0; i < weapon_slots; i++) {
 		if (self.weapons[i].weapon_id == 0) {
-			for(float j = 0; j < i; j++) {
+			for(float j = 0; j < i; j++)
 				Weapon_SwapWeapons(false);
-			}
 			Weapon_AssignWeapon(i, weapon_id, weapon_mag, weapon_reserve, weapon_tier);
-			should_leave = true;
-			break;
+			return;
 		}
 	}
-
-	if (should_leave)
-		return;
 
 	// All slots are occupied, fill in current slot
 	Weapon_AssignWeapon(0, weapon_id, weapon_mag, weapon_reserve, weapon_tier);

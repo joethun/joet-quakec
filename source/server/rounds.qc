@@ -58,53 +58,36 @@ void() Spawn_Enemy =
 	}
 }
 
-float(float a, float b) qc_max =
-{
-	if (a < b)
-		return b;
-	return a;
-}
+// Early-round scale factors indexed by round (rounds 1-5 get scaled down, 6+ = full)
+float round_scale_factors[] = { 0.25, 0.30, 0.50, 0.70, 0.90 };
 
 float() getZombieTotal = {
 	float count;
-	if (roundtype == 1) {
-		float multiplier;
-		count = 24;
 
-		multiplier = qc_max(rounds/5, 1);
+	if (roundtype == 1) {
+		float multiplier = (rounds / 5 > 1) ? rounds / 5 : 1;
 
 		if (rounds >= 10)
 			multiplier *= rounds * 0.15;
 
-		if (player_count == 1)
-			count += rint((0.5 * 6) * multiplier);
-		else
-			count += rint(((player_count - 1) * 6) * multiplier);
+		// Solo uses 0.5 player-equivalent, coop scales with extra players
+		float effective_players = (player_count == 1) ? 0.5 : (player_count - 1);
+		count = 24 + rint(effective_players * 6 * multiplier);
 
-		if (rounds < 2)
-			count = floor(count * 0.25);
-		else if (rounds < 3)
-			count = floor(count * 0.30);
-		else if (rounds < 4)
-			count = floor(count * 0.50);
-		else if (rounds < 5)
-			count = floor(count * 0.70);
-		else if (rounds < 6)
-			count = floor(count * 0.90);
-	} else { //dogs
-		// 2 waves
-		if (rounds <= 14)
-			count = 6 * (player_count);
-		else
-			count = 8 * (player_count);
+		// Scale down for early rounds (rounds 1-5)
+		if (rounds < 6)
+			count = floor(count * round_scale_factors[rounds - 1]);
+	} else {
+		// Dog rounds: 2 waves, more dogs after round 14
+		count = ((rounds <= 14) ? 6 : 8) * player_count;
 	}
 
 	count = Gamemode_GetZombieTotalForRound(count, rounds, roundtype, player_count);
 
-	switch(cvar("sv_difficulty")) {
-		case 1: count = floor(count * 0.90); break;
-		case 2:	count = floor(count * 1.25); break;
-		case 3: count = floor(count * 1.25); break;
+	switch (cvar("sv_difficulty")) {
+		case 1:  count = floor(count * 0.90); break;
+		case 2:
+		case 3:  count = floor(count * 1.25); break;
 		default: break;
 	}
 
@@ -127,15 +110,8 @@ void(string sound_path) Rounds_PlayTransition =
 
 void() updateDogRound =
 {
-	float r = random();
-
-	if (r < 0.33) {
-		dogRound = rounds + 5;
-	} else if (r < 0.66) {
-		dogRound = rounds + 6;
-	} else {
-		dogRound = rounds + 7;
-	}
+	// Pick a gap of 5, 6, or 7 rounds until the next dog round
+	dogRound = rounds + 5 + floor(random() * 3);
 }
 
 void() PlayerSpawn;
@@ -179,18 +155,12 @@ void() EndRound =
 
 	// No Perks? No Problem & Abstinence Program
 	if (rounds >= 10) {
-		entity players;
-		players = find(world, classname, "player");
-
-		while(players != world) {
-			if (players.ach_tracker_abst == 0) {
+		entity players = find(world, classname, "player");
+		while (players != world) {
+			if (players.ach_tracker_abst == 0)
 				GiveAchievement(8, players);
-			}
-			if (rounds >= 16) {
-				if (players.ach_tracker_npnp == 0) {
-					GiveAchievement(5, players);
-				}
-			}
+			if (rounds >= 16 && players.ach_tracker_npnp == 0)
+				GiveAchievement(5, players);
 			players = find(players, classname, "player");
 		}
 	}
@@ -215,9 +185,8 @@ void() NewRound =
 	entity tempe;
 	round_changetime = 0;
 	spawn_time = time + 5;
-	if (delay_at_round > 0.08)
-	{
-		delay_at_round = delay_at_round*0.95;
+	if (delay_at_round > 0.08) {
+		delay_at_round *= 0.95;
 		if (delay_at_round < 0.08)
 			delay_at_round = 0.08;
 	}
@@ -290,9 +259,7 @@ void() NewRound =
 
 	set_z_health();
 
-	barricade_reward_maximum = 50 * rounds;
-	if (barricade_reward_maximum > 500)
-		barricade_reward_maximum = 500;
+	barricade_reward_maximum = (50 * rounds > 500) ? 500 : 50 * rounds;
 
 	Current_Zombies = 0;
 	spawn_delay = 0;
@@ -307,18 +274,13 @@ void() NewRound =
 		default: 	break;
 	}
 
-	// Set up delay for zombie spawning
-	local float spawndelay;
-
-	spawndelay = zombie_spawn_delay;
-
-	if (spawndelay > 0.08) {
+	// Set up delay for zombie spawning, decaying toward 0.08s minimum
+	if (zombie_spawn_delay > 0.08)
 		zombie_spawn_delay *= 0.95;
-	} else {
+	else
 		zombie_spawn_delay = 0.08;
-	}
 
-	// 2 seconds by default
+	// Reset to 2 seconds on round 1
 	if (rounds == 1)
 		zombie_spawn_delay = 2;
 
