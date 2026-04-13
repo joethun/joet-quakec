@@ -97,7 +97,7 @@ string(float wep, float weapon_tier) GetWeaponName =
 			weapon_name = "Gewehr 43";
 			break;
 		case W_COMPRESSOR:
-			weapon_name = "G115 Compressor";
+			weapon_name = "Meta Goober Gooner 43";
 			break;
 		case W_KAR_SCOPE:
 			weapon_name = "Scoped Kar 98k";
@@ -560,8 +560,9 @@ float(float wep) getWeaponMag =
 		case W_SPRING:
 			return 5;
     	case W_PULVERIZER:
-		case W_DESTROYER:
 			return 8;
+		case W_DESTROYER:
+			return 48;
 		case W_THOMPSON:
 			return 20;
 		case W_GIBS:
@@ -686,7 +687,7 @@ float(float wep) getWeaponAmmo =
 			weapon_ammo = 60;
 			break;
 		case W_DESTROYER:
-			weapon_ammo = 100;
+			weapon_ammo = 600;
 			break;
 		case W_THOMPSON:
 			weapon_ammo = 200;
@@ -969,22 +970,22 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			break;
 		// -- Shotguns (per pellet) --
 		case W_SAWNOFF:
-			weapon_damage = 80;
+			weapon_damage = 60;
 			break;
 		case W_DB:
-			weapon_damage = 90;
+			weapon_damage = 70;
 			break;
 		case W_TRENCH:
-			weapon_damage = 100;
+			weapon_damage = 85;
 			break;
 		case W_SNUFF:
-			weapon_damage = 160;
+			weapon_damage = 125;
 			break;
 		case W_BORE:
-			weapon_damage = 180;
+			weapon_damage = 150;
 			break;
 		case W_GUT:
-			weapon_damage = 200;
+			weapon_damage = 175;
 			break;
 		// -- Snipers --
 		case W_PTRS:

@@ -136,10 +136,13 @@ def read_csv_data():
     csv_data = pandas.read_csv(args['input_file'])
 
     # Grab every value and turn the first entry into a hash.
+    crc_values = []
     for value in csv_data.values:
         original_lengths.append(len(value[0]))
         original_names.append(value[0])
-        value[0] = int(crc16.ibm_3740(str.encode(value[0])))
+        crc_values.append(int(crc16.ibm_3740(str.encode(value[0]))))
+    csv_data = csv_data.copy()
+    csv_data[csv_data.columns[0]] = pandas.array(crc_values, dtype="int64")
 
     # Now order everything by ascending order
     csv_data = csv_data.sort_values(csv_data.columns[0])

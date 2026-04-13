@@ -538,7 +538,7 @@ void() PlayerJump =
 	
 	self.oldz = self.origin_z;
 
-	self.velocity_z = 230;
+	self.velocity_z = 200;
 }
 
 void(float override) JumpCheck =
