@@ -490,9 +490,9 @@ float(float wep, float current_perks, float type) getWeaponMultiplier =
 		case W_GUT:
 			switch (type)
 			{
-				case HEAD_X: 		multiplier = 1.25; break;
-				case UPPER_TORSO_X:	multiplier = 1; break;
-				case LOWER_TORSO_X:	multiplier = 1; break;
+				case HEAD_X: 		multiplier = 1.125; break;
+				case UPPER_TORSO_X:	multiplier = 0.9; break;
+				case LOWER_TORSO_X:	multiplier = 0.9; break;
 				case LIMBS_X: 		multiplier = 0.8; break;
 			}
 			break;
@@ -962,13 +962,13 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			break;
 		// -- Shotguns (per pellet) --
 		case W_SAWNOFF:
-			weapon_damage = 60;
+			weapon_damage = 45;
 			break;
 		case W_DB:
-			weapon_damage = 70;
+			weapon_damage = 55;
 			break;
 		case W_TRENCH:
-			weapon_damage = 85;
+			weapon_damage = 70;
 			break;
 		case W_SNUFF:
 			weapon_damage = 125;
