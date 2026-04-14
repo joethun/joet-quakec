@@ -71,17 +71,17 @@ void() Menu_Main =
     Menu_DrawTitle("MAIN MENU");
     Menu_DrawBuildDate();
 
-    Menu_Button(1, "mm_start", "SOLO", "Play Solo.") ? Menu_StartSolo() : 0;
-    Menu_Button(2, "mm_coop", "COOPERATIVE", "Play with up to Four Players.") ? current_menu = MENU_COOP : 0;
+    Menu_Button(1, "mm_start", "SOLO", "Play solo") ? Menu_StartSolo() : 0;
+    Menu_Button(2, "mm_coop", "COOPERATIVE", "Play with up to eight players") ? current_menu = MENU_COOP : 0;
     Menu_DrawDivider(3);
-    Menu_Button(3.25, "mm_options", "CONFIGURATION", "Tweak Game related Options.") ? current_menu = MENU_OPTIONS : 0;
+    Menu_Button(3.25, "mm_options", "CONFIGURATION", "Tweak game-related options") ? current_menu = MENU_OPTIONS : 0;
     Menu_DrawDivider(4.25);
-    Menu_Button(4.50, "mm_credits", "CREDITS", "NZ:P Team + Special Thanks.") ? current_menu = MENU_CREDITS : 0;
+    Menu_Button(4.50, "mm_credits", "CREDITS", "NZ:P Team + Special Thanks") ? current_menu = MENU_CREDITS : 0;
 
     // Don't have a Quit Game button on WASM
     if (running_platform != PLATFORM_WEB) {
         Menu_DrawDivider(5.50);
-        Menu_Button(5.75, "mm_quit", "QUIT GAME", sprintf("Return to %s.", Menu_Main_GetDashboardName())) ? localcmd("quit\n") : 0;
+        Menu_Button(5.75, "mm_quit", "QUIT GAME", sprintf("Return to %s", Menu_Main_GetDashboardName())) ? localcmd("quit\n") : 0;
     }
 
     Menu_SocialBadge(1, "soc_youtube", "youtube.com/@nzpteam", 2);

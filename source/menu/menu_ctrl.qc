@@ -135,7 +135,7 @@ void() Menu_Control =
     Menu_DrawTitle("CONTROL OPTIONS");
     Menu_DrawMapPanel();
 
-    Menu_Button(1, "cm_adsm", "AIM DOWN SIGHT", "Switch between Hold and Toggle ADS Modes.") ? Menu_Control_ApplyADS() : 0;
+    Menu_Button(1, "cm_adsm", "AIM DOWN SIGHT", "Switch between hold and toggle ADS modes") ? Menu_Control_ApplyADS() : 0;
     string ads_string = "";
     switch(current_adsmode) {
         case 0: ads_string = "HOLD"; break;
@@ -144,7 +144,7 @@ void() Menu_Control =
     }
     Menu_DrawOptionValue(1, ads_string);
 
-    Menu_Button(2, "cm_sprm", "SPRINT MODE", "Switch between Hold and Toggle Sprint Modes.") ? Menu_Control_ApplySprint() : 0;
+    Menu_Button(2, "cm_sprm", "SPRINT MODE", "Switch between hold and toggle sprint modes") ? Menu_Control_ApplySprint() : 0;
     string sprint_string = "";
     switch(current_sprintmode) {
         case 0: sprint_string = "HOLD"; break;
@@ -153,24 +153,24 @@ void() Menu_Control =
     }
     Menu_DrawOptionValue(2, sprint_string);
 
-    Menu_Button(3, "cm_sens", "SENSITIVITY", "Alter Look Sensitivity.") ? 0 : 0;
+    Menu_Button(3, "cm_sens", "SENSITIVITY", "Alter look sensitivity") ? 0 : 0;
     Menu_CvarSlider(3, "cm_sens", [1, 10, 10], "sensitivity", false, false, false);
 
-    Menu_Button(4, "cm_invs", "INVERT LOOK", "Invert Y-Axis Camera Input.") ? Menu_Control_InvertLook() : 0;
+    Menu_Button(4, "cm_invs", "INVERT LOOK", "Invert Y-axis camera input") ? Menu_Control_InvertLook() : 0;
     string invert_string = "";
     switch(current_invert) {
-        case 0: invert_string = "ENABLED"; break;
-        case 1: invert_string = "DISABLED"; break;
+        case 0: invert_string = "DISABLED"; break;
+        case 1: invert_string = "ENABLED"; break;
         default: break;
     }
     Menu_DrawOptionValue(4, invert_string);
 
-    Menu_Button(5, "cm_gpad", "GAMEPAD", "Gamepad specific options.") ? current_menu = MENU_GAMEPAD : 0;
-    Menu_Button(6, "cm_bind", "BINDINGS", "Change Input Bindings.") ? current_menu = MENU_BINDINGS : 0;
+    Menu_Button(5, "cm_gpad", "GAMEPAD", "Gamepad specific options") ? current_menu = MENU_GAMEPAD : 0;
+    Menu_Button(6, "cm_bind", "BINDINGS", "Change input bindings") ? current_menu = MENU_BINDINGS : 0;
 
     Menu_DrawDivider(12.25);
-    Menu_Button(-2, "cm_apply", "APPLY", "Save & Apply Settings.") ? Menu_Control_ApplySettings() : 0;
-    Menu_Button(-1, "cm_back", "BACK", "Return to Configuration.") ? current_menu = MENU_OPTIONS : 0;
+    Menu_Button(-2, "cm_apply", "APPLY", "Save & apply settings") ? Menu_Control_ApplySettings() : 0;
+    Menu_Button(-1, "cm_back", "BACK", "Return to configuration") ? current_menu = MENU_OPTIONS : 0;
 
 	sui_pop_frame();	
 };

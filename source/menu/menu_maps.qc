@@ -114,8 +114,8 @@ void() Menu_Maps =
     float back_menudest = 0;
 
     switch(menu_map_mode) {
-        case MAP_SOLOSTOCK: Menu_DrawTitle("SELECT MAP: SOLO"); back_string = "Return to Main Menu."; back_menudest = MENU_MAIN; break;
-        case MAP_COOPSTOCK: Menu_DrawTitle("SELECT MAP: COOP"); back_string = "Return to Create Game Menu."; back_menudest = MENU_COOPCREATE; break;
+        case MAP_SOLOSTOCK: Menu_DrawTitle("SELECT MAP: SOLO"); back_string = "Return to main menu"; back_menudest = MENU_MAIN; break;
+        case MAP_COOPSTOCK: Menu_DrawTitle("SELECT MAP: COOP"); back_string = "Return to create game menu"; back_menudest = MENU_COOPCREATE; break;
         default: break;
     }
 
@@ -161,7 +161,7 @@ void() Menu_Maps =
     if (maps_on_page + maps_start_position < user_maps_count) {
         menu_maps_buttons[current_registry_position] = "map_usernext";
         current_registry_position++;
-        Menu_Button(-3, "map_usernext", "NEXT PAGE", "Advance to next page.") ? Menu_Maps_NextPage() : 0;
+        Menu_Button(-3, "map_usernext", "NEXT PAGE", "Advance to next page") ? Menu_Maps_NextPage() : 0;
     } else {
         Menu_GreyButton(-3, "NEXT PAGE");
     }
@@ -169,7 +169,7 @@ void() Menu_Maps =
     if (user_maps_page != 0) {
         menu_maps_buttons[current_registry_position] = "map_userprev";
         current_registry_position++;
-        Menu_Button(-2, "map_userprev", "PREVIOUS PAGE", "Return to last page.") ? Menu_Maps_PrevPage() : 0;
+        Menu_Button(-2, "map_userprev", "PREVIOUS PAGE", "Return to last page") ? Menu_Maps_PrevPage() : 0;
     } else {
         Menu_GreyButton(-2, "PREVIOUS PAGE");
     }

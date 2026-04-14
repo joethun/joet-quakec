@@ -90,7 +90,7 @@ void() Menu_Gamepad =
     Menu_DrawTitle("GAMEPAD OPTIONS");
     Menu_DrawMapPanel();
 
-    Menu_Button(1, "gp_glyp", "GLYPH TYPE", "Change the Style/Branding for Gamepad Glyphs.") ? Menu_Gamepad_ApplyGlpyh() : 0;
+    Menu_Button(1, "gp_glyp", "GLYPH TYPE", "Change the style/branding for gamepad glyphs") ? Menu_Gamepad_ApplyGlpyh() : 0;
     string glyph_string = "";
     switch(cvar_string("cl_controllerglyphs")) {
         case "xbox": glyph_string = "MICROSOFT"; break;
@@ -102,7 +102,7 @@ void() Menu_Gamepad =
     Menu_DrawOptionValue(1, glyph_string);
     Menu_DrawControllerGlyphDemo(1);
 
-    Menu_Button(2, "gp_rumb", "RUMBLE", "Toggle Rumble during Gameplay Actions.") ? Menu_Gamepad_ApplyRumble() : 0;
+    Menu_Button(2, "gp_rumb", "RUMBLE", "Toggle rumble during gameplay actions") ? Menu_Gamepad_ApplyRumble() : 0;
     string rumble_string = "";
     switch(cvar("in_rumbleenabled")) {
         case 0: rumble_string = "DISABLED"; break;
@@ -111,7 +111,7 @@ void() Menu_Gamepad =
     }
     Menu_DrawOptionValue(2, rumble_string);
 
-    Menu_Button(3, "gp_aima", "AIM ASSIST", "Toggle Aim Sensitivity+Snapping Assist.") ? Menu_Gamepad_ApplyAimAssist() : 0;
+    Menu_Button(3, "gp_aima", "AIM ASSIST", "Toggle aim sensitivity & snapping assist") ? Menu_Gamepad_ApplyAimAssist() : 0;
     string aa_string = "";
     switch(cvar("in_aimassist")) {
         case 0: aa_string = "DISABLED"; break;
@@ -120,15 +120,15 @@ void() Menu_Gamepad =
     }
     Menu_DrawOptionValue(3, aa_string);
 
-    Menu_Button(4, "gp_senx", "X AXIS SENSITIVITY", "Alter X-Axis Look Sensitivity.") ? 0 : 0;
+    Menu_Button(4, "gp_senx", "X AXIS SENSITIVITY", "Alter x-axis look sensitivity") ? 0 : 0;
     Menu_CvarSlider(4, "gp_senx", [0, 4, 16], "joypitchsensitivity", false, false, false);
 
-    Menu_Button(5, "gp_seny", "Y AXIS SENSITIVITY", "Alter Y-Axis Look Sensitivity.") ? 0 : 0;
+    Menu_Button(5, "gp_seny", "Y AXIS SENSITIVITY", "Alter y-axis look sensitivity") ? 0 : 0;
     Menu_CvarSlider(5, "gp_seny", [0, 4, 16], "joyyawsensitivity", false, false, false);
 
     Menu_DrawDivider(12.25);
-    Menu_Button(-2, "gp_apply", "APPLY", "Save & Apply Settings.") ? Menu_Gamepad_ApplySettings() : 0;
-    Menu_Button(-1, "gp_back", "BACK", "Return to Control Options.") ? current_menu = MENU_CONTROL : 0;
+    Menu_Button(-2, "gp_apply", "APPLY", "Save & apply settings") ? Menu_Gamepad_ApplySettings() : 0;
+    Menu_Button(-1, "gp_back", "BACK", "Return to control options.") ? current_menu = MENU_CONTROL : 0;
 
 	sui_pop_frame();	
 };

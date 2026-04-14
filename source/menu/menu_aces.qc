@@ -103,9 +103,10 @@ void() Menu_Accessibility =
 
     Menu_DrawBackground();
     Menu_DrawTitle("ACCESSIBILITY");
+    Menu_DrawMapPanel();
 
     // Hitmarkers
-    Menu_Button(1, "ac_hitm", "HITMARKERS", "HUD Hitmarkers for visual feedback.") ? Menu_Accessibility_UpdateHitmarkers() : 0;
+    Menu_Button(1, "ac_hitm", "HITMARKERS", "HUD hitmarkers for visual feedback") ? Menu_Accessibility_UpdateHitmarkers() : 0;
     string hitmarker_string = "";
     switch(current_hitmarker) {
         case 0: hitmarker_string = "DISABLED"; break;
@@ -115,11 +116,11 @@ void() Menu_Accessibility =
     Menu_DrawOptionValue(1, hitmarker_string);
 
     // Text Backdrop
-    Menu_Button(2, "ac_text", "TEXT BACKDROP", "Opacity of backdrop for text elements on HUD.") ? 0 : 0;
+    Menu_Button(2, "ac_text", "TEXT BACKDROP", "Opacity of backdrop for text elements on HUD") ? 0 : 0;
     Menu_CvarSlider(2, "ac_text", [0, 1, 20], "cl_textopacity", false, false, false);
 
     // Accessible Colors
-    Menu_Button(3, "ac_color", "ACCESSIBLE COLORS", "Uses enhanced Player colors to improve visibilty.") ? Menu_Accessibility_UpdateColorblindFilter() : 0;
+    Menu_Button(3, "ac_color", "ACCESSIBLE COLORS", "Uses enhanced player colors to improve visibility") ? Menu_Accessibility_UpdateColorblindFilter() : 0;
     string colorblind_string = "";
     switch(current_colorblind) {
         case 0: colorblind_string = "DISABLED"; break;
@@ -129,7 +130,7 @@ void() Menu_Accessibility =
     Menu_DrawOptionValue(3, colorblind_string);
 
     // Screen Flashes
-    Menu_Button(4, "ac_screenflash", "WHITE SCREEN FLASHES", "Choose the color of white screen flashes.") ? Menu_Accessibility_UpdateWhiteFlash() : 0;
+    Menu_Button(4, "ac_whiteflash", "WHITE SCREEN FLASHES", "Choose the color of white screen flashes") ? Menu_Accessibility_UpdateWhiteFlash() : 0;
     string whiteflash_string = "";
     switch(current_whiteflash) {
         case 0: whiteflash_string = "WHITE"; break;
@@ -139,7 +140,7 @@ void() Menu_Accessibility =
     Menu_DrawOptionValue(4, whiteflash_string);
 
     // Month Spoof
-    Menu_Button(5, "ac_monthspoof", "MONTH SPOOF", "Lie to the game about the current Month, if you are host.") ? Menu_Accessibility_UpdateMonthSpoof() : 0;
+    Menu_Button(5, "ac_monthspoof", "MONTH SPOOF", "Lie to the game about the current month, if you are host") ? Menu_Accessibility_UpdateMonthSpoof() : 0;
     string month_string = "";
     switch(current_monthspoof) {
         case 0: month_string = "REAL TIME"; break;
@@ -160,8 +161,8 @@ void() Menu_Accessibility =
     Menu_DrawOptionValue(5, month_string);
 
     Menu_DrawDivider(12.25);
-    Menu_Button(-2, "ac_apply", "APPLY", "Save & Apply Settings.") ? Menu_Accessibility_ApplySettings() : 0;
-    Menu_Button(-1, "ac_back", "BACK", "Return to Configuration Menu.") ? current_menu = MENU_OPTIONS : 0;
+    Menu_Button(-2, "ac_apply", "APPLY", "Save & apply settings") ? Menu_Accessibility_ApplySettings() : 0;
+    Menu_Button(-1, "ac_back", "BACK", "Return to configuration menu") ? current_menu = MENU_OPTIONS : 0;
 
 	sui_pop_frame();	
 };

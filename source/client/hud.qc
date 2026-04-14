@@ -1757,7 +1757,7 @@ void() HUD_Broadcast =
 			broadcast_msg = strcat(broadcast_name, " reached a new tier!");
 			break;
 		case CSQC_BROADCAST_GUNGAMEWINNER:
-			broadcast_msg = strcat(broadcast_name, " can Activate the Nuke!");
+			broadcast_msg = strcat(broadcast_name, " can activate the Nuke!");
 			break;
 		case CSQC_BROADCAST_NONE:
 			broadcast_msg = "";

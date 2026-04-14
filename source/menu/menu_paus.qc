@@ -84,15 +84,15 @@ void() Menu_Pause =
 
     if (menu_paus_submenu == 0)
     {
-        Menu_Button(1, "pm_resum", "RESUME CARNAGE", "Return to Game.") ? ToggleMenu() : 0;
+        Menu_Button(1, "pm_resum", "RESUME CARNAGE", "Return to game") ? ToggleMenu() : 0;
 
         if (player_count == 1)
-            Menu_Button(2, "pm_reloa", "RESTART", "Tough luck? Give things another go.") ? Menu_Pause_EnterSubMenu(1) : 0;
+            Menu_Button(2, "pm_reloa", "RESTART", "Tough luck? Give things another go") ? Menu_Pause_EnterSubMenu(1) : 0;
         else
             Menu_GreyButton(2, "RESTART");
 
-        Menu_Button(3, "pm_opts", "OPTIONS", "Tweak Game related Options.") ? current_menu = MENU_OPTIONS : 0;
-        Menu_Button(4, "pm_quit", "END GAME", "Return to Main Menu.") ? Menu_Pause_EnterSubMenu(2) : 0;
+        Menu_Button(3, "pm_opts", "OPTIONS", "Tweak game-related options") ? current_menu = MENU_OPTIONS : 0;
+        Menu_Button(4, "pm_quit", "END GAME", "Return to Main Menu") ? Menu_Pause_EnterSubMenu(2) : 0;
 
         menu_paus_buttons[0] = "pm_resum";
         menu_paus_buttons[1] = "pm_reloa";

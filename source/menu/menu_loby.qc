@@ -79,16 +79,16 @@ void() Menu_Lobby =
     float support_gamesettings = UserMapSupportsCustomGameLookup(current_selected_bsp);
 
     if (menu_loby_countdown == 0) {
-        Menu_Button(1, "lo_start", "START GAME", "Face the Horde!") ? Menu_Lobby_StartCountdown() : 0;
+        Menu_Button(1, "lo_start", "START GAME", "Face the horde!") ? Menu_Lobby_StartCountdown() : 0;
 
         if (support_gamesettings)
-            Menu_Button(2, "lo_games", "GAME SETTINGS", "Adjust Gameplay Options.") ? current_menu = MENU_GAMESETTINGS : 0;
+            Menu_Button(2, "lo_games", "GAME SETTINGS", "Adjust gameplay options") ? current_menu = MENU_GAMESETTINGS : 0;
         else
             Menu_GreyButton(2, "NOT SUPPORTED BY MAP");
 
-        Menu_Button(-1, "lo_back", "BACK", "Return to Map Selection.") ? current_menu = last_map_menu : 0;
+        Menu_Button(-1, "lo_back", "BACK", "Return to map selection") ? current_menu = last_map_menu : 0;
     } else {
-        Menu_Button(1, "lo_cancl", "CANCEL", "..Take it back!") ? Menu_Lobby_StopCountdown() : 0;
+        Menu_Button(1, "lo_cancl", "CANCEL", "...Take it back!") ? Menu_Lobby_StopCountdown() : 0;
 
         if (support_gamesettings)
             Menu_GreyButton(2, "GAME SETTINGS");
@@ -171,7 +171,7 @@ void() Menu_Lobby =
 
     float lobby_delta = menu_loby_countdown - time;
     if (lobby_delta > 0) {
-        sui_text([150, 5], MENU_TEXT_SMALL, sprintf("Game Starting In.. %d", lobby_delta), [1, 1, 1], 1, 0);
+        sui_text([150, 5], MENU_TEXT_SMALL, sprintf("Game starting in... %d", lobby_delta), [1, 1, 1], 1, 0);
 	    sui_fill([150, 20], [75 * (lobby_delta/6), 6], [0.2, 0.2 * (lobby_delta/6), 0.2 * (lobby_delta/6)], 1, 0);
 
         if (menu_loby_last != floor(lobby_delta)) {

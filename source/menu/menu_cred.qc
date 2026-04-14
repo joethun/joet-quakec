@@ -123,7 +123,7 @@ void() Menu_Credits =
         }
     }
 
-    Menu_Button(-1, "cr_back", "BACK", "Return to Main Menu.") ? current_menu = MENU_MAIN : 0;
+    Menu_Button(-1, "cr_back", "BACK", "Return to main menu") ? current_menu = MENU_MAIN : 0;
 
 	sui_pop_frame();
 };

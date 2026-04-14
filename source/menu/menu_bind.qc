@@ -129,8 +129,8 @@ void() Menu_Bindings =
     Menu_Bindings_PrintBindForCommand(11, "+button8");
 
     Menu_DrawDivider(12.25);
-    Menu_Button(-2, "bm_apply", "APPLY", "Save & Apply Settings.") ? Menu_Gamepad_ApplySettings() : 0;
-    Menu_Button(-1, "bm_back", "BACK", "Return to Control Options.") ? Menu_Bindings_Back() : 0;
+    Menu_Button(-2, "bm_apply", "APPLY", "Save & apply settings") ? Menu_Gamepad_ApplySettings() : 0;
+    Menu_Button(-1, "bm_back", "BACK", "Return to control options") ? Menu_Bindings_Back() : 0;
 
 	sui_pop_frame();	
 };
