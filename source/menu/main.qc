@@ -50,43 +50,6 @@ string() Menu_PickBackground =
 };
 
 //
-// UserMapNameLookup(bsp_name)
-// Returns the Prettified name for the given
-// .BSP
-//
-string UserMapNameLookup(string bsp_name) =
-{
-	for(int i = 0; i < USER_MAPS_MAX; i++) {
-		if (user_maps[i].map_name != bsp_name)
-			continue;
-
-		if (user_maps[i].map_name_pretty != "")
-			return user_maps[i].map_name_pretty;
-
-		return user_maps[i].map_name;
-	}
-
-	return "NULL";
-};
-
-//
-// UserMapSupportsCustomGameLookup(bsp_name)
-// Returns whether the User Map .BSP supports
-// Custom Game Settings.
-//
-float UserMapSupportsCustomGameLookup(string bsp_name) =
-{
-	for(int i = 0; i < USER_MAPS_MAX; i++) {
-		if (user_maps[i].map_name != bsp_name)
-			continue;
-
-		return user_maps[i].map_allow_game_settings;
-	}
-
-	return true;
-};
-
-//
 // Menu_MapFinder()
 // Performs a .BSP search in the maps/
 // directory and adds them to the custom
@@ -100,109 +63,210 @@ string(string s) strip_custominfo =
 
 	return s2;
 }
-void() Menu_MapFinder =
+
+//
+// strip_custommapinfo(s)
+// Strips the variable-length "maps/custom/<folder>/maps/" prefix
+// and ".bsp" suffix from a custom map search result path,
+// returning just the BSP name.
+//
+// Path format: maps/custom/<FolderName>/maps/<bspname>.bsp
+//
+string(string s) strip_custommapinfo =
 {
-	searchhandle maps;
+	// Strip leading "maps/custom/"
+	string s2 = substring(s, 12, strlen(s)); // after "maps/custom/"
+	// Find the next "/" to skip the folder name
+	float slash = strstrofs(s2, "/maps/", 0);
+	if (slash >= 0)
+		s2 = substring(s2, slash + 6, strlen(s2)); // after "<folder>/maps/"
+	// Strip ".bsp"
+	s2 = substring(s2, 0, strlen(s2) - 4);
+	return s2;
+}
 
-	maps = search_begin("maps/*.bsp", 0, 0);
-	user_maps_count = search_getsize(maps);
+//
+// get_custommapfolder(s)
+// Returns the folder name portion from a custom map path.
+// Path format: maps/custom/<FolderName>/maps/<bspname>.bsp
+//
+string(string s) get_custommapfolder =
+{
+	string s2 = substring(s, 12, strlen(s)); // after "maps/custom/"
+	float slash = strstrofs(s2, "/", 0);
+	if (slash >= 0)
+		return substring(s2, 0, slash);
+	return s2;
+}
 
-	for (float i = 0; i < user_maps_count; i++) {
-		float index = i;
+//
+// UserMapNameLookup(bsp_name)
+// Returns the Prettified name for the given
+// .BSP
+//
+string UserMapNameLookup(string bsp_name) =
+{
+	// Extract just the BSP name if it's a full path
+	string lookup_name = bsp_name;
+	if (substring(bsp_name, 0, 7) == "custom/")
+		lookup_name = strip_custommapinfo(strcat("maps/", bsp_name, ".bsp"));
 
-		user_maps[index].occupied = TRUE;
-		user_maps[index].map_name = strip_custominfo(search_getfilename(maps, i));
+	for(int i = 0; i < USER_MAPS_MAX; i++) {
+		if (user_maps[i].map_name != lookup_name)
+			continue;
 
-		float settings = fopen(strcat("maps/", user_maps[index].map_name, ".txt"), FILE_READ);
+		if (user_maps[i].map_name_pretty != "")
+			return user_maps[i].map_name_pretty;
+
+		return user_maps[i].map_name;
+	}
+
+	for(int i = 0; i < CUSTOM_MAPS_MAX; i++) {
+		if (custom_maps[i].map_name != lookup_name)
+			continue;
+
+		if (custom_maps[i].map_name_pretty != "")
+			return custom_maps[i].map_name_pretty;
+
+		return custom_maps[i].map_name;
+	}
+
+	return lookup_name;
+};
+
+//
+// UserMapSupportsCustomGameLookup(bsp_name)
+// Returns whether the User Map .BSP supports
+// Custom Game Settings.
+//
+float UserMapSupportsCustomGameLookup(string bsp_name) =
+{
+	// Extract just the BSP name if it's a full path
+	string lookup_name = bsp_name;
+	if (substring(bsp_name, 0, 7) == "custom/")
+		lookup_name = strip_custommapinfo(strcat("maps/", bsp_name, ".bsp"));
+
+	for(int i = 0; i < USER_MAPS_MAX; i++) {
+		if (user_maps[i].map_name != lookup_name)
+			continue;
+
+		return user_maps[i].map_allow_game_settings;
+	}
+
+	for(int i = 0; i < CUSTOM_MAPS_MAX; i++) {
+		if (custom_maps[i].map_name != lookup_name)
+			continue;
+
+		return custom_maps[i].map_allow_game_settings;
+	}
+
+	return true;
+};
+
+//
+// Menu_CustomMapFinder()
+// Performs a .BSP search in the maps/custom/*/maps/
+// directory and populates the custom_maps struct.
+//
+void() Menu_CustomMapFinder =
+{
+	searchhandle maps = search_begin("maps/custom/*/maps/*.bsp", 0, 0);
+	custom_maps_count = search_getsize(maps);
+
+	for (float i = 0; i < custom_maps_count; i++) {
+		string fullpath = search_getfilename(maps, i);
+
+		custom_maps[i].occupied = TRUE;
+		custom_maps[i].map_name = strip_custommapinfo(fullpath);
+		custom_maps[i].map_folder = get_custommapfolder(fullpath);
+
+		float settings = fopen(strcat("maps/custom/", custom_maps[i].map_folder, "/maps/", custom_maps[i].map_name, ".txt"), FILE_READ);
 		if (settings != -1) {
-			user_maps[index].map_name_pretty = fgets(settings);
-			user_maps[index].map_desc[0] = fgets(settings);
-			user_maps[index].map_desc[1] = fgets(settings);
-			user_maps[index].map_desc[2] = fgets(settings);
-			user_maps[index].map_desc[3] = fgets(settings);
-			user_maps[index].map_desc[4] = fgets(settings);
-			user_maps[index].map_desc[5] = fgets(settings);
-			user_maps[index].map_desc[6] = fgets(settings);
-			user_maps[index].map_desc[7] = fgets(settings);
-			user_maps[index].map_author = fgets(settings);
-			user_maps[index].map_use_thumbnail = stof(fgets(settings));
-			user_maps[index].map_allow_game_settings = stof(fgets(settings));
+			custom_maps[i].map_name_pretty          = fgets(settings);
+			custom_maps[i].map_desc[0]              = fgets(settings);
+			custom_maps[i].map_desc[1]              = fgets(settings);
+			custom_maps[i].map_desc[2]              = fgets(settings);
+			custom_maps[i].map_desc[3]              = fgets(settings);
+			custom_maps[i].map_desc[4]              = fgets(settings);
+			custom_maps[i].map_desc[5]              = fgets(settings);
+			custom_maps[i].map_desc[6]              = fgets(settings);
+			custom_maps[i].map_desc[7]              = fgets(settings);
+			custom_maps[i].map_author               = fgets(settings);
+			custom_maps[i].map_use_thumbnail        = stof(fgets(settings));
+			custom_maps[i].map_allow_game_settings  = stof(fgets(settings));
 			fclose(settings);
 		}
-		
 	}
 
 	search_end(maps);
 
-	// Sort maps alphabetically by display name (insertion sort)
-	float i, j;
-	for (i = 1; i < user_maps_count; i++) {
-		// Save entry i
-		float t_occupied = user_maps[i].occupied;
-		float t_allow = user_maps[i].map_allow_game_settings;
-		float t_thumb = user_maps[i].map_use_thumbnail;
-		string t_name = user_maps[i].map_name;
-		string t_pretty = user_maps[i].map_name_pretty;
-		string t_author = user_maps[i].map_author;
-		string t_desc0 = user_maps[i].map_desc[0];
-		string t_desc1 = user_maps[i].map_desc[1];
-		string t_desc2 = user_maps[i].map_desc[2];
-		string t_desc3 = user_maps[i].map_desc[3];
-		string t_desc4 = user_maps[i].map_desc[4];
-		string t_desc5 = user_maps[i].map_desc[5];
-		string t_desc6 = user_maps[i].map_desc[6];
-		string t_desc7 = user_maps[i].map_desc[7];
+	// Sort alphabetically by display name (insertion sort)
+	for (float i = 1; i < custom_maps_count; i++) {
+		map_entry_t t = custom_maps[i];
+		string sort_key_i = (t.map_name_pretty != "") ? strtolower(t.map_name_pretty) : strtolower(t.map_name);
 
-		// Sort key: pretty name if available, otherwise bsp name
-		string sort_key_i = t_pretty;
-		if (sort_key_i == "") sort_key_i = t_name;
-		sort_key_i = strtolower(sort_key_i);
+		float j = i - 1;
+		while (j >= 0) {
+			string sort_key_j = (custom_maps[j].map_name_pretty != "") ?
+				strtolower(custom_maps[j].map_name_pretty) : strtolower(custom_maps[j].map_name);
 
-		j = i - 1;
-		string sort_key_j = user_maps[j].map_name_pretty;
-		if (sort_key_j == "") sort_key_j = user_maps[j].map_name;
-		sort_key_j = strtolower(sort_key_j);
+			if (strcmp(sort_key_j, sort_key_i) <= 0)
+				break;
 
-		while (j >= 0 && strcmp(sort_key_j, sort_key_i) > 0) {
-			// Shift entry j forward
-			user_maps[j + 1].occupied = user_maps[j].occupied;
-			user_maps[j + 1].map_allow_game_settings = user_maps[j].map_allow_game_settings;
-			user_maps[j + 1].map_use_thumbnail = user_maps[j].map_use_thumbnail;
-			user_maps[j + 1].map_name = user_maps[j].map_name;
-			user_maps[j + 1].map_name_pretty = user_maps[j].map_name_pretty;
-			user_maps[j + 1].map_author = user_maps[j].map_author;
-			user_maps[j + 1].map_desc[0] = user_maps[j].map_desc[0];
-			user_maps[j + 1].map_desc[1] = user_maps[j].map_desc[1];
-			user_maps[j + 1].map_desc[2] = user_maps[j].map_desc[2];
-			user_maps[j + 1].map_desc[3] = user_maps[j].map_desc[3];
-			user_maps[j + 1].map_desc[4] = user_maps[j].map_desc[4];
-			user_maps[j + 1].map_desc[5] = user_maps[j].map_desc[5];
-			user_maps[j + 1].map_desc[6] = user_maps[j].map_desc[6];
-			user_maps[j + 1].map_desc[7] = user_maps[j].map_desc[7];
-
+			custom_maps[j + 1] = custom_maps[j];
 			j--;
-			if (j >= 0) {
-				sort_key_j = user_maps[j].map_name_pretty;
-				if (sort_key_j == "") sort_key_j = user_maps[j].map_name;
-				sort_key_j = strtolower(sort_key_j);
-			}
 		}
 
-		// Insert saved entry at j+1
-		user_maps[j + 1].occupied = t_occupied;
-		user_maps[j + 1].map_allow_game_settings = t_allow;
-		user_maps[j + 1].map_use_thumbnail = t_thumb;
-		user_maps[j + 1].map_name = t_name;
-		user_maps[j + 1].map_name_pretty = t_pretty;
-		user_maps[j + 1].map_author = t_author;
-		user_maps[j + 1].map_desc[0] = t_desc0;
-		user_maps[j + 1].map_desc[1] = t_desc1;
-		user_maps[j + 1].map_desc[2] = t_desc2;
-		user_maps[j + 1].map_desc[3] = t_desc3;
-		user_maps[j + 1].map_desc[4] = t_desc4;
-		user_maps[j + 1].map_desc[5] = t_desc5;
-		user_maps[j + 1].map_desc[6] = t_desc6;
-		user_maps[j + 1].map_desc[7] = t_desc7;
+		custom_maps[j + 1] = t;
+	}
+};
+void() Menu_MapFinder =
+{
+	searchhandle maps = search_begin("maps/*.bsp", 0, 0);
+	user_maps_count = search_getsize(maps);
+
+	for (float i = 0; i < user_maps_count; i++) {
+		user_maps[i].occupied = TRUE;
+		user_maps[i].map_name = strip_custominfo(search_getfilename(maps, i));
+
+		float settings = fopen(strcat("maps/", user_maps[i].map_name, ".txt"), FILE_READ);
+		if (settings != -1) {
+			user_maps[i].map_name_pretty         = fgets(settings);
+			user_maps[i].map_desc[0]             = fgets(settings);
+			user_maps[i].map_desc[1]             = fgets(settings);
+			user_maps[i].map_desc[2]             = fgets(settings);
+			user_maps[i].map_desc[3]             = fgets(settings);
+			user_maps[i].map_desc[4]             = fgets(settings);
+			user_maps[i].map_desc[5]             = fgets(settings);
+			user_maps[i].map_desc[6]             = fgets(settings);
+			user_maps[i].map_desc[7]             = fgets(settings);
+			user_maps[i].map_author              = fgets(settings);
+			user_maps[i].map_use_thumbnail       = stof(fgets(settings));
+			user_maps[i].map_allow_game_settings = stof(fgets(settings));
+			fclose(settings);
+		}
+	}
+
+	search_end(maps);
+
+	// Sort alphabetically by display name (insertion sort)
+	for (float i = 1; i < user_maps_count; i++) {
+		map_entry_t t = user_maps[i];
+		string sort_key_i = (t.map_name_pretty != "") ? strtolower(t.map_name_pretty) : strtolower(t.map_name);
+
+		float j = i - 1;
+		while (j >= 0) {
+			string sort_key_j = (user_maps[j].map_name_pretty != "") ?
+				strtolower(user_maps[j].map_name_pretty) : strtolower(user_maps[j].map_name);
+
+			if (strcmp(sort_key_j, sort_key_i) <= 0)
+				break;
+
+			user_maps[j + 1] = user_maps[j];
+			j--;
+		}
+
+		user_maps[j + 1] = t;
 	}
 };
 
@@ -272,6 +336,7 @@ void() m_init =
 
 	// Perform map BSP search
 	Menu_MapFinder();
+	Menu_CustomMapFinder();
 
 	// Load the font Kerning Map.
 	InitKerningMap();

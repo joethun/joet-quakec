@@ -128,7 +128,7 @@ void() Menu_Gamepad =
 
     Menu_DrawDivider(12.25);
     Menu_Button(-2, "gp_apply", "APPLY", "Save & apply settings") ? Menu_Gamepad_ApplySettings() : 0;
-    Menu_Button(-1, "gp_back", "BACK", "Return to control options.") ? current_menu = MENU_CONTROL : 0;
+    Menu_Button(-1, "gp_back", "BACK", "Return to control options") ? current_menu = MENU_CONTROL : 0;
 
 	sui_pop_frame();	
 };

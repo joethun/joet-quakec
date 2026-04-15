@@ -179,7 +179,7 @@ void() Menu_Lobby =
             menu_loby_last = floor(lobby_delta);
         }
     } else if (lobby_delta < 0 && menu_loby_countdown != 0) {
-        localcmd(sprintf("map %s\n", current_selected_bsp)); 
+        localcmd(sprintf("map \"%s\"\n", current_selected_bsp)); 
         Menu_Lobby_StopCountdown();
         current_menu = MENU_MAIN;
     }

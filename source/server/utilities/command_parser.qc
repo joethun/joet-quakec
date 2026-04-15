@@ -38,27 +38,16 @@ float client_parse_override;
 #define COMMAND_FAILURE     1
 
 //
-// Command_IsCheating(command_name)
-// Returns COMMAND_FAILURE and prints a warning if cheats are
-// not permitted in the current session (co-op without sv_cheats).
-// Returns 0 (falsy) when the command is allowed to proceed.
-//
-float(string command_name) Command_IsCheating =
-{
-	if (cvar("maxclients") > 1) {
-		bprint(PRINT_HIGH, strcat(strcat("Someone tried to issue ", command_name), " in a Co-Op match. Nice try!\n"));
-		return COMMAND_FAILURE;
-	}
-	return 0;
-}
-
-//
 // Command_give(params)
 // Usage: give <weapon_number>
 //
 float(string params) Command_give =
 {
-	if (Command_IsCheating("Give")) return COMMAND_FAILURE;
+	// Anti-Cheat in Co-Op.
+	if (player_count > 1 && cheats_have_been_activated == false) {
+		bprint(PRINT_HIGH, "Someone tried to issue Give in a Co-Op match. Nice try!\n");
+		return COMMAND_FAILURE;
+	}
 
 	float wep = stof(argv(1));
 
@@ -79,7 +68,11 @@ float(string params) Command_give =
 //
 float(string params) Command_addmoney =
 {
-	if (Command_IsCheating("Add Money")) return COMMAND_FAILURE;
+	// Anti-Cheat in Co-Op.
+	if (player_count > 1 && cheats_have_been_activated == false) {
+		bprint(PRINT_HIGH, "Someone tried to issue Add Money in a Co-Op match. Nice try!\n");
+		return COMMAND_FAILURE;
+	}
 
     // Grab parameters.
     tokenize(params);
@@ -104,8 +97,6 @@ float(string params) Command_addmoney =
 //
 float(string params) Command_softrestart =
 {
-	if (Command_IsCheating("qc_soft_restart")) return COMMAND_FAILURE;
-
 	Soft_Restart();
 
 	return COMMAND_SUCCESS;
@@ -117,11 +108,19 @@ float(string params) Command_softrestart =
 //
 float(string params) Command_godmode =
 {
-	if (Command_IsCheating("God Mode")) return COMMAND_FAILURE;
+	// Anti-Cheat in Co-Op.
+	if (player_count > 1 && cheats_have_been_activated == false) {
+		bprint(PRINT_HIGH, "Someone tried to issue God Mode in a Co-Op match. Nice try!\n");
+		return COMMAND_FAILURE;
+	}
 
-	client_parse_override = false;
+	if (self.flags & FL_GODMODE)
+		self.flags -= FL_GODMODE;
+	else
+		self.flags |= FL_GODMODE;
+
 	return COMMAND_SUCCESS;
-} 
+}
 
 //
 // Command_noclip()
@@ -129,7 +128,11 @@ float(string params) Command_godmode =
 //
 float(string params) Command_noclip =
 {
-	if (Command_IsCheating("No-Clip")) return COMMAND_FAILURE;
+	// Anti-Cheat in Co-Op.
+	if (player_count > 1 && cheats_have_been_activated == false) {
+		bprint(PRINT_HIGH, "Someone tried to issue No-Clip in a Co-Op match. Nice try!\n");
+		return COMMAND_FAILURE;
+	}
 
 	if (self.model == "") {
 		setmodel(self, "models/player.mdl");
@@ -138,9 +141,8 @@ float(string params) Command_noclip =
 		setmodel(self, "");
 	}
 
-	client_parse_override = false;
 	return COMMAND_SUCCESS;
-} 
+}
 
 //
 // Command_powerup()
@@ -148,7 +150,11 @@ float(string params) Command_noclip =
 //
 float(string params) Command_powerup =
 {
-	if (Command_IsCheating("spawn_pu")) return COMMAND_FAILURE;
+	// Anti-Cheat in Co-Op.
+	if (player_count > 1 && cheats_have_been_activated == false) {
+		bprint(PRINT_HIGH, "Someone tried to issue spawn_pu in a Co-Op match. Nice try!\n");
+		return COMMAND_FAILURE;
+	}
 
 	// Grab parameters.
     tokenize(params);
@@ -166,7 +172,11 @@ float(string params) Command_powerup =
 //
 float(string params) Command_tracedmgmultiplier =
 {
-	if (Command_IsCheating("sv_tracedmgmultiplier")) return COMMAND_FAILURE;
+	// Anti-Cheat in Co-Op.
+	if (player_count > 1 && cheats_have_been_activated == false) {
+		bprint(PRINT_HIGH, "Someone tried to issue sv_tracedmgmultiplier in a Co-Op match. Nice try!\n");
+		return COMMAND_FAILURE;
+	}
 
 	// Grab parameters.
     tokenize(params);
@@ -214,7 +224,6 @@ float(string params) Command_say =
 
 #endif // FTE
 
-	client_parse_override = false;
 	return COMMAND_SUCCESS;
 }
 

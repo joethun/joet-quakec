@@ -52,12 +52,13 @@ void() GameRestart_CleanPowerUps =
         sound(tempe.owner, CHAN_VOICE, "sounds/null.wav", 1, ATTN_NORM);
 	    sound(tempe, CHAN_AUTO, "sounds/null.wav", 1, ATTN_NONE);
 
+        entity next = find(tempe, classname, "item_powerup");
+
         // Delete em
         remove(tempe.owner); // Sparkle
         remove(tempe);
 
-        // Iterate to the next
-        tempe = find(tempe, classname, "item_powerup");
+        tempe = next;
     }
 
     // Turn off HUD icons
@@ -168,6 +169,11 @@ void() GameRestart_ResetPerkaColas =
 //
 void() GameRestart_ResetMysteryBox =
 {
+	// Clear already_obtained flags so the next game isn't filtered to W_COLT.
+	for (float i = 0; i < MAX_BOX_WEAPONS; i++) {
+		mystery_box_weapons[i].already_obtained = false;
+	}
+
 	// Check if there is a Mystery Box in the map
 	entity mystery_box = find(world, classname, "mystery");
 
@@ -225,7 +231,6 @@ void() GameRestart_ResetMysteryBox =
 			original_box.touch = MBOX_Touch;
 			original_box.solid = SOLID_TRIGGER;
 			original_box.classname = "mystery";
-			setorigin(original_box, original_box.origin);
 			setmodel(original_box, mystery_box_model);
 			setsize(original_box, VEC_HULL2_MIN, VEC_HULL2_MAX);
 

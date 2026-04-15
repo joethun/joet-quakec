@@ -471,31 +471,8 @@ void(string chaptertitle, string location, string date, string person, entity wh
 
 void (float achievement_id, optional entity who) GiveAchievement =
 {
-	return;
-
 	// Achievements have been removed, adding back TBD
-#if 0
-#ifndef FTE
-
-	// temp
-	if (achievement_id > 4)
-		return;
-
-#endif // FTE
-
-	// this is an achievement specific to an individual
-	if ((who && who != world) || player_count == 1) {
-		if (player_count == 1) who = find(world, classname, "player");
-		nzp_achievement(who, achievement_id);
-	} else {
-		entity players;
-		players = find(world, classname, "player");
-		while(players != world) {
-			nzp_achievement(players, achievement_id);
-			players = find(players, classname, "player");
-		}
-	}
-#endif
+	return;
 }
 
 #ifdef FTE

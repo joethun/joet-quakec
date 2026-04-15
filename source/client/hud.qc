@@ -1076,73 +1076,73 @@ void() HUD_Useprint =
 			usestring = "";
 			break;
 		case 1://door
-			usestring = strcat("Hold  ",usespace, " to open Door");
+			usestring = strcat("Press  ",usespace, " to open door");
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 2://debris
-			usestring = strcat("Hold  ",usespace, " to remove Debris");
+			usestring = strcat("Press  ",usespace, " to remove debris");
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 3://ammo
-			usestring = strcat("Hold  ",usespace, " to buy Ammo for ", getstats(STAT_WEAPONNAMETOUCH));
+			usestring = strcat("Press  ",usespace, " to buy ammo for ", getstats(STAT_WEAPONNAMETOUCH));
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 4://weapon
-			usestring = strcat("Hold  ",usespace, " to buy ", getstats(STAT_WEAPONNAMETOUCH));
+			usestring = strcat("Press  ",usespace, " to buy ", getstats(STAT_WEAPONNAMETOUCH));
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 5://window
-			usestring = strcat("Hold  ",usespace, " to Rebuild Barrier");
+			usestring = strcat("Hold  ",usespace, " to rebuild barrier");
 			break;
 		case 6://box
-			usestring = strcat("Hold  ",usespace, " for Mystery Machine");
+			usestring = strcat("Press  ",usespace, " to open the Mystery Machine");
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 7://box take
-			usestring = strcat("Hold  ",usespace, " for ", getstats(STAT_WEAPONNAMETOUCH));
+			usestring = strcat("Press  ",usespace, " for ", getstats(STAT_WEAPONNAMETOUCH));
 			break;
 		case 8://power
-			usestring = "The Power must be Activated first";
+			usestring = "The power must be activated first";
 			break;
 		case 9://perk
-			usestring = strcat("Hold  ",usespace, " to buy ", GetItemName(useprint_weapon));
+			usestring = strcat("Press  ",usespace, " to buy ", GetItemName(useprint_weapon));
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 10://turn on power
-			usestring = strcat("Hold  ",usespace, " to Turn On the Power");
+			usestring = strcat("Press  ",usespace, " to Turn On the Power");
 			break;
 		case 11://turn on trap
-			usestring = strcat("Hold  ",usespace, " to Activate the Trap");
+			usestring = strcat("Press  ",usespace, " to activate the trap");
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 12://packapunch
-			usestring = strcat("Hold  ",usespace, " to Pack-a-Punch");
+			usestring = strcat("Press  ",usespace, " to Pack-a-Punch");
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 13://revive
-			usestring = strcat("Hold  ",usespace, " to Revive Player");
+			usestring = strcat("Hold  ",usespace, " to revive player");
 			break;
 		case 14://use teleporter (free)
-			usestring = strcat("Hold  ", usespace, " to use Teleporter");
+			usestring = strcat("Press  ", usespace, " to use teleporter");
 			break;
 		case 15://use teleporter (cost)
-			usestring = strcat("Hold  ", usespace, " to use Teleporter");
+			usestring = strcat("Press  ", usespace, " to use teleporter");
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 16://tp cooldown
 			usestring = "Teleporter is cooling down";
 			break;
 		case 17://link
-			usestring = strcat("Hold  ", usespace, " to initate link to pad");
+			usestring = strcat("Press  ", usespace, " to initate link to pad");
 			break;
 		case 18://no link
 			usestring = "Link not active";
 			break;
 		case 19://finish link
-			usestring = strcat("Hold  ", usespace, " to link pad with core");
+			usestring = strcat("Press  ", usespace, " to link pad with core");
 			break;
 		case 20://buyable ending
-			usestring = strcat("Hold  ", usespace, " to End the Game");
+			usestring = strcat("Hold  ", usespace, " to end the game");
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 21: // Magic disabled
@@ -1152,7 +1152,7 @@ void() HUD_Useprint =
 			usestring = "It doesn't seem to be working..";
 			break;
 		case 23: // Tactical Nuke (Gun Game)
-			usestring = strcat("Hold ", usespace, " to Drop the Nuke");
+			usestring = strcat("Hold ", usespace, " to drop the nuke");
 			break;
 		default:
 			usestring = "This should not happen you dum fuck"; //yikes
@@ -1175,7 +1175,14 @@ void() HUD_Useprint =
 	}
 
 	// Draw highlighted usebutton
-	if (substring(usestring, 0, 4) == "Hold") {
+	if (substring(usestring, 0, 5) == "Press") {
+		button_width = x + getTextWidth("Press ", 12);
+
+		if (Key_IsControllerGlyph(usebutton))
+			Key_DrawControllerGlyph([button_width - 5, g_height/2 + 62], usebutton, [18, 18]);
+		else
+			Draw_String([button_width, g_height/2 + 65, 0], usebutton, [12, 12, 0], [1, 1, 0], 1, 0);
+	} else if (substring(usestring, 0, 4) == "Hold") {
 		button_width = x + getTextWidth("Hold ", 12);
 
 		if (Key_IsControllerGlyph(usebutton))

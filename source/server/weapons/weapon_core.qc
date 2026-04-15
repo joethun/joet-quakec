@@ -127,7 +127,7 @@ void() W_AimIn =
 	if (WepDef_DoesNotADS(self.weapon))
 		return;
 
-	if ((self.stance == PLAYER_STANCE_PRONE) && self.velocity)
+	if ((self.stance == PLAYER_STANCE_PRONE) && self.velocity && !self.dive)
 		return;
 
 	if (IsDualWeapon(self.weapon) ||
@@ -993,7 +993,7 @@ void(float side) W_Fire =
 	if (GetFiretype(self.weapon) == FIRETYPE_FLAME && self.cooldown)
 		return;
 
-	if (self.dive || self.isBuying)
+	if (self.isBuying)
 		return;
 
 	// Prevent the player from spamming the fire button to interrupt a burst.
@@ -1908,6 +1908,7 @@ void() CheckPlayer =
 			}
 			PAnim_Flop();
 			self.dive = 0;
+			self.dive_delay = time + 0.5; // grace period to keep ADS after landing
 		}
 
         float height = dist + 64;
@@ -2163,6 +2164,10 @@ void() WeaponCore_GrenadeButtonPressed =
 	if (self.grenade_delay > time || (self.semi_actions & SEMIACTION_GRENADE))
 		return;
 
+	// Cancel ADS when pulling out a grenade.
+	if (self.zoom)
+		W_AimOut();
+
 	if (self.pri_grenade_state == 0)
 		W_Grenade();
     else
@@ -2201,6 +2206,10 @@ void() WeaponCore_MeleeButtonPressed =
 	W_SprintStop();
 
 #endif // FTE
+
+	// Cancel ADS when knifing.
+	if (self.zoom)
+		W_AimOut();
 
 	WeaponCore_Melee();
 	self.semi_actions |= SEMIACTION_MELEE;
@@ -2245,8 +2254,8 @@ void() WeaponCore_ClientLogic =
 #endif // FTE
 
 	// If the client is Aiming down the Sight while prone and
-	// moving, force them to stop
-	if (self.stance == PLAYER_STANCE_PRONE && self.velocity && self.zoom) {
+	// moving (but not diving), force them to stop
+	if (self.stance == PLAYER_STANCE_PRONE && self.velocity && self.zoom && !self.dive && self.dive_delay < time) {
 		W_AimOut();
 	}
 

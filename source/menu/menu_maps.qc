@@ -171,7 +171,9 @@ void() Menu_Maps =
         current_registry_position++;
         Menu_Button(-2, "map_userprev", "PREVIOUS PAGE", "Return to last page") ? Menu_Maps_PrevPage() : 0;
     } else {
-        Menu_GreyButton(-2, "PREVIOUS PAGE");
+        menu_maps_buttons[current_registry_position] = "map_customaps";
+        current_registry_position++;
+        Menu_Button(-2, "map_customaps", "CUSTOM MAPS", "Browse maps in maps/custom/") ? (last_map_menu = current_menu, current_menu = MENU_CUSTOMMAPS) : 0;
     }
 
     menu_maps_buttons[current_registry_position] = "map_back";

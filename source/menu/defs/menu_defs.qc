@@ -2,7 +2,7 @@
 #define false   0
 
 string build_datetime;
-#define JOET_VERSION "0.1.5"
+#define JOET_VERSION "0.1.6"
 float music_duration_time;
 
 string menu_background;
@@ -61,7 +61,8 @@ enum {
     MENU_CREDITS,
     MENU_PAUSE,
     MENU_LOBBY,
-    MENU_GAMESETTINGS
+    MENU_GAMESETTINGS,
+    MENU_CUSTOMMAPS
 };
 
 #define MENU_SND_NAVIGATE 	0
@@ -76,6 +77,7 @@ void() Menu_RightArrowPressed;
 
 void() Menu_Main;
 void() Menu_Maps;
+void() Menu_CustomMaps;
 void() Menu_Coop;
 void() Menu_Coop_Join;
 void() Menu_Coop_Browse;
@@ -119,6 +121,9 @@ string(string next_id) Menu_Coop_GetPreviousButton;
 string(string prev_id) Menu_Maps_GetNextButton;
 string(string next_id) Menu_Maps_GetPreviousButton;
 
+string(string prev_id) Menu_CustomMaps_GetNextButton;
+string(string next_id) Menu_CustomMaps_GetPreviousButton;
+
 string(string prev_id) Menu_Lobby_GetNextButton;
 string(string next_id) Menu_Lobby_GetPreviousButton;
 
@@ -158,16 +163,19 @@ float menu_map_mode;
 #define USER_MAPS_MAX   512
 
 // Map content data structure
-var struct
+typedef struct
 {
 	float 	occupied;
 	float 	map_allow_game_settings;
 	float 	map_use_thumbnail;
 	string 	map_name;
+	string 	map_folder;
 	string 	map_name_pretty;
     string  map_desc[8];
 	string 	map_author;
-} user_maps[USER_MAPS_MAX];
+} map_entry_t;
+
+map_entry_t user_maps[USER_MAPS_MAX];
 float user_maps_count;
 float user_maps_page;
 
@@ -177,6 +185,13 @@ float user_maps_page;
 #define MAP_CATEGORY_NZP        2
 #define MAP_CATEGORY_NZPBETA    3
 #define MAP_CATEGORY_BLACKOPSDS 4
+
+// Custom maps (maps/custom/) data structure
+#define CUSTOM_MAPS_MAX 512
+
+map_entry_t custom_maps[CUSTOM_MAPS_MAX];
+float custom_maps_count;
+float custom_maps_page;
 
 // Built-in (stock) maps, array_index
 // is populated later.

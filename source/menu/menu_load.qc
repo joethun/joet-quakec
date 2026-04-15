@@ -1,4 +1,6 @@
 string UserMapNameLookup(string bsp_name);
+string(string s) strip_custommapinfo;
+string(string s) get_custommapfolder;
 
 string loading_tips[] =
 {
@@ -36,6 +38,8 @@ string loading_tips[] =
 
 float loading_tip_endtime;
 string current_tip;
+string latched_map_loading;
+
 string GetLoadingTip() =
 {
     if (time > loading_tip_endtime) {
@@ -51,38 +55,41 @@ void(vector screensize, float opaque) m_drawloading =
     // Black Background
     drawfill([0, 0], screensize, [0, 0, 0], 1);
 
-    string current_map_loading = "";
+    string current_map_loading = (map_name_override != "") ? map_name_override : cvar_string("mapname");
 
-    if (map_name_override != "")
-        current_map_loading = map_name_override;
-    else
-        current_map_loading = cvar_string("mapname");
-
-    string map_loadscreen_path = sprintf("gfx/lscreen/%s", current_map_loading);
-
-    // If it's blank, just keep the screen black until FTE sends it to us.
-    if (current_map_loading == "")
+    // If blank, clear the latch and keep the screen black until FTE sends it to us.
+    if (current_map_loading == "") {
+        latched_map_loading = "";
         return;
+    }
 
-    // Pick a loading tip.
+    // Latch the map name on first sight so we keep the full "custom/..." path
+    // even if the engine drops the prefix just before finishing the load.
+    if (latched_map_loading == "")
+        latched_map_loading = current_map_loading;
+
     string loading_tip = GetLoadingTip();
-
     string map_name_pretty = "";
+    string map_loadscreen_path;
 
-    // We use the OVERRIDE key if we don't know (direct connect).
+    if (substring(latched_map_loading, 0, 7) == "custom/") {
+        string full = strcat("maps/", latched_map_loading, ".bsp");
+        map_loadscreen_path = sprintf("maps/custom/%s/gfx/lscreen/%s",
+            get_custommapfolder(full), strip_custommapinfo(full));
+    } else {
+        map_loadscreen_path = sprintf("gfx/lscreen/%s", latched_map_loading);
+    }
+
     if (map_name_override != "OVERRIDE") {
-        // A little slow but whatever.
-        // If the loading screen doesn't exist on disk, default to a generic one.
         float file_handle = fopen(sprintf("%s.png", map_loadscreen_path), FILE_READ);
-
         if (file_handle == -1)
             map_loadscreen_path = "gfx/lscreen/lscreen";
         else
             fclose(file_handle);
 
-        map_name_pretty = UserMapNameLookup(current_map_loading);
+        map_name_pretty = UserMapNameLookup(latched_map_loading);
     } else {
-        map_name_pretty = "Direct Connect..";
+        map_name_pretty = "Direct Connect";
         map_loadscreen_path = "gfx/lscreen/lscreen";
     }
 
@@ -98,7 +105,7 @@ void(vector screensize, float opaque) m_drawloading =
 
     // Notice for how to end server connecting
     if (loading_into_server == true) {
-        string abort_message = "Press ESC to abort connection and return to Menu..";
+        string abort_message = "Press ESC to abort connection and return to menu";
         drawfill([0, 111], [screensize_x, 36], [0, 0, 0], 175/255);
         Draw_String([screensize_x/2 - getTextWidth(abort_message, MENU_TEXT_MEDIUM_x)/2, 120], abort_message, MENU_TEXT_MEDIUM, [1, 1, 1], 1, 0);
     }

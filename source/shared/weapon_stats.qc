@@ -962,13 +962,13 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			break;
 		// -- Shotguns (per pellet) --
 		case W_SAWNOFF:
-			weapon_damage = 45;
+			weapon_damage = 50;
 			break;
 		case W_DB:
-			weapon_damage = 55;
+			weapon_damage = 60;
 			break;
 		case W_TRENCH:
-			weapon_damage = 70;
+			weapon_damage = 75;
 			break;
 		case W_SNUFF:
 			weapon_damage = 125;

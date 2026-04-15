@@ -78,14 +78,26 @@ void(float order) Menu_DrawDivider =
 // Pre-Game menu.
 //
 string UserMapNameLookup(string bsp_name);
+string(string s) strip_custommapinfo;
+string(string s) get_custommapfolder;
 void() Menu_DrawMapPreview =
 {
 	string map_preview_name = UserMapNameLookup(current_selected_bsp);
 	sui_set_align([SUI_ALIGN_CENTER, SUI_ALIGN_CENTER]);
 
-	// Map thumbnail
+	string thumb_path;
+	if (substring(current_selected_bsp, 0, 7) == "custom/") {
+		// Path is "custom/<folder>/maps/<bsp>" -- reuse existing helpers
+		string full = strcat("maps/", current_selected_bsp, ".bsp");
+		string bsp_name = strip_custommapinfo(full);
+		string folder   = get_custommapfolder(full);
+		thumb_path = strcat("maps/custom/", folder, "/gfx/menu/custom/", bsp_name, ".png");
+	} else {
+		thumb_path = strcat("menu/custom/", current_selected_bsp, ".png");
+	}
+
 	sui_fill([150, 100], [228, 130], [0.4, 0.4, 0.4], 1, 0);
-	sui_pic([150, 100], [225, 127], strcat("menu/custom/", current_selected_bsp, ".png"), [1, 1, 1], 1, 0);
+	sui_pic([150, 100], [225, 127], thumb_path, [1, 1, 1], 1, 0);
 
 	sui_text([150, 152], MENU_TEXT_MEDIUM, map_preview_name, [0.7, 0.15, 0.15], 1, 0);
 };
@@ -949,6 +961,7 @@ void(vector size) root_menu =
 		case MENU_CREDITS: Menu_Credits(); break;
 		case MENU_LOBBY: Menu_Lobby(); break;
 		case MENU_GAMESETTINGS: Menu_GameSettings(); break;
+		case MENU_CUSTOMMAPS: Menu_CustomMaps(); break;
 
 #else
 

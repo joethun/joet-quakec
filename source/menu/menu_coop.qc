@@ -265,7 +265,7 @@ void() Menu_Coop =
 	Menu_Button(2.25, "cm_join", "JOIN GAME", "Join an in-progress match") ? Menu_Coop_EnterJoin() : 0;
 	Menu_Button(3.25, "cm_create", "CREATE GAME", "Create a new match for others to join") ? Menu_Coop_EnterCreate() : 0;
 
-	Menu_Button(-1, "cm_back", "BACK", "Return to Main Menu") ? Menu_Coop_EnterBack() : 0;
+	Menu_Button(-1, "cm_back", "BACK", "Return to main menu") ? Menu_Coop_EnterBack() : 0;
 
 	sui_pop_frame();
 };

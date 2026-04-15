@@ -380,7 +380,7 @@ void() LastStand_TouchReviveTrigger =
 
 			// Link us together!
 			LastStand_LinkRevivee(self.owner, other);
-			other.fire_delay = other.fire_delay2 = other.reload_delay = other.reload_delay2 = other.knife_delay = time + revive_time; // FIXME
+			other.fire_delay = other.fire_delay2 = other.reload_delay = other.reload_delay2 = other.knife_delay = time + revive_time;
 
 			// Use ltime on the revive trigger to know when the revive is finished
 			self.ltime = time + revive_time;
@@ -400,9 +400,9 @@ void() LastStand_TouchReviveTrigger =
 	// Reviving has been executed for the full duration..
 	if (self.ltime < time) {
 		// Reward the revivee with the points the downed client lost,
-		// and increment their revives stat.
+		// and increment the reviver's revives stat.
 		Player_AddScore(other, self.owner.requirespower, false);
-		self.owner.revives++;
+		other.revives++;
 
 		entity old_self = self;
 		self = self.owner;

@@ -610,38 +610,17 @@ void() func_door =
 // the sizes can be detected properly.
 	self.think = LinkDoors;
 	self.nextthink = self.ltime + 0.1;
-
-#ifdef FTE
-
-	HalfLife_DoRender();
-	
-#endif // FTE
-
 };
 
 void() func_door_nzp =
 {
 
-#ifndef FTE
+#ifdef FTE
 
-	if (!self.renderamt)
-		self.renderamt = 255;
-	
-	if (!self.rendermode)
-		self.rendermode = 4;
-	
-	if (!self.rendercolor)
-		self.rendercolor = '0 0 0'; 
-	
-	if (!self.mapversion)
-		self.mapversion = 0; 
-	
-	if (!self.ammo)
-		self.ammo = 0; //thease are just here because they can be sp there is no error message. serve no real purpose
+	HalfLife_DoRender();
 
 #endif // FTE
-	 
-	// naievil (FIXME) ^^^^ hl rendermodes, mapversion
+
 	makevectors(self.angles);
 	SetMovedir ();
 

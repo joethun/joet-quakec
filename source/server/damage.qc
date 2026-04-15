@@ -168,7 +168,6 @@ void() EndGameSetup =
 	{
 		Weapon_RemoveWeapon(0);
 	}
-  return;
 }
 
 float() push_away_zombies;
@@ -180,7 +179,7 @@ void () GetUp =
 
 	Player_SetStance(self, PLAYER_STANCE_STAND, false);
 
-	// Bad hack: if we're crouching, just play some dummy crouchwalk frames.
+	// If we're crouching, play crouchwalk frames to avoid a visual glitch.
 	if (self.stance == PLAYER_STANCE_CROUCH)
 		PAnim_CrouchWalk7();
 	
