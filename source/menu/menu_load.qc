@@ -65,8 +65,26 @@ void(vector screensize, float opaque) m_drawloading =
 
     // Latch the map name on first sight so we keep the full "custom/..." path
     // even if the engine drops the prefix just before finishing the load.
-    if (latched_map_loading == "")
+    // Also reset the latch if the engine reports a map that doesn't match what
+    // we latched — this handles the case where mapname jumps directly from one
+    // map to another without ever being empty (e.g. rejoining a different custom
+    // map round), which would otherwise leave the old loading screen in place.
+    if (latched_map_loading == "") {
         latched_map_loading = current_map_loading;
+    } else {
+        // Strip the custom/ prefix from the latch for comparison, since the
+        // engine may report just the bare BSP name while we stored the full path.
+        string latch_bare = latched_map_loading;
+        if (substring(latch_bare, 0, 7) == "custom/")
+            latch_bare = strip_custommapinfo(strcat("maps/", latch_bare, ".bsp"));
+
+        string current_bare = current_map_loading;
+        if (substring(current_bare, 0, 7) == "custom/")
+            current_bare = strip_custommapinfo(strcat("maps/", current_bare, ".bsp"));
+
+        if (current_bare != latch_bare)
+            latched_map_loading = current_map_loading;
+    }
 
     string loading_tip = GetLoadingTip();
     string map_name_pretty = "";
