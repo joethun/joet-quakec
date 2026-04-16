@@ -971,10 +971,10 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 80;
 			break;
 		case W_SNUFF:
-			weapon_damage = 140;
+			weapon_damage = 240;
 			break;
 		case W_BORE:
-			weapon_damage = 160;
+			weapon_damage = 220;
 			break;
 		case W_GUT:
 			weapon_damage = 180;
