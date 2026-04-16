@@ -962,10 +962,10 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			break;
 		// -- Shotguns (per pellet) --
 		case W_SAWNOFF:
-			weapon_damage = 75;
+			weapon_damage = 110;
 			break;
 		case W_DB:
-			weapon_damage = 70;
+			weapon_damage = 100;
 			break;
 		case W_TRENCH:
 			weapon_damage = 80;
@@ -1274,18 +1274,18 @@ float(float wep, float delaytype) getWeaponDelay =
 				return 0.75;
 		case W_DB:
 			if (delaytype == RELOAD)
-				return 3;
+				return 2.5;
 			else if (delaytype == FIRE)
-				return 0.5;
+				return 0.2;
 			else if (delaytype == PUTOUT)
 				return 0.5;
 			else if (delaytype == TAKEOUT)
 				return 0.65;
 		case W_BORE:
 			if (delaytype == RELOAD)
-				return 2.5;
+				return 2.25;
 			else if (delaytype == FIRE)
-				return 0.5;
+				return 0.15;
 			else if (delaytype == PUTOUT)
 				return 0.5;
 			else if (delaytype == TAKEOUT)
@@ -1474,18 +1474,18 @@ float(float wep, float delaytype) getWeaponDelay =
 				return 0.5;
 		case W_SAWNOFF:
 			if (delaytype == RELOAD)
-				return 2.65;
+				return 2.5;
 			else if (delaytype == FIRE)
-				return 0.283;
+				return 0.2;
 			else if (delaytype == PUTOUT)
 				return 0.5;
 			else if (delaytype == TAKEOUT)
 				return 0.65;
 		case W_SNUFF:
 			if (delaytype == RELOAD)
-				return 2;
+				return 2.25;
 			else if (delaytype == FIRE)
-				return 0.283;
+				return 0.15;
 			else if (delaytype == PUTOUT)
 				return 0.5;
 			else if (delaytype == TAKEOUT)
