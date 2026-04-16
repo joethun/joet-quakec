@@ -1,4 +1,4 @@
-string menu_accesibility_buttons[7] = {"ac_hitm", "ac_text", "ac_color", "ac_whiteflash", "ac_monthspoof", "ac_apply", "ac_back"};
+string menu_accesibility_buttons[8] = {"ac_hitm", "ac_text", "ac_color", "ac_whiteflash", "ac_monthspoof", "ac_mboxname", "ac_apply", "ac_back"};
 
 float menu_accessibility_init;
 
@@ -6,6 +6,7 @@ float current_hitmarker;
 float current_colorblind;
 float current_whiteflash;
 float current_monthspoof;
+float current_mboxname;
 
 string(string prev_id) Menu_Accessibility_GetNextButton =
 {
@@ -53,6 +54,7 @@ void() Menu_Accessibility_StoreCurrentSettings =
     current_colorblind = cvar("cl_colorblind");
     current_whiteflash = cvar("scr_whiteflash");
     current_monthspoof = cvar("sv_spoofmonth");
+    current_mboxname = cvar("cl_mboxname");
 }
 
 void() Menu_Accessibility_ApplySettings =
@@ -94,6 +96,13 @@ void() Menu_Accessibility_UpdateMonthSpoof =
     current_monthspoof++;
     if (current_monthspoof > 12) current_monthspoof = 0;
     cvar_set("sv_spoofmonth", ftos(current_monthspoof));
+}
+
+void() Menu_Accessibility_UpdateMBoxName =
+{
+    Menu_PlaySound(MENU_SND_ENTER);
+    current_mboxname = !current_mboxname;
+    cvar_set("cl_mboxname", ftos(current_mboxname));
 }
 
 void() Menu_Accessibility =
@@ -159,6 +168,16 @@ void() Menu_Accessibility =
         default: break;
     }
     Menu_DrawOptionValue(5, month_string);
+
+    // Mystery Box Name
+    Menu_Button(6, "ac_mboxname", "MYSTERY BOX NAME", "Choose the name for the Mystery Box") ? Menu_Accessibility_UpdateMBoxName() : 0;
+    string mboxname_string = "";
+    switch(current_mboxname) {
+        case 0: mboxname_string = "MYSTERY BOX"; break;
+        case 1: mboxname_string = "MYSTERY MACHINE"; break;
+        default: break;
+    }
+    Menu_DrawOptionValue(6, mboxname_string);
 
     Menu_DrawDivider(12.25);
     Menu_Button(-2, "ac_apply", "APPLY", "Save & apply settings") ? Menu_Accessibility_ApplySettings() : 0;

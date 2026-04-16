@@ -845,139 +845,139 @@ float(float wep, float weapon_tier) getWeaponDamage =
 	{
 		// -- Pistols --
 		case W_COLT:
-			weapon_damage = 30;
+			weapon_damage = 45;
 			break;
 		case W_BIATCH:
 			weapon_damage = 1000;
 			break;
 		case W_357:
-			weapon_damage = 170;
+			weapon_damage = 150;
 			break;
 		case W_KILLU:
-			weapon_damage = 340;
+			weapon_damage = 300;
 			break;
 		// -- Bolt-Action Rifles --
 		case W_KAR:
-			weapon_damage = 130;
+			weapon_damage = 120;
 			break;
 		case W_ARMAGEDDON:
-			weapon_damage = 260;
+			weapon_damage = 240;
 			break;
 		case W_SPRING:
-			weapon_damage = 130;
+			weapon_damage = 120;
 			break;
 		case W_PULVERIZER:
-			weapon_damage = 260;
+			weapon_damage = 240;
 			break;
 		case W_DESTROYER:
 			weapon_damage = 10000;
 			break;
 		case W_KAR_SCOPE:
-			weapon_damage = 200;
+			weapon_damage = 180;
 			break;
 		case W_HEADCRACKER:
-			weapon_damage = 400;
+			weapon_damage = 360;
 			break;
 		// -- Semi-Auto Rifles --
 		case W_GEWEHR:
-			weapon_damage = 125;
+			weapon_damage = 110;
 			break;
 		case W_COMPRESSOR:
-			weapon_damage = 250;
+			weapon_damage = 220;
 			break;
 		case W_M1:
-			weapon_damage = 180;
+			weapon_damage = 160;
 			break;
 		case W_M1000:
-			weapon_damage = 360;
+			weapon_damage = 320;
 			break;
 		case W_M1A1:
-			weapon_damage = 135;
+			weapon_damage = 120;
 			break;
 		case W_WIDDER:
-			weapon_damage = 270;
+			weapon_damage = 240;
 			break;
 		// -- SMGs (per-bullet scaled by fire rate) --
 		case W_THOMPSON:
-			weapon_damage = 110;
-			break;
-		case W_GIBS:
-			weapon_damage = 220;
-			break;
-		case W_MP40:
-			weapon_damage = 120;
-			break;
-		case W_AFTERBURNER:
-			weapon_damage = 240;
-			break;
-		case W_MP5K:
-			weapon_damage = 105;
-			break;
-		case W_KOLLIDER:
-			weapon_damage = 210;
-			break;
-		case W_PPSH:
-			weapon_damage = 80;
-			break;
-		case W_REAPER:
-			weapon_damage = 160;
-			break;
-		case W_TYPE:
 			weapon_damage = 100;
 			break;
-		case W_SAMURAI:
+		case W_GIBS:
 			weapon_damage = 200;
 			break;
+		case W_MP40:
+			weapon_damage = 110;
+			break;
+		case W_AFTERBURNER:
+			weapon_damage = 220;
+			break;
+		case W_MP5K:
+			weapon_damage = 95;
+			break;
+		case W_KOLLIDER:
+			weapon_damage = 190;
+			break;
+		case W_PPSH:
+			weapon_damage = 75;
+			break;
+		case W_REAPER:
+			weapon_damage = 150;
+			break;
+		case W_TYPE:
+			weapon_damage = 95;
+			break;
+		case W_SAMURAI:
+			weapon_damage = 190;
+			break;
 		case W_STG:
-			weapon_damage = 135;
+			weapon_damage = 120;
 			break;
 		case W_SPATZ:
-			weapon_damage = 270;
+			weapon_damage = 240;
 			break;
 		// -- Assault Rifles / Light MGs --
 		case W_BAR:
-			weapon_damage = 175;
+			weapon_damage = 160;
 			break;
 		case W_WIDOW:
-			weapon_damage = 350;
+			weapon_damage = 320;
 			break;
 		case W_FG:
-			weapon_damage = 110;
+			weapon_damage = 100;
 			break;
 		case W_IMPELLER:
-			weapon_damage = 220;
+			weapon_damage = 200;
 			break;
 		// -- LMGs --
 		case W_BROWNING:
-			weapon_damage = 150;
+			weapon_damage = 140;
 			break;
 		case W_ACCELERATOR:
-			weapon_damage = 300;
+			weapon_damage = 280;
 			break;
 		case W_MG:
-			weapon_damage = 100;
+			weapon_damage = 95;
 			break;
 		case W_BARRACUDA:
-			weapon_damage = 200;
+			weapon_damage = 190;
 			break;
 		// -- Shotguns (per pellet) --
 		case W_SAWNOFF:
-			weapon_damage = 50;
-			break;
-		case W_DB:
-			weapon_damage = 60;
-			break;
-		case W_TRENCH:
 			weapon_damage = 75;
 			break;
+		case W_DB:
+			weapon_damage = 70;
+			break;
+		case W_TRENCH:
+			weapon_damage = 80;
+			break;
 		case W_SNUFF:
-			weapon_damage = 125;
+			weapon_damage = 140;
 			break;
 		case W_BORE:
-			weapon_damage = 150;
+			weapon_damage = 160;
 			break;
 		case W_GUT:
-			weapon_damage = 175;
+			weapon_damage = 180;
 			break;
 		// -- Snipers --
 		case W_PTRS:
@@ -1013,6 +1013,13 @@ float(float wep, float weapon_tier) getWeaponDamage =
 		case W_KRAUS:
 			weapon_damage = 1000;
 			break;
+		// -- Tesla Wonder Weapon --
+		case W_TESLA:
+			weapon_damage = 10000;
+			break;
+		case W_DG3:
+			weapon_damage = 10000;
+			break;
     }
 
 #ifndef CSQC
@@ -1032,9 +1039,9 @@ float(float wep) GetWeaponShotcount =
 		case W_BORE:
 			return 10;
 		case W_SAWNOFF:
-			return 10;
+			return 8;
 		case W_SNUFF:
-			return 12;
+			return 10;
 		case W_TRENCH:
 			return 8;
 		case W_GUT:
@@ -1051,122 +1058,96 @@ float(float wep, float penetration_times) getWeaponPenetration =
 
 	switch (wep)
 	{
+		// ===== PISTOLS - No Penetration =====
 		case W_COLT:
 		case W_BIATCH:
-			if (penetration_times >= 2)
-				return 0;
-			return 0.75;
-		case W_KAR:
-		case W_ARMAGEDDON:
-			if (penetration_times >= 3)
-				return 0;
-			return 1;
-		case W_SPRING:
-		case W_PULVERIZER:
-		case W_DESTROYER:
-		case W_DESTROYER:
-			if (penetration_times >= 3)
-				return 0;
-			return 1;
-		case W_THOMPSON:
-		case W_GIBS:
-			if (penetration_times >= 2)
-				return 0;
-			return 0.8;
 		case W_357:
 		case W_KILLU:
-			if (penetration_times >= 3)
+			return 0;
+		
+		// ===== SMGs - Low Penetration (1 pen, 60%) =====
+		case W_MP40:
+		case W_AFTERBURNER:
+		case W_MP5K:
+		case W_KOLLIDER:
+		case W_PPSH:
+		case W_REAPER:
+		case W_THOMPSON:
+		case W_GIBS:
+		case W_TYPE:
+		case W_SAMURAI:
+			if (penetration_times >= 1)
 				return 0;
-		case W_BAR:
-		case W_WIDOW:
-			if (penetration_times >= 3)
-				return 0;
-			return 1;
-		case W_BROWNING:
-		case W_ACCELERATOR:
-			if (penetration_times >= 3)
-				return 0;
-			return 1;
+			return 0.6;
+		
+		// ===== SHOTGUNS - Low-Medium Penetration (2 pen, 70%) =====
 		case W_DB:
 		case W_BORE:
 		case W_SAWNOFF:
 		case W_SNUFF:
-			if (penetration_times >= 3)
+		case W_TRENCH:
+		case W_GUT:
+			if (penetration_times >= 2)
 				return 0;
-			return 1;
+			return 0.7;
+		
+		// ===== ASSAULT RIFLES - Medium Penetration (2 pen, 80%) =====
+		case W_STG:
+		case W_SPATZ:
 		case W_FG:
 		case W_IMPELLER:
-			if (penetration_times >= 2)
-				return 0;
-			return 0.9;
-		case W_GEWEHR:
-		case W_COMPRESSOR:
-			if (penetration_times >= 2)
-				return 0;
-			return 0.9;
-		case W_KAR_SCOPE:
-		case W_HEADCRACKER:
-			if (penetration_times >= 3)
-				return 0;
-			return 1;
-		case W_M1:
-		case W_M1000:
-			if (penetration_times >= 2)
-				return 0;
-			return 0.9;
-		case W_M1A1:
-		case W_WIDDER:
-			if (penetration_times >= 2)
-				return 0;
-			return 0.9;
-		case W_MP40:
-		case W_AFTERBURNER:
+		case W_BAR:
+		case W_WIDOW:
 			if (penetration_times >= 2)
 				return 0;
 			return 0.8;
-		case W_MP5K:
-		case W_KOLLIDER:
-			if (penetration_times >= 2)
-				return 0;
-			return 0.8;
+		
+		// ===== LMGs - High Penetration (2 pen, 90%) =====
 		case W_MG:
 		case W_BARRACUDA:
-			if (penetration_times >= 3)
-				return 0;
-			return 1;
-		case W_PPSH:
-		case W_REAPER:
+		case W_BROWNING:
+		case W_ACCELERATOR:
 			if (penetration_times >= 2)
 				return 0;
-			return 0.75;
-		case W_PTRS:
+			return 0.9;
+		
+		// ===== SEMI-AUTO RIFLES - Higher Penetration (3 pen, 95%) =====
+		case W_GEWEHR:
+		case W_COMPRESSOR:
+		case W_M1:
+		case W_M1000:
+		case W_M1A1:
+		case W_WIDDER:
 			if (penetration_times >= 3)
 				return 0;
+			return 0.95;
+		
+		// ===== BOLT-ACTION RIFLES - Very High Penetration (4 pen, 100%) =====
+		case W_KAR:
+		case W_ARMAGEDDON:
+		case W_KAR_SCOPE:
+		case W_HEADCRACKER:
+		case W_SPRING:
+		case W_PULVERIZER:
+		case W_DESTROYER:
+			if (penetration_times >= 4)
+				return 0;
 			return 1;
+		
+		// ===== SNIPER RIFLES - Maximum Penetration (5 pen, 100%) =====
+		case W_PTRS:
 		case W_PENETRATOR:
 			if (penetration_times >= 5)
 				return 0;
 			return 1;
-		case W_STG:
-		case W_SPATZ:
-			if (penetration_times >= 2)
-				return 0;
-			return 0.8;
-		case W_TRENCH:
-		case W_GUT:
-			if (penetration_times >= 3)
-				return 0;
-			return 1;
-		case W_TYPE:
-		case W_SAMURAI:
-			if (penetration_times >= 2)
-				return 0;
-			return 0.8;
+		
+		// ===== SPECIAL WEAPONS =====
 		case W_RAYMK2:
 		case W_PORTERMK2:
 			if (penetration_times >= 3)
 				return 0;
 			return 1;
+		
 		default:
 			return 0;
     }

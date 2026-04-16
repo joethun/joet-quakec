@@ -8,6 +8,15 @@ vector MENU_TEXT_2 = '0.6 0.45 0.45';
 vector MENU_HIGHLIGHT = '0.9 0.15 0.15';
 vector MENU_DARKEN = '1 1 1';
 
+// Consistent color definitions for menu elements
+vector MENU_COLOR_RED = '0.7 0.15 0.15';  // Standard red for text and accents
+vector MENU_COLOR_RED_BRIGHT = '0.9 0.15 0.15';  // Brighter red for highlights
+vector MENU_COLOR_RED_DARK = '0.6 0.1 0.1';  // Darker red for borders
+vector MENU_COLOR_DIVIDER = '0.2 0.2 0.2';  // Gray for dividers
+vector MENU_COLOR_BLACK = '0 0 0';  // Pure black
+vector MENU_COLOR_WHITE = '1 1 1';  // Pure white
+vector MENU_COLOR_GRAY = '0.4 0.4 0.4';  // Gray for backgrounds
+
 vector MENU_TEXT_SUPERSMALL = '10 10 0';
 vector MENU_TEXT_SMALL = '12 12 0';
 vector MENU_TEXT_MEDIUM = '14 14 0';
@@ -67,7 +76,7 @@ void(float order) Menu_DrawDivider =
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
 
 	vector position = [0, 45 + (order * 25)];
-	sui_fill(position, [285, 2], [0.2, 0.2, 0.2], 1, 0);
+	sui_fill(position, [285, 2], MENU_COLOR_DIVIDER, 1, 0);
 };
 
 #ifdef MENU
@@ -78,28 +87,17 @@ void(float order) Menu_DrawDivider =
 // Pre-Game menu.
 //
 string UserMapNameLookup(string bsp_name);
-string(string s) strip_custommapinfo;
-string(string s) get_custommapfolder;
 void() Menu_DrawMapPreview =
 {
 	string map_preview_name = UserMapNameLookup(current_selected_bsp);
 	sui_set_align([SUI_ALIGN_CENTER, SUI_ALIGN_CENTER]);
 
-	string thumb_path;
-	if (substring(current_selected_bsp, 0, 7) == "custom/") {
-		// Path is "custom/<folder>/maps/<bsp>" -- reuse existing helpers
-		string full = strcat("maps/", current_selected_bsp, ".bsp");
-		string bsp_name = strip_custommapinfo(full);
-		string folder   = get_custommapfolder(full);
-		thumb_path = strcat("maps/custom/", folder, "/gfx/menu/custom/", bsp_name, ".png");
-	} else {
-		thumb_path = strcat("menu/custom/", current_selected_bsp, ".png");
-	}
+	string thumb_path = strcat("menu/custom/", current_selected_bsp, ".png");
 
-	sui_fill([150, 100], [228, 130], [0.4, 0.4, 0.4], 1, 0);
-	sui_pic([150, 100], [225, 127], thumb_path, [1, 1, 1], 1, 0);
+	sui_fill([150, 100], [228, 130], MENU_COLOR_GRAY, 1, 0);
+	sui_pic([150, 100], [225, 127], thumb_path, MENU_COLOR_WHITE, 1, 0);
 
-	sui_text([150, 152], MENU_TEXT_MEDIUM, map_preview_name, [0.7, 0.15, 0.15], 1, 0);
+	sui_text([150, 152], MENU_TEXT_MEDIUM, map_preview_name, MENU_COLOR_RED, 1, 0);
 };
 
 #endif // MENU
@@ -127,8 +125,8 @@ void(float order, string id, string text, float index) Menu_SocialBadge =
 	sui_subpic(position, [28, 28], "gfx/menu/social", [1, 1, 1], coords_pos, coords_size, 1, 0);
 
 	if (sui_is_hovered(id)) {
-		sui_fill(position - [36, 8], [getTextWidth(text, MENU_TEXT_SUPERSMALL_x) + 1, 10], [0, 0, 0], 0.9, 0);
-		sui_text(position - [35, 8], MENU_TEXT_SUPERSMALL, text, [0.7, 0.15, 0.15], 1, 0);
+		sui_fill(position - [36, 8], [getTextWidth(text, MENU_TEXT_SUPERSMALL_x) + 1, 10], MENU_COLOR_BLACK, 0.9, 0);
+		sui_text(position - [35, 8], MENU_TEXT_SUPERSMALL, text, MENU_COLOR_RED, 1, 0);
 	}
 
 	sui_action_element(position, [28, 28], id, sui_noop);
@@ -142,18 +140,18 @@ void(float order, string id, string text, float index) Menu_SocialBadge =
 void(string line_1, string line_2) Menu_DrawYesNoPanel =
 {
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
-	sui_fill([0, 0], sui_current_frame_size(), [0, 0, 0], 0.5, 0);
+	sui_fill([0, 0], sui_current_frame_size(), MENU_COLOR_BLACK, 0.5, 0);
 
 	// Black Fill
-	sui_fill([0, 160], [sui_current_frame_size()[0], 160], [0, 0, 0], 1, 0);
+	sui_fill([0, 160], [sui_current_frame_size()[0], 160], MENU_COLOR_BLACK, 1, 0);
 
 	// Red borders
-	sui_fill([0, 160], [sui_current_frame_size()[0], 3], [0.7, 0.15, 0.15], 0.9, 0);
-	sui_fill([0, sui_current_frame_size()[1] - 160], [sui_current_frame_size()[0], 3], [0.7, 0.15, 0.15], 0.9, 0);
+	sui_fill([0, 160], [sui_current_frame_size()[0], 3], MENU_COLOR_RED, 0.9, 0);
+	sui_fill([0, sui_current_frame_size()[1] - 160], [sui_current_frame_size()[0], 3], MENU_COLOR_RED, 0.9, 0);
 
 	sui_set_align([SUI_ALIGN_CENTER, SUI_ALIGN_START]);
-	sui_text([0, 170], MENU_TEXT_MEDIUM, line_1, [1, 1, 1], 1, 0);
-	sui_text([0, 190], MENU_TEXT_MEDIUM, line_2, [1, 1, 1], 1, 0);
+	sui_text([0, 170], MENU_TEXT_MEDIUM, line_1, MENU_COLOR_WHITE, 1, 0);
+	sui_text([0, 190], MENU_TEXT_MEDIUM, line_2, MENU_COLOR_WHITE, 1, 0);
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
 };
 
@@ -166,8 +164,8 @@ void(string line_1, string line_2) Menu_DrawYesNoPanel =
 void() Menu_DrawMapPanel =
 {
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
-	sui_fill([300, 55], [sui_current_frame_size()[0], sui_current_frame_size()[1] - 55 - 58], [0, 0, 0], 0.9, 0);
-	sui_fill([300, 55], [3, sui_current_frame_size()[1] - 55 - 58], [0.7, 0.15, 0.15], 0.9, 0);
+	sui_fill([300, 55], [sui_current_frame_size()[0], sui_current_frame_size()[1] - 55 - 58], MENU_COLOR_BLACK, 0.9, 0);
+	sui_fill([300, 55], [3, sui_current_frame_size()[1] - 55 - 58], MENU_COLOR_RED, 0.9, 0);
 };
 
 //
@@ -179,7 +177,7 @@ void(float order, string value) Menu_DrawOptionValue =
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
 
 	vector position = [320, 50 + (order * 25)];
-	sui_text(position, MENU_TEXT_MEDIUM, value, [1, 1, 1], 1, 0);
+	sui_text(position, MENU_TEXT_MEDIUM, value, MENU_COLOR_WHITE, 1, 0);
 };
 
 //
@@ -216,10 +214,10 @@ void(float order, string bind) Menu_DrawOptionKey =
 			case K_GP_DPAD_RIGHT: tilemap_position = [0.875, 0]; break;
 		}
 
-		sui_subpic([position_x, position_y - 2], [MENU_TEXT_MEDIUM_x + 5, MENU_TEXT_MEDIUM_x + 5], sprintf("gfx/controller_glyphs/%s.tga", cvar_string("cl_controllerglyphs")), [1, 1, 1], tilemap_position, [0.125, 0.125], 1, 0);
+		sui_subpic([position_x, position_y - 2], [MENU_TEXT_MEDIUM_x + 5, MENU_TEXT_MEDIUM_x + 5], sprintf("gfx/controller_glyphs/%s.tga", cvar_string("cl_controllerglyphs")), MENU_COLOR_WHITE, tilemap_position, [0.125, 0.125], 1, 0);
 	}
 	else {
-		sui_text(position, MENU_TEXT_MEDIUM, bind, [0.7, 0.15, 0.15], 1, 0);
+		sui_text(position, MENU_TEXT_MEDIUM, bind, MENU_COLOR_RED, 1, 0);
 	}
 };
 
@@ -234,20 +232,20 @@ float(float order, string id, string bsp_name, float map_category, float usermap
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
 
 	float is_hovered = sui_is_hovered(id);
-	vector text_color = is_hovered ? [0.9, 0.15, 0.15] : [0.95, 0.93, 0.85];
+	vector text_color = is_hovered ? MENU_COLOR_RED_BRIGHT : [0.95, 0.93, 0.85];
 	vector position = [6, 50 + (order * 25)];
 	vector bbox_pos = position - [6, 5, 0];
 	vector bbox_size = [290, 22];
 
 	if (is_hovered) {
 		// Background
-		sui_fill(bbox_pos, bbox_size, [0, 0, 0], 0.9, 0);
+		sui_fill(bbox_pos, bbox_size, MENU_COLOR_BLACK, 0.9, 0);
 		// Top
-		sui_fill(bbox_pos, [bbox_size_x, 2], [0.6, 0.1, 0.1], 1, 0);
+		sui_fill(bbox_pos, [bbox_size_x, 2], MENU_COLOR_RED_DARK, 1, 0);
 		// Bottom
-		sui_fill(bbox_pos + [0, bbox_size_y - 2], [bbox_size_x, 2], [0.6, 0.1, 0.1], 1, 0);
+		sui_fill(bbox_pos + [0, bbox_size_y - 2], [bbox_size_x, 2], MENU_COLOR_RED_DARK, 1, 0);
 		// Right
-		sui_fill(bbox_pos + [bbox_size_x - 2, 0], [2, bbox_size_y], [0.6, 0.1, 0.1], 1, 0);
+		sui_fill(bbox_pos + [bbox_size_x - 2, 0], [2, bbox_size_y], MENU_COLOR_RED_DARK, 1, 0);
 	}
 
 	int i;
@@ -961,7 +959,6 @@ void(vector size) root_menu =
 		case MENU_CREDITS: Menu_Credits(); break;
 		case MENU_LOBBY: Menu_Lobby(); break;
 		case MENU_GAMESETTINGS: Menu_GameSettings(); break;
-		case MENU_CUSTOMMAPS: Menu_CustomMaps(); break;
 
 #else
 

@@ -18,7 +18,7 @@ void() Menu_GetBuildDate =
 
 //
 // Menu_PickBackground()
-// Returns a random image in nzp/gfx/menu/custom
+// Returns a random background image
 // to display in Menu_DrawBackground().
 //
 string() Menu_PickBackground =
@@ -29,9 +29,31 @@ string() Menu_PickBackground =
 	pics 			= search_begin("gfx/menu/custom/*", 0, 0);
 	pic_count 		= search_getsize(pics);
 
+	// If no backgrounds found, return empty string
+	if (pic_count <= 0) {
+		search_end(pics);
+		return "";
+	}
+
 	string image = "";
+	float attempts = 0;
+	float max_attempts = pic_count * 2; // Prevent infinite loop
 
 	while(TRUE) {
+		attempts++;
+		if (attempts > max_attempts) {
+			// Fallback: just return the first valid image
+			for (float i = 0; i < pic_count; i++) {
+				string fallback_image = search_getfilename(pics, i);
+				string ext = strtolower(substring(fallback_image, strlen(fallback_image) - 3, strlen(fallback_image)));
+				if (ext == "tga" || ext == "png" || ext == "jpg") {
+					image = fallback_image;
+					break;
+				}
+			}
+			break;
+		}
+
 		float entry = rint(random() * pic_count);
 		string potential_image = search_getfilename(pics, entry);
 
@@ -46,56 +68,22 @@ string() Menu_PickBackground =
 		}
 	}
 
+	search_end(pics);
 	return image;
 };
 
 //
 // Menu_MapFinder()
 // Performs a .BSP search in the maps/
-// directory and adds them to the custom
+// directory and adds them to the
 // map data structure.
 //
-string(string s) strip_custominfo =
+string(string s) strip_mapinfo =
 {
 	string s2;
 	s2 = substring(s, 5, strlen(s)); // maps/
 	s2 = substring(s2, 0, strlen(s2) - 4); // .bsp
 
-	return s2;
-}
-
-//
-// strip_custommapinfo(s)
-// Strips the variable-length "maps/custom/<folder>/maps/" prefix
-// and ".bsp" suffix from a custom map search result path,
-// returning just the BSP name.
-//
-// Path format: maps/custom/<FolderName>/maps/<bspname>.bsp
-//
-string(string s) strip_custommapinfo =
-{
-	// Strip leading "maps/custom/"
-	string s2 = substring(s, 12, strlen(s)); // after "maps/custom/"
-	// Find the next "/" to skip the folder name
-	float slash = strstrofs(s2, "/maps/", 0);
-	if (slash >= 0)
-		s2 = substring(s2, slash + 6, strlen(s2)); // after "<folder>/maps/"
-	// Strip ".bsp"
-	s2 = substring(s2, 0, strlen(s2) - 4);
-	return s2;
-}
-
-//
-// get_custommapfolder(s)
-// Returns the folder name portion from a custom map path.
-// Path format: maps/custom/<FolderName>/maps/<bspname>.bsp
-//
-string(string s) get_custommapfolder =
-{
-	string s2 = substring(s, 12, strlen(s)); // after "maps/custom/"
-	float slash = strstrofs(s2, "/", 0);
-	if (slash >= 0)
-		return substring(s2, 0, slash);
 	return s2;
 }
 
@@ -106,13 +94,8 @@ string(string s) get_custommapfolder =
 //
 string UserMapNameLookup(string bsp_name) =
 {
-	// Extract just the BSP name if it's a full path
-	string lookup_name = bsp_name;
-	if (substring(bsp_name, 0, 7) == "custom/")
-		lookup_name = strip_custommapinfo(strcat("maps/", bsp_name, ".bsp"));
-
 	for(int i = 0; i < USER_MAPS_MAX; i++) {
-		if (user_maps[i].map_name != lookup_name)
+		if (user_maps[i].map_name != bsp_name)
 			continue;
 
 		if (user_maps[i].map_name_pretty != "")
@@ -121,17 +104,7 @@ string UserMapNameLookup(string bsp_name) =
 		return user_maps[i].map_name;
 	}
 
-	for(int i = 0; i < CUSTOM_MAPS_MAX; i++) {
-		if (custom_maps[i].map_name != lookup_name)
-			continue;
-
-		if (custom_maps[i].map_name_pretty != "")
-			return custom_maps[i].map_name_pretty;
-
-		return custom_maps[i].map_name;
-	}
-
-	return lookup_name;
+	return bsp_name;
 };
 
 //
@@ -141,85 +114,16 @@ string UserMapNameLookup(string bsp_name) =
 //
 float UserMapSupportsCustomGameLookup(string bsp_name) =
 {
-	// Extract just the BSP name if it's a full path
-	string lookup_name = bsp_name;
-	if (substring(bsp_name, 0, 7) == "custom/")
-		lookup_name = strip_custommapinfo(strcat("maps/", bsp_name, ".bsp"));
-
 	for(int i = 0; i < USER_MAPS_MAX; i++) {
-		if (user_maps[i].map_name != lookup_name)
+		if (user_maps[i].map_name != bsp_name)
 			continue;
 
 		return user_maps[i].map_allow_game_settings;
 	}
 
-	for(int i = 0; i < CUSTOM_MAPS_MAX; i++) {
-		if (custom_maps[i].map_name != lookup_name)
-			continue;
-
-		return custom_maps[i].map_allow_game_settings;
-	}
-
 	return true;
 };
 
-//
-// Menu_CustomMapFinder()
-// Performs a .BSP search in the maps/custom/*/maps/
-// directory and populates the custom_maps struct.
-//
-void() Menu_CustomMapFinder =
-{
-	searchhandle maps = search_begin("maps/custom/*/maps/*.bsp", 0, 0);
-	custom_maps_count = search_getsize(maps);
-
-	for (float i = 0; i < custom_maps_count; i++) {
-		string fullpath = search_getfilename(maps, i);
-
-		custom_maps[i].occupied = TRUE;
-		custom_maps[i].map_name = strip_custommapinfo(fullpath);
-		custom_maps[i].map_folder = get_custommapfolder(fullpath);
-
-		float settings = fopen(strcat("maps/custom/", custom_maps[i].map_folder, "/maps/", custom_maps[i].map_name, ".txt"), FILE_READ);
-		if (settings != -1) {
-			custom_maps[i].map_name_pretty          = fgets(settings);
-			custom_maps[i].map_desc[0]              = fgets(settings);
-			custom_maps[i].map_desc[1]              = fgets(settings);
-			custom_maps[i].map_desc[2]              = fgets(settings);
-			custom_maps[i].map_desc[3]              = fgets(settings);
-			custom_maps[i].map_desc[4]              = fgets(settings);
-			custom_maps[i].map_desc[5]              = fgets(settings);
-			custom_maps[i].map_desc[6]              = fgets(settings);
-			custom_maps[i].map_desc[7]              = fgets(settings);
-			custom_maps[i].map_author               = fgets(settings);
-			custom_maps[i].map_use_thumbnail        = stof(fgets(settings));
-			custom_maps[i].map_allow_game_settings  = stof(fgets(settings));
-			fclose(settings);
-		}
-	}
-
-	search_end(maps);
-
-	// Sort alphabetically by display name (insertion sort)
-	for (float i = 1; i < custom_maps_count; i++) {
-		map_entry_t t = custom_maps[i];
-		string sort_key_i = (t.map_name_pretty != "") ? strtolower(t.map_name_pretty) : strtolower(t.map_name);
-
-		float j = i - 1;
-		while (j >= 0) {
-			string sort_key_j = (custom_maps[j].map_name_pretty != "") ?
-				strtolower(custom_maps[j].map_name_pretty) : strtolower(custom_maps[j].map_name);
-
-			if (strcmp(sort_key_j, sort_key_i) <= 0)
-				break;
-
-			custom_maps[j + 1] = custom_maps[j];
-			j--;
-		}
-
-		custom_maps[j + 1] = t;
-	}
-};
 void() Menu_MapFinder =
 {
 	searchhandle maps = search_begin("maps/*.bsp", 0, 0);
@@ -227,7 +131,7 @@ void() Menu_MapFinder =
 
 	for (float i = 0; i < user_maps_count; i++) {
 		user_maps[i].occupied = TRUE;
-		user_maps[i].map_name = strip_custominfo(search_getfilename(maps, i));
+		user_maps[i].map_name = strip_mapinfo(search_getfilename(maps, i));
 
 		float settings = fopen(strcat("maps/", user_maps[i].map_name, ".txt"), FILE_READ);
 		if (settings != -1) {
@@ -336,7 +240,6 @@ void() m_init =
 
 	// Perform map BSP search
 	Menu_MapFinder();
-	Menu_CustomMapFinder();
 
 	// Load the font Kerning Map.
 	InitKerningMap();
@@ -353,7 +256,7 @@ void() m_init =
 	autocvar(nzp_bgmvolume, 1);
 	autocvar(vid_ultrawide_limiter, 0);
 	autocvar(cl_hitmarkers, 1);
-	autocvar(cl_textopacity, 0.20);
+	autocvar(cl_textopacity, 0);
 	autocvar(cl_colorblind, 0);
 
 	autocvar(sv_gamemode, 0);

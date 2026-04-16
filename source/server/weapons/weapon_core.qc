@@ -827,14 +827,14 @@ void(float damage, vector dir, vector org, vector plane, entity hit_ent, float s
 		if(hit_ent.classname == "item_radio" || hit_ent.classname == "teddy_spawn")
 		{
 			entity oldself;
-			oldself  = self;
+			oldself = self;
 			self = hit_ent;
 			self.th_die();
 			self = oldself;
 			return;
 		} else if (hit_ent.classname == "explosive_barrel") {
 			hit_ent.enemy = self;
-			oldself  = self;
+			oldself = self;
 			self = hit_ent;
 			self.health = self.health - damage;
 			
@@ -1609,7 +1609,7 @@ void(float wepnum) CheckButton = {
 
 void() Change_Stance = {
 
-	if (self.downed || !(self.flags & FL_ONGROUND) || self.changestance == true || self.new_ofs_z != self.view_ofs_z)
+	if (self.downed || !(self.flags & FL_ONGROUND) || self.changestance == true || self.new_ofs_z != self.view_ofs_z || self.dive_delay > time)
 		return;
 
 	switch(self.stance) {
@@ -1652,6 +1652,8 @@ void() dolphin_dive =		//naievil
 	(!map_compatibility_mode && self.view_ofs_z != VIEW_OFS_HL[2]))
 		return;
  	if (self.flags & FL_WATERJUMP)
+		return;
+	if (self.dive_delay > time)
 		return;
 
 	if (self.waterlevel >= 2)

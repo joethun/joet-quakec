@@ -25,9 +25,26 @@
 
 */
 
-#define ZOMBIE_DAMAGE_THROUGH_WINDOW 		60
+#define ZOMBIE_DAMAGE_THROUGH_WINDOW 		30
 
 float(float current_health, float current_round) Gamemode_GetZombieHealthForRound;
+
+//
+// GetZombieDamageForRound()
+// Returns the damage a zombie should deal based on the current round.
+// Round 1-5: 25 damage (4 hits to down on normal difficulty)
+// Round 6-9: 34 damage (3 hits to down on normal difficulty)
+// Round 10+: 50 damage (2 hits to down on normal difficulty)
+//
+float() GetZombieDamageForRound =
+{
+	if (rounds >= 10)
+		return 50;
+	else if (rounds >= 6)
+		return 34;
+	else
+		return 25;
+};
 
 void() Zombie_Walk_Setup;
 void() crawler_rip_board1;
@@ -408,22 +425,22 @@ void() zombie_footstep
 $frame walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10 walk11 walk12 walk13 walk14 walk15 walk16
 //walk15
 //walk 1!
-void()	zombie_walk1		=[	$walk1,		zombie_walk2	] 	{self.nextthink = time + 0.12;Zombie_Walk(8);SetZombieHitBox(WALK1_BBOX);/*if(freeze_time < time)*/ self.frame = 37;Zombie_Think();};
-void()	zombie_walk2		=[	$walk2,		zombie_walk3	] 	{self.nextthink = time + 0.12;Zombie_Walk(3.5); self.frame = 38;Zombie_Think();};
-void()	zombie_walk3		=[	$walk3,		zombie_walk4	] 	{self.nextthink = time + 0.12;Zombie_Walk(3.5); self.frame = 39;Zombie_Think();};
-void()	zombie_walk4		=[	$walk4,		zombie_walk5	] 	{self.nextthink = time + 0.12;Zombie_Walk(3.5); self.frame = 40;Zombie_Think();};
-void()	zombie_walk5		=[	$walk5,		zombie_walk6	] 	{self.nextthink = time + 0.12;Zombie_Walk(3.5); self.frame = 41;Zombie_Think();zombie_footstep();};//footstep
-void()	zombie_walk6		=[	$walk6,		zombie_walk7	] 	{self.nextthink = time + 0.12;Zombie_Walk(3.5); self.frame = 42;Zombie_Think();};
-void()	zombie_walk7		=[	$walk7,		zombie_walk8	] 	{self.nextthink = time + 0.12;Zombie_Walk(8.8); self.frame = 43;Zombie_Think();};
-void()	zombie_walk8		=[	$walk8,		zombie_walk9	] 	{self.nextthink = time + 0.12;Zombie_Walk(9); self.frame = 44;Zombie_Think();zombie_footstep();};//footstep
-void()	zombie_walk9		=[	$walk9,		zombie_walk10	] 	{self.nextthink = time + 0.12;Zombie_Walk(4); self.frame = 45;Zombie_Think();};
-void()	zombie_walk10		=[	$walk10,		zombie_walk11	] 	{self.nextthink = time + 0.12;Zombie_Walk(4); self.frame = 46;Zombie_Think();};
-void()	zombie_walk11		=[	$walk11,		zombie_walk12	] 	{self.nextthink = time + 0.12;Zombie_Walk(7.8); self.frame = 47;Zombie_Think();};
-void()	zombie_walk12		=[	$walk12,		zombie_walk13	] 	{self.nextthink = time + 0.12;Zombie_Walk(5.2); self.frame = 48;Zombie_Think();zombie_footstep();};//footstep
-void()	zombie_walk13		=[	$walk13,		zombie_walk14	] 	{self.nextthink = time + 0.12;Zombie_Walk(2.4); self.frame = 49;Zombie_Think();};
-void()	zombie_walk14		=[	$walk14,		zombie_walk15	] 	{self.nextthink = time + 0.12;Zombie_Walk(2.8); self.frame = 50;Zombie_Think();};
-void()	zombie_walk15		=[	$walk15,		zombie_walk16	] 	{self.nextthink = time + 0.12;Zombie_Walk(6.5); self.frame = 51;Zombie_Think();};
-void()	zombie_walk16		=[	$walk16,		Zombie_Walk_Setup	] 	{self.nextthink = time + 0.12;Zombie_Walk(7.7); self.frame = 52;Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_walk1		=[	$walk1,		zombie_walk2	] 	{self.nextthink = time + 0.12;Zombie_Walk(10);SetZombieHitBox(WALK1_BBOX);/*if(freeze_time < time)*/ self.frame = 37;Zombie_Think();};
+void()	zombie_walk2		=[	$walk2,		zombie_walk3	] 	{self.nextthink = time + 0.12;Zombie_Walk(4.4); self.frame = 38;Zombie_Think();};
+void()	zombie_walk3		=[	$walk3,		zombie_walk4	] 	{self.nextthink = time + 0.12;Zombie_Walk(4.4); self.frame = 39;Zombie_Think();};
+void()	zombie_walk4		=[	$walk4,		zombie_walk5	] 	{self.nextthink = time + 0.12;Zombie_Walk(4.4); self.frame = 40;Zombie_Think();};
+void()	zombie_walk5		=[	$walk5,		zombie_walk6	] 	{self.nextthink = time + 0.12;Zombie_Walk(4.4); self.frame = 41;Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_walk6		=[	$walk6,		zombie_walk7	] 	{self.nextthink = time + 0.12;Zombie_Walk(4.4); self.frame = 42;Zombie_Think();};
+void()	zombie_walk7		=[	$walk7,		zombie_walk8	] 	{self.nextthink = time + 0.12;Zombie_Walk(11); self.frame = 43;Zombie_Think();};
+void()	zombie_walk8		=[	$walk8,		zombie_walk9	] 	{self.nextthink = time + 0.12;Zombie_Walk(11.3); self.frame = 44;Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_walk9		=[	$walk9,		zombie_walk10	] 	{self.nextthink = time + 0.12;Zombie_Walk(5); self.frame = 45;Zombie_Think();};
+void()	zombie_walk10		=[	$walk10,		zombie_walk11	] 	{self.nextthink = time + 0.12;Zombie_Walk(5); self.frame = 46;Zombie_Think();};
+void()	zombie_walk11		=[	$walk11,		zombie_walk12	] 	{self.nextthink = time + 0.12;Zombie_Walk(9.8); self.frame = 47;Zombie_Think();};
+void()	zombie_walk12		=[	$walk12,		zombie_walk13	] 	{self.nextthink = time + 0.12;Zombie_Walk(6.5); self.frame = 48;Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_walk13		=[	$walk13,		zombie_walk14	] 	{self.nextthink = time + 0.12;Zombie_Walk(3); self.frame = 49;Zombie_Think();};
+void()	zombie_walk14		=[	$walk14,		zombie_walk15	] 	{self.nextthink = time + 0.12;Zombie_Walk(3.5); self.frame = 50;Zombie_Think();};
+void()	zombie_walk15		=[	$walk15,		zombie_walk16	] 	{self.nextthink = time + 0.12;Zombie_Walk(8.1); self.frame = 51;Zombie_Think();};
+void()	zombie_walk16		=[	$walk16,		Zombie_Walk_Setup	] 	{self.nextthink = time + 0.12;Zombie_Walk(9.6); self.frame = 52;Zombie_Think();zombie_footstep();};//footstep
 
 /////////////////////////////////////////////////////////////////////////
 //53-66
@@ -472,29 +489,29 @@ void()	zombie_walkc16		=[	$cwalk16,		Zombie_Walk_Setup	] 	{self.nextthink = time
 //116- 129
 $frame jog1 jog2 jog3 jog4 jog5 jog6 jog7 jog8
 
-void()	zombie_jog1		=[	$jog1,		zombie_jog2	] 	{self.nextthink = time + 0.08;Zombie_Walk(6);SetZombieHitBox(JOG_BBOX);/*if(freeze_time < time)*/ self.frame = 83;Zombie_Think();};//FOOTSTEP
-void()	zombie_jog2		=[	$jog2,		zombie_jog3	] 		{self.nextthink = time + 0.08;Zombie_Walk(6); self.frame = 84;Zombie_Think();};
-void()	zombie_jog3		=[	$jog3,		zombie_jog4	] 		{self.nextthink = time + 0.08;Zombie_Walk(6); self.frame = 85;Zombie_Think();};
-void()	zombie_jog4		=[	$jog4,		zombie_jog5	] 		{self.nextthink = time + 0.08;Zombie_Walk(6); self.frame = 86;Zombie_Think();zombie_footstep();};//footstep
-void()	zombie_jog5		=[	$jog5,		zombie_jog6	] 		{self.nextthink = time + 0.08;Zombie_Walk(6); self.frame = 87;Zombie_Think();};
-void()	zombie_jog6		=[	$jog6,		zombie_jog7	] 		{self.nextthink = time + 0.08;Zombie_Walk(6); self.frame = 88;Zombie_Think();};
-void()	zombie_jog7		=[	$jog7,		zombie_jog8	] 		{self.nextthink = time + 0.08;Zombie_Walk(6); self.frame = 89;Zombie_Think();};
-void()	zombie_jog8		=[	$jog8,		Zombie_Walk_Setup	] 	{self.nextthink = time + 0.08;Zombie_Walk(6); self.frame = 90;Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_jog1		=[	$jog1,		zombie_jog2	] 	{self.nextthink = time + 0.08;Zombie_Walk(7.5);SetZombieHitBox(JOG_BBOX);/*if(freeze_time < time)*/ self.frame = 83;Zombie_Think();};//FOOTSTEP
+void()	zombie_jog2		=[	$jog2,		zombie_jog3	] 		{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 84;Zombie_Think();};
+void()	zombie_jog3		=[	$jog3,		zombie_jog4	] 		{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 85;Zombie_Think();};
+void()	zombie_jog4		=[	$jog4,		zombie_jog5	] 		{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 86;Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_jog5		=[	$jog5,		zombie_jog6	] 		{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 87;Zombie_Think();};
+void()	zombie_jog6		=[	$jog6,		zombie_jog7	] 		{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 88;Zombie_Think();};
+void()	zombie_jog7		=[	$jog7,		zombie_jog8	] 		{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 89;Zombie_Think();};
+void()	zombie_jog8		=[	$jog8,		Zombie_Walk_Setup	] 	{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 90;Zombie_Think();zombie_footstep();};//footstep
 
 /////////////////////////////////////////////////////////////////////
 //78-85
 $frame run1 run2 run3 run4 run5 run6 run7 run8 run9 run10 
 //12 unless 14
-void()	zombie_run1		=[	$run1,		zombie_run2	] 	{Zombie_Walk(13);/*if(freeze_time < time)*/ self.frame = 92;SetZombieHitBox(RUN_BBOX);Zombie_Think();zombie_footstep();};//footstep
-void()	zombie_run2		=[	$run2,		zombie_run3	] 	{Zombie_Walk(13);self.frame = 93;Zombie_Think();};
-void()	zombie_run3		=[	$run3,		zombie_run4	] 	{Zombie_Walk(13); self.frame = 94;Zombie_Think();zombie_footstep();};//footstep
-void()	zombie_run4		=[	$run4,		zombie_run5	] 	{Zombie_Walk(13); self.frame = 95;Zombie_Think();};
-void()	zombie_run5		=[	$run5,		zombie_run6	] 	{Zombie_Walk(13); self.frame = 96;Zombie_Think();};
-void()	zombie_run6		=[	$run6,		zombie_run7	] 	{Zombie_Walk(13); self.frame = 97;Zombie_Think();zombie_footstep();};//footstep
-void()	zombie_run7		=[	$run7,		zombie_run8	] 	{Zombie_Walk(13); self.frame = 98;Zombie_Think();};
-void()	zombie_run8		=[	$run8,		zombie_run9	] 	{Zombie_Walk(13); self.frame = 99;Zombie_Think();zombie_footstep();};//footstep
-void()	zombie_run9		=[	$run9,		zombie_run10	] 	{Zombie_Walk(13); self.frame = 100;Zombie_Think();};
-void()	zombie_run10		=[	$run10,	Zombie_Walk_Setup	] 	{Zombie_Walk(13); self.frame = 101;Zombie_Think();};
+void()	zombie_run1		=[	$run1,		zombie_run2	] 	{Zombie_Walk(16.3);/*if(freeze_time < time)*/ self.frame = 92;SetZombieHitBox(RUN_BBOX);Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_run2		=[	$run2,		zombie_run3	] 	{Zombie_Walk(16.3);self.frame = 93;Zombie_Think();};
+void()	zombie_run3		=[	$run3,		zombie_run4	] 	{Zombie_Walk(16.3); self.frame = 94;Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_run4		=[	$run4,		zombie_run5	] 	{Zombie_Walk(16.3); self.frame = 95;Zombie_Think();};
+void()	zombie_run5		=[	$run5,		zombie_run6	] 	{Zombie_Walk(16.3); self.frame = 96;Zombie_Think();};
+void()	zombie_run6		=[	$run6,		zombie_run7	] 	{Zombie_Walk(16.3); self.frame = 97;Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_run7		=[	$run7,		zombie_run8	] 	{Zombie_Walk(16.3); self.frame = 98;Zombie_Think();};
+void()	zombie_run8		=[	$run8,		zombie_run9	] 	{Zombie_Walk(16.3); self.frame = 99;Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_run9		=[	$run9,		zombie_run10	] 	{Zombie_Walk(16.3); self.frame = 100;Zombie_Think();};
+void()	zombie_run10		=[	$run10,	Zombie_Walk_Setup	] 	{Zombie_Walk(16.3); self.frame = 101;Zombie_Think();};
 
 // Round threshold at which the last zombie starts running, per difficulty (0=easy, 1=normal, 2=hard, 3=nightmare)
 float zombie_run_round_thresholds[] = { 4, 10, 2, 1 };
@@ -600,10 +617,12 @@ void() zombie_attack2 =
 	{
 		if(vlen(self.enemy.origin - self.origin) < 64)
 		{
+			float zombie_damage = GetZombieDamageForRound();
+			
 			if (self.classname == "ai_dog")
-				DamageHandler (self.enemy, self, 40, DMG_TYPE_ZOMBIESWIPE);
+				DamageHandler (self.enemy, self, 20, DMG_TYPE_ZOMBIESWIPE);
 			else
-				DamageHandler (self.enemy, self, 50, DMG_TYPE_ZOMBIESWIPE);
+				DamageHandler (self.enemy, self, zombie_damage, DMG_TYPE_ZOMBIESWIPE);
 
 			// Getting hit by Zombies triggers a GamePad rumble.
 			nzp_rumble(self.enemy, 1000, 1200, 75);
@@ -712,12 +731,13 @@ void() zombie_attack_through_window =
 {
 	Zombie_PlaySoundType(ZOMBIE_SOUND_TYPE_MELEE);
 	local entity who;
+	float zombie_damage = GetZombieDamageForRound();
 	who = findradius(self.origin, 70);
 	while(who)
 	{
 		if(who.classname == "player")
 		{
-			DamageHandler (who, self, ZOMBIE_DAMAGE_THROUGH_WINDOW, DMG_TYPE_ZOMBIESWIPE);
+			DamageHandler (who, self, zombie_damage, DMG_TYPE_ZOMBIESWIPE);
 		}
 		who = who.chain;
 	}
@@ -1406,15 +1426,20 @@ void() spawn_zombie =
 void(entity where) spawn_a_zombieB;
 void() set_z_health =
 {
+	// WAW-style zombie health scaling with gradual increase
+	// Rounds 1-10: 150 + (round - 1) * 75
+	// Round 11+: multiply by 1.1 per round
+	
 	if(rounds <= 10)
 	{
-		z_health = 50 + (rounds * 100);
+		z_health = 150 + ((rounds - 1) * 75);  // Round 1: 150, Round 2: 225, ..., Round 10: 825
 	}
 	else
 	{	
+		// Round 11+: Start at 825 HP and multiply by 1.1 each round
 		local float i;
 		i = rounds - 10;
-		z_health = 1040;
+		z_health = 825;  // Base for round 11 (same as round 10)
 		while(i > 0)
 		{
 			z_health *= 1.1; 

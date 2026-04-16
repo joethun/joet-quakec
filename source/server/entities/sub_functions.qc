@@ -400,7 +400,6 @@ void () HalfLife_DoRender =
         if (self.rendermode == 2) {
             self.alpha = self.renderamt/255;
             if (self.alpha == 0) {
-                //self.alpha = 0.01;
                 osize = self.size;
                 omins = self.mins;
                 omaxs = self.maxs;

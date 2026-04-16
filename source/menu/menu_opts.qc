@@ -54,13 +54,13 @@ void() Menu_Options =
 
 #ifdef MENU
 
-    Menu_Button(-1, "om_back", "BACK", "Return to Main Menu") ? current_menu = MENU_MAIN : 0;
+    Menu_Button(-1, "om_back", "BACK", "Return to main menu") ? current_menu = MENU_MAIN : 0;
 
 #else
 
-    Menu_Button(-1, "om_back", "BACK", "Return to Pause Menu") ? current_menu = MENU_PAUSE : 0;
+    Menu_Button(-1, "om_back", "BACK", "Return to pause menu") ? current_menu = MENU_PAUSE : 0;
 
 #endif // MENU
 
-	sui_pop_frame();	
+	sui_pop_frame();
 };

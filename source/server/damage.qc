@@ -514,7 +514,7 @@ void(entity inflictor, entity attacker, float damage2, float mindamage, float ra
 			ent.health -= final_damage;
 
 			entity oldself;
-			oldself  = self;
+			oldself = self;
 			self = ent;
 			Barrel_Hit();
 			self = oldself;

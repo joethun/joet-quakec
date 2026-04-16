@@ -1,6 +1,4 @@
 string UserMapNameLookup(string bsp_name);
-string(string s) strip_custommapinfo;
-string(string s) get_custommapfolder;
 
 string loading_tips[] =
 {
@@ -63,40 +61,17 @@ void(vector screensize, float opaque) m_drawloading =
         return;
     }
 
-    // Latch the map name on first sight so we keep the full "custom/..." path
-    // even if the engine drops the prefix just before finishing the load.
-    // Also reset the latch if the engine reports a map that doesn't match what
-    // we latched — this handles the case where mapname jumps directly from one
-    // map to another without ever being empty (e.g. rejoining a different custom
-    // map round), which would otherwise leave the old loading screen in place.
+    // Latch the map name on first sight
     if (latched_map_loading == "") {
         latched_map_loading = current_map_loading;
     } else {
-        // Strip the custom/ prefix from the latch for comparison, since the
-        // engine may report just the bare BSP name while we stored the full path.
-        string latch_bare = latched_map_loading;
-        if (substring(latch_bare, 0, 7) == "custom/")
-            latch_bare = strip_custommapinfo(strcat("maps/", latch_bare, ".bsp"));
-
-        string current_bare = current_map_loading;
-        if (substring(current_bare, 0, 7) == "custom/")
-            current_bare = strip_custommapinfo(strcat("maps/", current_bare, ".bsp"));
-
-        if (current_bare != latch_bare)
+        if (current_map_loading != latched_map_loading)
             latched_map_loading = current_map_loading;
     }
 
     string loading_tip = GetLoadingTip();
     string map_name_pretty = "";
-    string map_loadscreen_path;
-
-    if (substring(latched_map_loading, 0, 7) == "custom/") {
-        string full = strcat("maps/", latched_map_loading, ".bsp");
-        map_loadscreen_path = sprintf("maps/custom/%s/gfx/lscreen/%s",
-            get_custommapfolder(full), strip_custommapinfo(full));
-    } else {
-        map_loadscreen_path = sprintf("gfx/lscreen/%s", latched_map_loading);
-    }
+    string map_loadscreen_path = sprintf("gfx/lscreen/%s", latched_map_loading);
 
     if (map_name_override != "OVERRIDE") {
         float file_handle = fopen(sprintf("%s.png", map_loadscreen_path), FILE_READ);
@@ -119,15 +94,15 @@ void(vector screensize, float opaque) m_drawloading =
     drawfill([0, screensize_y - 36], [screensize_x, 36], [0, 0, 0], 175/255);
 
     // Map Title
-    Draw_String([10, 5], map_name_pretty, MENU_TEXT_LARGE, [0.9, 0.15, 0.15], 1, 0);
+    Draw_String([10, 5], map_name_pretty, MENU_TEXT_LARGE, MENU_COLOR_RED_BRIGHT, 1, 0);
 
     // Notice for how to end server connecting
     if (loading_into_server == true) {
         string abort_message = "Press ESC to abort connection and return to menu";
         drawfill([0, 111], [screensize_x, 36], [0, 0, 0], 175/255);
-        Draw_String([screensize_x/2 - getTextWidth(abort_message, MENU_TEXT_MEDIUM_x)/2, 120], abort_message, MENU_TEXT_MEDIUM, [1, 1, 1], 1, 0);
+        Draw_String([screensize_x/2 - getTextWidth(abort_message, MENU_TEXT_MEDIUM_x)/2, 120], abort_message, MENU_TEXT_MEDIUM, MENU_COLOR_WHITE, 1, 0);
     }
 
     // Loading Tip
-    Draw_String([screensize_x/2 - getTextWidth(loading_tip, MENU_TEXT_SMALL_x)/2, screensize_y - 25], loading_tip, MENU_TEXT_SMALL, [1, 1, 1], 1, 0);
+    Draw_String([screensize_x/2 - getTextWidth(loading_tip, MENU_TEXT_SMALL_x)/2, screensize_y - 25], loading_tip, MENU_TEXT_SMALL, MENU_COLOR_WHITE, 1, 0);
 };

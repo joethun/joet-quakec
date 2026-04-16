@@ -92,14 +92,11 @@ void(entity hit_ent, entity arc_parent, entity arc_owner, float arc_num, float d
     }
 
     if(do_arc == true) {
-        // float wait_time = lerp(0.2,0.6, random()) * arc_num;
         // The first zombie does not wait, every arc thereafter does
         float wait_time = arc_num == 1 ? 0 : lerp(0.2,0.6, random()) * arc_num;
         hit_ent.tesla_next_arc_time = time + wait_time;
-        // print("Entity ", hit_ent.classname, " set to arc after ",ftos(wait_time)," (t=", ftos(hit_ent.tesla_next_arc_time), ")\n");
     }
     else {
-        // print("Entity ", hit_ent.classname, " NOT set to arc at.\n");
         hit_ent.tesla_next_arc_time = -1;
     }
     hit_ent.tesla_arc_parent = arc_parent;
@@ -130,7 +127,6 @@ vector(entity ent) tesla_arc_ofs_for_ent = {
 }
 
 
-// entity cur_ent, entity prev_ent, entity player
 void() tesla_arc = {
     if(self.tesla_next_arc_time < 0) {
         return;
@@ -138,31 +134,24 @@ void() tesla_arc = {
     if(self.tesla_next_arc_time > time) {
         return;
     }
-    // print("\"",self.classname,"\" arcing ( arcs:",ftos(self.tesla_arc_num)," kills: ",ftos(self.tesla_arc_owner.tesla_n_kills),") for arctime: ");
-    // print(ftos(self.tesla_next_arc_time),"\n");
     self.tesla_next_arc_time = -1;
     if(self.tesla_arc_owner.tesla_n_kills >= 10) {
-        // print("\tAt max kills. Stopping.\n");
         return;
     }
 
     self.iszomb = 0;
 
-    // If we can't arc any further, tell parent to keep trying
     if(self.tesla_arc_num >= 5) {
         // We already waited, do it immediately
         self.tesla_arc_parent.tesla_next_arc_time = 0;
-        // print("\tAt max arc-counts, keep arcing from parent.\n");
         return;
     }
 
     // Maximum arcing distance for this zombie
     float max_dist = 300 - (20 * self.tesla_arc_num);
-    // print("\tZombie arc to max dist: ", ftos(max_dist), "\n");
 
 	entity best_ent = world;
     if(max_dist > 0) {
-        // If arcing, find the closest zombie to current zombie:
         entity ent = findfloat(world, iszomb, 1);
         float dist;
         float best_dist = max_dist;
@@ -183,9 +172,6 @@ void() tesla_arc = {
             ent = findfloat(ent, iszomb, 1);
         }
     }
-
-    // print("\tZombie arcing to entity: \"", best_ent.classname, "\" dist: ", ftos(best_dist), "\n");
-
 
     // We found a zombie to arc to, continue arc from there
     if(best_ent != world) {
@@ -213,11 +199,6 @@ void() tesla_arc = {
 #endif // FTE
 
     }
-    // No ent to arc to, tell arc parent to resume its search
-    // else if(self.tesla_arc_parent != world) {
-    //     // Don't wait, start immediately
-    //     self.tesla_arc_parent.tesla_next_arc_time = 0;
-    // }
     // Have self immediately arc again next frame
     self.tesla_next_arc_time = 0;
 }

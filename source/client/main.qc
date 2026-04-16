@@ -1028,10 +1028,6 @@ noref void(float width, float height, float menushown) CSQC_UpdateView =
 
 noref float(string cmd) CSQC_ConsoleCommand =
 {
-	//self = theplayer;
-	//if (!self)
-	//	return FALSE;
-
 	tokenize(cmd);
 	switch(argv(0))
 	{

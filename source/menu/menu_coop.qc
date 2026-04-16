@@ -148,7 +148,7 @@ void() Menu_Coop_Browse =
 	if (!sui_is_hovered("cbm_refresh") && !sui_is_hovered("cbm_back"))
 	{
 		sui_set_align([SUI_ALIGN_CENTER, SUI_ALIGN_END]);
-		sui_text([0, -30], MENU_TEXT_MEDIUM, "NOTE: Keyboard or gamepad is not supported for server selection", [1, 1, 1], 1, 0);
+		sui_text([0, -30], MENU_TEXT_MEDIUM, "NOTE: Keyboard or gamepad is not supported for server selection", MENU_COLOR_WHITE, 1, 0);
 	}
 
 	sui_pop_frame();
