@@ -1,21 +1,4 @@
-string menu_main_buttons[5] = {"mm_start", "mm_coop", "mm_options", "mm_credits", "mm_quit"};
-
-string() Menu_Main_GetDashboardName =
-{
-    switch(running_platform) {
-        case PLATFORM_WIN: return "Windows";
-        case PLATFORM_MAC: return "macOS";
-        case PLATFORM_LIN: return "Linux";
-        case PLATFORM_XBX: return "Xbox Dashboard";
-        case PLATFORM_AND: return "Android";
-        case PLATFORM_BSD: return "BSD";
-        case PLATFORM_IOS: return "iOS";
-        case PLATFORM_DOS: return "DOS";
-        default: return "System";
-    }
-
-    return "System";
-};
+string menu_main_buttons[4] = {"mm_start", "mm_coop", "mm_options", "mm_credits"};
 
 string(string prev_id) Menu_Main_GetNextButton =
 {
@@ -33,10 +16,6 @@ string(string prev_id) Menu_Main_GetNextButton =
             break;
         }
     }
-
-    // Wrap around to first if we selected Quit and this is WASM.
-    if (running_platform == PLATFORM_WEB && ret == "mm_quit")
-        ret = menu_main_buttons[0];
 
     return ret;
 };
@@ -58,10 +37,6 @@ string(string next_id) Menu_Main_GetPreviousButton =
         }
     }
 
-    // Wrap around to first if we selected Quit and this is WASM.
-    if (running_platform == PLATFORM_WEB && ret == "mm_quit")
-        ret = menu_main_buttons[menu_main_buttons.length - 1];
-
     return ret;
 };
 
@@ -77,12 +52,6 @@ void() Menu_Main =
     Menu_Button(3.25, "mm_options", "CONFIGURATION", "Tweak game-related options") ? current_menu = MENU_OPTIONS : 0;
     Menu_DrawDivider(4.25);
     Menu_Button(4.50, "mm_credits", "CREDITS", "NZ:P Team + Special Thanks") ? current_menu = MENU_CREDITS : 0;
-
-    // Don't have a Quit Game button on WASM
-    if (running_platform != PLATFORM_WEB) {
-        Menu_DrawDivider(5.50);
-        Menu_Button(5.75, "mm_quit", "QUIT GAME", sprintf("Return to %s", Menu_Main_GetDashboardName())) ? localcmd("quit\n") : 0;
-    }
 
     Menu_SocialBadge(1, "soc_youtube", "youtube.com/@nzpteam", 2);
     Menu_SocialBadge(2, "soc_bluesky", "@nzportable.bsky.social", 3);

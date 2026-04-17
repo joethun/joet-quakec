@@ -77,7 +77,7 @@ void(entity person, float slot, float ammo) Weapon_SetPlayerAmmoInSlot =
 // Weapon_PlayerHasWeapon(person, comparison, include_pap)
 // Checks to see if the Player is holding a weapon in any
 // of their three slots. `include_pap` dictates whether to
-// consider Pack-A-Punch'd varients. Returns 1, 2, 3 depending
+// consider Pack-a-Punch'd varients. Returns 1, 2, 3 depending
 // on the slot the weapon is contained in.
 //
 float(entity person, float comparison, float include_pap) Weapon_PlayerHasWeapon =

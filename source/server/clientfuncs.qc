@@ -25,12 +25,15 @@
 
 */
 
+// ============================================================
+// Engine Packet Helpers
+// ============================================================
+
 #ifdef FTE
 
 //
 // FTE_RunParticleEffect(target, particle_type, position, optional_field, optional_entity)
-// Fires a CSQC_EVENT_PARTICLE to clients specified (or
-// world for global).
+// Fires a CSQC_EVENT_PARTICLE to the target client, or all clients if target == world.
 //
 void(entity target, float particle_type, vector position, float optional_field, entity optional_entity) FTE_RunParticleEffect =
 {
@@ -53,21 +56,22 @@ void(entity target, float particle_type, vector position, float optional_field, 
 
 #endif // FTE
 
+// ============================================================
+// Game State / Round Events
+// ============================================================
+
 void() NotifyGameEnd =
 {
 #ifdef FTE
-
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
 	WriteByte(MSG_MULTICAST, EVENT_ENDGAME);
 	multicast('0 0 0', MULTICAST_ALL);
-
 #endif // FTE
 }
 
 void SetUpdate(entity client, float type, float val1, float val2, float val3)
 {
 #ifdef FTE
-
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
 	WriteByte(MSG_MULTICAST, EVENT_UPDATE);
 	WriteByte(MSG_MULTICAST, type);
@@ -82,12 +86,13 @@ void SetUpdate(entity client, float type, float val1, float val2, float val3)
 		msg_entity = client;
 		multicast('0 0 0', MULTICAST_ONE);
 	}
-
 #endif // FTE
 }
 
 #ifdef FTE
-void(float mode, entity to) ReportMapMode = {
+
+void(float mode, entity to) ReportMapMode =
+{
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
 	WriteByte(MSG_MULTICAST, EVENT_MAPTYPE);
 	WriteByte(MSG_MULTICAST, mode);
@@ -95,46 +100,9 @@ void(float mode, entity to) ReportMapMode = {
 	multicast('0 0 0', MULTICAST_ONE);
 }
 
-void(entity to, float type, float cost, float weapon) useprint = {
-	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, CSQC_EVENT_USEPRINT);
-	WriteByte(MSG_MULTICAST, type);
-	WriteLong(MSG_MULTICAST, cost);
-	WriteByte(MSG_MULTICAST, weapon);
-	msg_entity = to;
-	multicast('0 0 0', MULTICAST_ONE);
-}
-
-void(string track_name) songegg =
-{
-	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, CSQC_EVENT_MUSICSTREAM);
-	WriteString(MSG_MULTICAST, track_name);
-	multicast('0 0 0', MULTICAST_ALL);
-};
-#endif // FTE
-
-void(vector org) CallExplosion = {
-#ifndef FTE
-
-    WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, org_x);
-	WriteCoord (MSG_BROADCAST, org_y);
-	WriteCoord (MSG_BROADCAST, org_z);
-
-#else
-
-	FTE_RunParticleEffect(world, CSQC_PART_EXPLOSION, org, 0, world);
-
-#endif // FTE
-}
-
-#ifdef FTE
-
 //
-// FTE_IncrementRound()
-// Alerts all clients of new value for Rounds.
+// FTE_IncrementRound(round)
+// Alerts all clients of new round value.
 // -- RELIABLE --
 //
 void(float round) FTE_IncrementRound =
@@ -145,45 +113,54 @@ void(float round) FTE_IncrementRound =
 	multicast('0 0 0', MULTICAST_ALL_R);
 };
 
+void(string track_name) songegg =
+{
+	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
+	WriteByte(MSG_MULTICAST, CSQC_EVENT_MUSICSTREAM);
+	WriteString(MSG_MULTICAST, track_name);
+	multicast('0 0 0', MULTICAST_ALL);
+};
 
 #endif // FTE
+
+// ============================================================
+// Revive Icon State
+// ============================================================
 
 void(float player_index, float state) ChangeReviveIconState =
 {
 #ifdef FTE
-
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
 	WriteByte(MSG_MULTICAST, EVENT_REVIVECHANGE);
 	WriteByte(MSG_MULTICAST, player_index);
 	WriteByte(MSG_MULTICAST, state);
 	multicast('0 0 0', MULTICAST_ALL);
-
 #endif // FTE
 }
 
 void(float player_index) EnableReviveIcon =
 {
 #ifdef FTE
-
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
 	WriteByte(MSG_MULTICAST, EVENT_REVIVEON);
 	WriteByte(MSG_MULTICAST, player_index);
 	multicast('0 0 0', MULTICAST_ALL);
-
 #endif // FTE
 }
 
 void(float index) DisableReviveIcon =
 {
 #ifdef FTE
-
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
 	WriteByte(MSG_MULTICAST, EVENT_REVIVEOFF);
 	WriteByte(MSG_MULTICAST, index);
 	multicast('0 0 0', MULTICAST_ALL);
-
 #endif // FTE
 }
+
+// ============================================================
+// Weapon Effects
+// ============================================================
 
 void(entity who, float weapon) CL_SendWeaponFire =
 {
@@ -193,54 +170,100 @@ void(entity who, float weapon) CL_SendWeaponFire =
 	msg_entity = who;
 
 #ifdef FTE
-
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
 	WriteByte(MSG_MULTICAST, EVENT_WEAPONRECOIL);
-	WriteCoord (MSG_MULTICAST, weapon_recoil_x);
-	WriteCoord (MSG_MULTICAST, weapon_recoil_y);
-	WriteCoord (MSG_MULTICAST, weapon_recoil_z);
+	WriteCoord(MSG_MULTICAST, weapon_recoil_x);
+	WriteCoord(MSG_MULTICAST, weapon_recoil_y);
+	WriteCoord(MSG_MULTICAST, weapon_recoil_z);
 	multicast('0 0 0', MULTICAST_ONE);
-
 #else
-
 	WriteByte(MSG_ONE, SVC_WEAPONFIRE);
-	WriteLong(MSG_ONE, recoil_return_time); // FIXME: A long for this is overkill.
+	WriteLong(MSG_ONE, recoil_return_time);
 	WriteCoord(MSG_ONE, weapon_recoil_x);
 	WriteCoord(MSG_ONE, weapon_recoil_y);
 	WriteCoord(MSG_ONE, weapon_recoil_z);
-
 #endif // FTE
 
-	self.recoil_delay = 60/recoil_return_time + time;
+	self.recoil_delay = 60 / recoil_return_time + time;
 }
 
 //
-// nzp_hitmarker(who)
-// Tells client to draw hitmarker for "who". death_marker
-// indicates a red hitmarker.
+// nzp_hitmarker(who, death_marker)
+// Tells the client to draw a hitmarker; death_marker flags a red hitmarker.
 //
 void(entity who, float death_marker) nzp_hitmarker =
 {
-
 #ifdef FTE
-		
 	SetUpdate(who, UT_HM, death_marker, 0, 0);
-		
 #else
-
 	msg_entity = who;
 	WriteByte(MSG_ONE, SVC_HITMARK);
-		
+#endif // FTE
+};
+
+#ifdef FTE
+
+void(entity who) grenade_pulse =
+{
+	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
+	WriteByte(MSG_MULTICAST, EVENT_GRENADEPULSE);
+	msg_entity = who;
+	multicast('0 0 0', MULTICAST_ONE);
+}
+
+void(entity who) nzp_bettyprompt =
+{
+	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
+	WriteByte(MSG_MULTICAST, EVENT_BETTYPROMPT);
+	msg_entity = who;
+	multicast('0 0 0', MULTICAST_ONE);
+}
+
+void(entity to, float type, float cost, float weapon) useprint =
+{
+	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
+	WriteByte(MSG_MULTICAST, CSQC_EVENT_USEPRINT);
+	WriteByte(MSG_MULTICAST, type);
+	WriteLong(MSG_MULTICAST, cost);
+	WriteByte(MSG_MULTICAST, weapon);
+	msg_entity = to;
+	multicast('0 0 0', MULTICAST_ONE);
+}
+
 #endif // FTE
 
+// ============================================================
+// HUD / UI Packets
+// ============================================================
+
+void(vector org) CallExplosion =
+{
+#ifndef FTE
+	WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte(MSG_BROADCAST, TE_EXPLOSION);
+	WriteCoord(MSG_BROADCAST, org_x);
+	WriteCoord(MSG_BROADCAST, org_y);
+	WriteCoord(MSG_BROADCAST, org_z);
+#else
+	FTE_RunParticleEffect(world, CSQC_PART_EXPLOSION, org, 0, world);
+#endif // FTE
+}
+
+void(vector org) Effect_Fire =
+{
+#ifndef FTE
+	particle(self.origin, v_up * 8, 111, 0);
+#else
+	FTE_RunParticleEffect(world, CSQC_PART_FIRE, org, 0, world);
+#endif // FTE
 };
 
 #ifdef FTE
 
 //
-// FTE_BroadcastMessage(target, broadcast_type, broadcast_type, player_id)
-// Sends a CSQC Event to display text on the screen for the
-// desired clients. Use 'world' to send to everyone.
+// FTE_BroadcastMessage(target, broadcast_type, broadcast_time, player_id)
+// Sends a CSQC event to display on-screen text.
+// Use world to send to all clients.
 // -- RELIABLE --
 //
 void(entity target, float broadcast_type, float broadcast_time, float player_id) FTE_BroadcastMessage =
@@ -261,7 +284,7 @@ void(entity target, float broadcast_type, float broadcast_time, float player_id)
 
 //
 // nzp_screenflash(target, color, duration, type)
-// FTE equivalent of nzp_screenflash builtin.
+// FTE equivalent of the nzp_screenflash builtin.
 //
 void(entity target, float color, float duration, float type) nzp_screenflash =
 {
@@ -290,146 +313,13 @@ void(entity target, float low_frequency, float high_frequency, float duration) n
 	WriteShort(MSG_MULTICAST, low_frequency);
 	WriteShort(MSG_MULTICAST, high_frequency);
 	WriteShort(MSG_MULTICAST, duration);
-
 	msg_entity = target;
 	multicast('0 0 0', MULTICAST_ONE);
 };
 
-#endif // FTE
-
-void(float count) UpdatePlayerCount = {
-#ifdef FTE
-	if (count == 0)
-		return;
-
-	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, EVENT_PLAYERUPDATE);
-	WriteByte(MSG_MULTICAST, count);
-	multicast('0 0 0', MULTICAST_ALL);
-#endif // FTE
-}
-
-#ifdef FTE
-void(entity who) grenade_pulse =
-{
-
-	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, EVENT_GRENADEPULSE);
-	msg_entity = who;
-	multicast('0 0 0', MULTICAST_ONE);
-
-}
-#endif // FTE
-
-#ifdef FTE
-
-void(entity who) nzp_bettyprompt =
-{
-	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, EVENT_BETTYPROMPT);
-	msg_entity = who;
-	multicast('0 0 0', MULTICAST_ONE);
-}
-
-#endif // FTE
-
-#ifdef FTE
-
 //
-// FTE_InterpolatePunchAngle(person)
-// Punch Angle interpolation from our native sourceports,
-// handled in SSQC for FTE.
-//
-void(entity person) FTE_InterpolatePunchAngle =
-{
-	vector last_punchangle = person.punchangle;
-	float lerp_factor = 0.9*frametime; // It's fine that this is server-dependent, since it's server-executed..
-
-	// Early-out: Let's not spam fabs calls if we have no punchangle.
-	if (person.punchangle_x == 0 && person.punchangle_y == 0)
-		return;
-
-	// Begin interpolation.
-	for(int i = 0; i < 2; i++) {
-		float difference = last_punchangle[i] * lerp_factor;
-
-		if (fabs(person.punchangle[i]) > 0.01) {
-			if (person.punchangle[i] >= difference)
-				person.punchangle[i] -= difference;
-			else if (person.punchangle[i] <= -difference)
-				person.punchangle[i] -= difference;
-			else
-				person.punchangle[i] = 0;
-		} else {
-			person.punchangle[i] = 0;
-		}
-	}
-};
-
-//
-// FTE_UpdateDynamicFOV(person)
-// Context-sensitive adjustment of client's viewzoom
-// factor.
-//
-void(entity person) FTE_UpdateDynamicFOV =
-{
-	// Early-out if client is not zoomed in at all
-	// and viewzoom is correctly applied
-	if (!person.zoom && person.viewzoom == 1)
-	 	return;
-
-	// Calculate viewzoom FOV differential
-	float viewzoom_differential = 1 - (0.018*GetWeaponZoomAmount(person.weapon));
-	float has_scoped_weapon = WepDef_HasSniperScore(person.weapon);
-
-	// Sniper scope-in: Force-set as soon as the Scope draws
-	if (person.zoom == 2) {
-		person.viewzoom = viewzoom_differential;
-		return;
-	}
-	// Force-set viewzoom back to one if client is holding a scoped
-	// weapon and need their viewzoom adjusted.
-	else if (person.viewzoom != 1 && has_scoped_weapon) {
-		person.viewzoom = 1;
-		return;
-	} else if (has_scoped_weapon) {
-		return;
-	}
-
-	// Utilize a sigmoid curve to minimize motion sickness.
-	float sigmoid_input, sigmoid_output;
-	float viewzoom_adjustment_rate;
-
-	// If we're Aiming down the Sight and viewzoom has not reached it's end
-	if (person.zoom == 1 && person.viewzoom != viewzoom_differential) {
-		sigmoid_input = (person.viewzoom - viewzoom_differential) * 10;
-		sigmoid_output = 1 / (1 + exp(-sigmoid_input));
-		viewzoom_adjustment_rate = 0.06 * (sigmoid_output + 0.5) * (frametime*20);
-
-		if (person.viewzoom > viewzoom_differential) {
-			person.viewzoom -= viewzoom_adjustment_rate;
-			if (person.viewzoom < viewzoom_differential)
-				person.viewzoom = viewzoom_differential;
-		} else {
-			person.viewzoom = viewzoom_differential;
-		}
-	}
-	// If we're not Aiming down the Sight and viewzoom is not reset
-	else if (person.zoom != 1 && person.viewzoom != 1) {
-		// We can zoom out at a constant rate without consequence.
-		person.viewzoom += 0.85 * frametime;
-		if (person.viewzoom > 1)
-			person.viewzoom = 1;
-	}
-};
-
-#endif // FTE
-
-#ifdef FTE
-
-//
-// nzp_poweruptoast()
-// FTE equivalent of nzp_poweruptoast builtin.
+// nzp_poweruptoast(powerup_id)
+// FTE equivalent of the nzp_poweruptoast builtin.
 //
 void(float powerup_id) nzp_poweruptoast =
 {
@@ -441,7 +331,7 @@ void(float powerup_id) nzp_poweruptoast =
 
 //
 // nzp_setplayername(target, player_name)
-// FTE equivalent of nzp_setplayername builtin.
+// FTE equivalent of the nzp_setplayername builtin.
 //
 void(entity target, string player_name) nzp_setplayername =
 {
@@ -452,28 +342,33 @@ void(entity target, string player_name) nzp_setplayername =
 	multicast('0 0 0', MULTICAST_ONE);
 };
 
-void(string chaptertitle, string location, string date, string person, entity who) WorldText = {
+void(entity who, float version) nzp_setdoubletapver =
+{
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, EVENT_WORLDDATA);
-	WriteString(MSG_MULTICAST, chaptertitle);
-	WriteString(MSG_MULTICAST, location);
-	WriteString(MSG_MULTICAST, date);
-	WriteString(MSG_MULTICAST, person);
+	WriteByte(MSG_MULTICAST, EVENT_DOUBLETAPUPDATE);
+	WriteByte(MSG_MULTICAST, version);
+	msg_entity = who;
+	multicast('0 0 0', MULTICAST_ONE);
+};
 
-	if (player_count == 1) {
-		msg_entity = who;
-		multicast('0 0 0', MULTICAST_ONE);
-	} else {
-		multicast('0 0 0', MULTICAST_ALL);
-	}
-}
 #endif // FTE
 
-void (float achievement_id, optional entity who) GiveAchievement =
+void(float count) UpdatePlayerCount =
 {
-	// Achievements have been removed, adding back TBD
-	return;
+#ifdef FTE
+	if (count == 0)
+		return;
+
+	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
+	WriteByte(MSG_MULTICAST, EVENT_PLAYERUPDATE);
+	WriteByte(MSG_MULTICAST, count);
+	multicast('0 0 0', MULTICAST_ALL);
+#endif // FTE
 }
+
+// ============================================================
+// Chat
+// ============================================================
 
 #ifdef FTE
 
@@ -498,84 +393,177 @@ void CSQC_SendChatMessageToPlayer(float player_id, string message, entity who) =
 	multicast('0 0 0', MULTICAST_ONE);
 };
 
+#endif // FTE
+
+// ============================================================
+// World Text
+// ============================================================
+
+#ifdef FTE
+
+void(string chaptertitle, string location, string date, string person, entity who) WorldText =
+{
+	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
+	WriteByte(MSG_MULTICAST, EVENT_WORLDDATA);
+	WriteString(MSG_MULTICAST, chaptertitle);
+	WriteString(MSG_MULTICAST, location);
+	WriteString(MSG_MULTICAST, date);
+	WriteString(MSG_MULTICAST, person);
+
+	if (player_count == 1) {
+		msg_entity = who;
+		multicast('0 0 0', MULTICAST_ONE);
+	} else {
+		multicast('0 0 0', MULTICAST_ALL);
+	}
+}
+
+#endif // FTE
+
+// ============================================================
+// Player Networking
+// ============================================================
+
+#ifdef FTE
+
 /*
 =================
 Player_SendEntity
-
-    Networks the player info
+    Networks the player info.
 =================
 */
-float Player_SendEntity( entity ePVEnt, float flChanged ) {
+float Player_SendEntity(entity ePVEnt, float flChanged)
+{
 	self.ping = infokeyf(self, "ping");
 
-    WriteByte( MSG_ENTITY, 1 );
-    WriteCoord( MSG_ENTITY, self.origin_x ); // Position X
-    WriteCoord( MSG_ENTITY, self.origin_y ); // Position Y
-    WriteCoord( MSG_ENTITY, self.origin_z ); // Position Z
-    WriteAngle( MSG_ENTITY, self.angles_x ); // Angle X
-    WriteAngle( MSG_ENTITY, self.angles_y ); // Angle Y
-    WriteAngle( MSG_ENTITY, self.angles_z ); // Angle Z
-    WriteShort( MSG_ENTITY, self.velocity_x ); // Velocity X
-    WriteShort( MSG_ENTITY, self.velocity_y ); // Velocity X
-    WriteShort( MSG_ENTITY, self.velocity_z ); // Velocity X
-	WriteByte( MSG_ENTITY, self.playernum ); // Player ID
-	WriteShort( MSG_ENTITY, self.modelindex ); // Player Model
-	WriteByte( MSG_ENTITY, self.frame ); // Player's Frame
-	WriteShort( MSG_ENTITY, self.movetype ); // Player Movetype
-    WriteShort( MSG_ENTITY, self.flags ); // Flags, important for physics
-	WriteByte( MSG_ENTITY, self.stance ); // Player Stance
-	WriteFloat( MSG_ENTITY, self.points ); // Player Score
-	WriteShort( MSG_ENTITY, self.kills ); // Player Kills
-	WriteShort( MSG_ENTITY, self.headshots ); // Player Headshots
-	WriteShort( MSG_ENTITY, self.downs ); // Player Downs
-	WriteShort( MSG_ENTITY, self.revives ); // Player Revives
-	WriteByte( MSG_ENTITY, self.is_in_menu ); // Player is in a Menu State
-	WriteByte( MSG_ENTITY, self.is_spectator ); // Player is spectating
-	WriteShort( MSG_ENTITY, self.ping ); // Player's latency to the server in ms
-    return TRUE;
+	WriteByte(MSG_ENTITY, 1);
+	WriteCoord(MSG_ENTITY, self.origin_x);
+	WriteCoord(MSG_ENTITY, self.origin_y);
+	WriteCoord(MSG_ENTITY, self.origin_z);
+	WriteAngle(MSG_ENTITY, self.angles_x);
+	WriteAngle(MSG_ENTITY, self.angles_y);
+	WriteAngle(MSG_ENTITY, self.angles_z);
+	WriteShort(MSG_ENTITY, self.velocity_x);
+	WriteShort(MSG_ENTITY, self.velocity_y);
+	WriteShort(MSG_ENTITY, self.velocity_z);
+	WriteByte(MSG_ENTITY, self.playernum);
+	WriteShort(MSG_ENTITY, self.modelindex);
+	WriteByte(MSG_ENTITY, self.frame);
+	WriteShort(MSG_ENTITY, self.movetype);
+	WriteShort(MSG_ENTITY, self.flags);
+	WriteByte(MSG_ENTITY, self.stance);
+	WriteFloat(MSG_ENTITY, self.points);
+	WriteShort(MSG_ENTITY, self.kills);
+	WriteShort(MSG_ENTITY, self.headshots);
+	WriteShort(MSG_ENTITY, self.downs);
+	WriteShort(MSG_ENTITY, self.revives);
+	WriteByte(MSG_ENTITY, self.is_in_menu);
+	WriteByte(MSG_ENTITY, self.is_spectator);
+	WriteShort(MSG_ENTITY, self.ping);
+	return TRUE;
 }
 
-void(entity who, float version) nzp_setdoubletapver =
+#endif // FTE
+
+// ============================================================
+// Per-Frame Client Updates (FTE only)
+// ============================================================
+
+#ifdef FTE
+
+//
+// FTE_InterpolatePunchAngle(person)
+// Punchangle interpolation handled in SSQC for FTE.
+//
+void(entity person) FTE_InterpolatePunchAngle =
 {
-	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, EVENT_DOUBLETAPUPDATE);
-	WriteByte(MSG_MULTICAST, version);
-	msg_entity = who;
-	multicast('0 0 0', MULTICAST_ONE);
+	// Early-out: skip fabs calls when punchangle is already zero.
+	if (person.punchangle_x == 0 && person.punchangle_y == 0)
+		return;
+
+	// It's fine that lerp_factor is server-framerate-dependent since this runs server-side.
+	float lerp_factor = 0.9 * frametime;
+
+	for (int i = 0; i < 2; i++) {
+		float difference = person.punchangle[i] * lerp_factor;
+
+		if (fabs(person.punchangle[i]) > 0.01) {
+			if (person.punchangle[i] >= difference)
+				person.punchangle[i] -= difference;
+			else if (person.punchangle[i] <= -difference)
+				person.punchangle[i] -= difference;
+			else
+				person.punchangle[i] = 0;
+		} else {
+			person.punchangle[i] = 0;
+		}
+	}
+};
+
+//
+// FTE_UpdateDynamicFOV(person)
+// Context-sensitive adjustment of the client's viewzoom factor.
+//
+void(entity person) FTE_UpdateDynamicFOV =
+{
+	// Early-out: nothing to do if not zoomed and viewzoom is already correct.
+	if (!person.zoom && person.viewzoom == 1)
+		return;
+
+	float viewzoom_differential = 1 - (0.018 * GetWeaponZoomAmount(person.weapon));
+	float has_scoped_weapon = WepDef_HasSniperScore(person.weapon);
+
+	// Sniper scope-in: force-set viewzoom as soon as the scope draws.
+	if (person.zoom == 2) {
+		person.viewzoom = viewzoom_differential;
+		return;
+	}
+
+	// Scoped weapon but not zoomed in: reset viewzoom to 1.
+	if (has_scoped_weapon) {
+		if (person.viewzoom != 1)
+			person.viewzoom = 1;
+		return;
+	}
+
+	// Utilize a sigmoid curve to minimize motion sickness during ADS.
+	if (person.zoom == 1 && person.viewzoom != viewzoom_differential) {
+		float sigmoid_input = (person.viewzoom - viewzoom_differential) * 10;
+		float sigmoid_output = 1 / (1 + exp(-sigmoid_input));
+		float viewzoom_adjustment_rate = 0.06 * (sigmoid_output + 0.5) * (frametime * 20);
+
+		if (person.viewzoom > viewzoom_differential) {
+			person.viewzoom -= viewzoom_adjustment_rate;
+			if (person.viewzoom < viewzoom_differential)
+				person.viewzoom = viewzoom_differential;
+		} else {
+			person.viewzoom = viewzoom_differential;
+		}
+	} else if (person.zoom != 1 && person.viewzoom != 1) {
+		// Zoom out at a constant rate.
+		person.viewzoom += 0.85 * frametime;
+		if (person.viewzoom > 1)
+			person.viewzoom = 1;
+	}
 };
 
 #endif // FTE
 
-void(vector org) Effect_Fire =
-{
+// ============================================================
+// Utility Functions
+// ============================================================
 
-#ifndef FTE
-
-	particle (self.origin, v_up*8, 111, 0);
-
-#else
-
-	FTE_RunParticleEffect(world, CSQC_PART_FIRE, org, 0, world);
-
-#endif // FTE
-
-};
-
-// *****************************************
-// Unrelated to engine, but custom functions
-// *****************************************
-
-// "Removes" an entity that is placed back on restart.
+// "Removes" an entity in a way that can be restored on restart.
 void(entity ent) Ent_FakeRemove =
 {
 	ent.entity_removed = true;
-	ent.oldmodel = ent.model;
+	ent.oldmodel  = ent.model;
 	ent.oldorigin = ent.origin;
-	ent.bbmins = ent.mins;
-	ent.bbmaxs = ent.maxs;
+	ent.bbmins    = ent.mins;
+	ent.bbmaxs    = ent.maxs;
 	ent.sprintflag = ent.solid;
-	ent.use = SUB_Null;
-	ent.think = SUB_Null;
+	ent.use       = SUB_Null;
+	ent.think     = SUB_Null;
 	ent.nextthink = 0;
 
 	ent.solid = SOLID_NOT;
@@ -583,50 +571,46 @@ void(entity ent) Ent_FakeRemove =
 	setmodel(ent, "");
 }
 
-void(string modelname) Precache_Set = // Precache model, and set myself to it
+// Precaches a model and sets self to use it.
+void(string modelname) Precache_Set =
 {
 	modelname = Compat_ConvertOldAssetPath(modelname);
-    precache_model(modelname);
-    setmodel(self, modelname);
+	precache_model(modelname);
+	setmodel(self, modelname);
 };
 
+// Returns a random float in [-1, 1].
 float() crandom =
 {
-	return 2*(random() - 0.5);
+	return 2 * (random() - 0.5);
 }
 
+// Returns true if 'them' is looking at 'me'.
 float(entity them, entity me) PlayerIsLooking =
 {
-
 #ifdef QUAKEC_TEST
-
 	return true;
-
 #else
-
 	float ret = false;
 	float old_solid = me.solid;
 	me.solid = SOLID_BBOX;
 
 #ifdef FTE
-	// Temporarily make the target visible to the tracer's dimension_hit
-	// so the traceline can actually collide with them.
+	// Temporarily expose the target to the tracer's dimension_hit
+	// so the traceline can collide with it.
 	float old_dimension_solid = me.dimension_solid;
 	me.dimension_solid = HITBOX_DIM_LIMBS | HITBOX_DIM_ZOMBIES | HITBOX_DIM_PLAYERS;
 #endif // FTE
 
 	setorigin(me, me.origin);
 
-	vector source;
-	makevectors (them.v_angle);
-	source = them.origin + them.view_ofs;
+	makevectors(them.v_angle);
+	vector source = them.origin + them.view_ofs;
 
-	// Standard 'are we facing' test..
-	traceline(source, source + v_forward*50, 0, them);
+	traceline(source, source + v_forward * 50, 0, them);
 
-	// We're inside of an object.. is it the target?
 	if (trace_startsolid) {
-		if (v_forward*normalize(me.origin - them.origin) > 0.7)
+		if (v_forward * normalize(me.origin - them.origin) > 0.7)
 			ret = true;
 	} else if (trace_ent == me) {
 		ret = true;
@@ -640,7 +624,5 @@ float(entity them, entity me) PlayerIsLooking =
 
 	setorigin(me, me.origin);
 	return ret;
-
 #endif // QUAKEC_TEST
-
 };

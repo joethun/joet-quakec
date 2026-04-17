@@ -174,52 +174,6 @@ void() Menu_MapFinder =
 	}
 };
 
-//
-// Menu_GetPlatform()
-// Parses sys_platform and returns
-// a valid platform from the platform
-// enums.
-//
-float() Menu_GetPlatform =
-{
-	string sys_platform = cvar_string("sys_platform");
-
-	switch(sys_platform) {
-		case "Web": 
-			return PLATFORM_WEB;
-		case "WinCE":
-		case "WinRT":
-		case "Win":
-		case "Win16":
-		case "Cygwin":
-			return PLATFORM_WIN;
-		case "Xbox":
-			return PLATFORM_XBX;
-		case "Android":
-			return PLATFORM_AND;
-		case "Linux":
-			return PLATFORM_LIN;
-		case "iOSSim":
-		case "iOS":
-			return PLATFORM_IOS;
-		case "Mac":
-		case "Apple":
-		case "MacOS X":
-			return PLATFORM_MAC;
-		case "FreeBSD":
-		case "OpenBSD":
-		case "NetBSD":
-		case "BSD":
-			return PLATFORM_BSD;
-		case "Dos":
-			return PLATFORM_DOS;
-		default:
-			return PLATFORM_UNK;
-	}
-
-	return PLATFORM_UNK;
-}
-
 void() m_init =
 {
 	registercommand("togglemenu2");
@@ -244,9 +198,6 @@ void() m_init =
 	// Load the font Kerning Map.
 	InitKerningMap();
 
-	// Get Platform Information
-	running_platform = Menu_GetPlatform();
-
 	localcmd("com_protocolname NZP-JOET\n");
 
 	// Init Cvars
@@ -258,6 +209,9 @@ void() m_init =
 	autocvar(cl_hitmarkers, 1);
 	autocvar(cl_textopacity, 0);
 	autocvar(cl_colorblind, 0);
+	autocvar(cl_mboxname, 0);
+	autocvar(cl_papnames, 0);
+	autocvar(cl_zombiecounter, 0);
 
 	autocvar(sv_gamemode, 0);
 	autocvar(sv_difficulty, 0);

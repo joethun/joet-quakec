@@ -97,7 +97,7 @@ string(float wep, float weapon_tier) GetWeaponName =
 			weapon_name = "Gewehr 43";
 			break;
 		case W_COMPRESSOR:
-			weapon_name = "Meta Goober Gooner 43";
+			weapon_name = "G115 Compressor";
 			break;
 		case W_KAR_SCOPE:
 			weapon_name = "Scoped Kar 98k";
@@ -224,7 +224,7 @@ string(float wep, float weapon_tier) GetWeaponName =
 	}
 
 	if (game_modifier_packapunch_uses_tiers == true && weapon_tier > 0) {
-		// Append the Pack-A-Punch tier to the name if tiers are enabled.
+		// Append the Pack-a-Punch tier to the name if tiers are enabled.
 		if (EqualPapWeapon(wep) == wep) {
 			// Roman numerals for tiers 1-3
 			string tier_numerals[] = { "", "I", "II", "III" };
@@ -5070,7 +5070,7 @@ float(float weapon, float did_lunge, float has_bowie) WepDef_GetMeleeAnimDuratio
 //
 // WepDef_DoesNotPlayUpgradedSound(weapon)
 // Returns true if the weapon should not play
-// the special Pack-A-Punch fire sound over
+// the special Pack-a-Punch fire sound over
 // it's standard weapon fire.
 //
 float(float weapon) WepDef_DoesNotPlayUpgradedSound =

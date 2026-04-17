@@ -35,7 +35,7 @@ void(string message) Test_Skip;
 
 //
 // Test_Weapons_Gewehr_MagazineSize()
-// Asserts the Gewehr and it's Pack-A-Punched
+// Asserts the Gewehr and it's Pack-a-Punched
 // form have the correct magazine sizes.
 // (https://github.com/nzp-team/nzportable/issues/1102)
 //

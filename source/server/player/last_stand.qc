@@ -449,14 +449,6 @@ void(entity client) LastStand_Begin =
     entity old_self = self;
     self = client;
 
-	// 'Pro Gamer Move' achievement.
-	if (rounds <= 1 && self.weapons[0].weapon_magazine == 0 && 
-	self.weapons[0].weapon_magazine_left == 0 && self.weapons[0].weapon_reserve == 0 && 
-	self.weapons[1].weapon_magazine == 0 && self.weapons[1].weapon_magazine_left == 0 && 
-	self.weapons[1].weapon_reserve == 0) {
-		GiveAchievement(9, self);
-	}
-
 	// Aim out to reset zoom values
 	W_AimOut();
 
@@ -514,9 +506,6 @@ void(entity client) LastStand_Begin =
     else {
         LastStand_SpawnReviveTrigger(self);
     }
-
-    // Reset the tracker for the achievement "No Perks? No Problem"
-	self.ach_tracker_npnp = 0;
 
     // Take away Perks, Mule Kick weapon, etc.
     LastStand_Penalize(self);

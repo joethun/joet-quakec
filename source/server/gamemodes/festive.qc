@@ -157,7 +157,7 @@ void() Gamemode_Festive_Frame =
             double_tap_machines = find(double_tap_machines, classname, "perk_double");
         }
 
-        // Enable weapon upgrade Power-Up if Pack-A-Punch isn't present..
+        // Enable weapon upgrade Power-Up if Pack-a-Punch isn't present..
         if (find(world, classname, "perk_pap") == world) {
             game_modifier_powerup_weapon_upgrade = true;
         }

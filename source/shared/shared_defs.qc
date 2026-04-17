@@ -68,8 +68,6 @@
 
 #define CSQC_EVENT_MUSICSTREAM			15	// <string> track_name
 
-#define CSQC_EVENT_GIVEACHIEVEMENT		16 	// <byte> achievement_index
-
 #define CSQC_EVENT_PLAYERNAME			17 	// <string> player_name
 
 #define CSQC_EVENT_SCREENFLASH			18 	// <byte> screenflash_color
@@ -349,6 +347,7 @@ float 	map_compatibility_mode;
 
 #define STAT_GUNGAME_IDX		76
 #define STAT_GUNGAME_SCOREGOAL	77
+#define STAT_REMAINING_ZOMBIES	78
 
 // Game Modes
 #define GAMEMODE_CLASSIC        0

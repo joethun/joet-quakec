@@ -159,25 +159,18 @@ noref void(float apiver, string enginename, float enginever) CSQC_Init =
 	autocvar(cl_hitmarkers, 1);
 	autocvar(cl_textopacity, 0.20);
 	autocvar(cl_colorblind, 0);
+	autocvar(cl_mboxname, 0);
+	autocvar(cl_papnames, 0);
+	autocvar(cl_zombiecounter, 0);
 
 	autocvar(scr_playerdebuginfo, 0);
 	autocvar(scr_playerdebuginfo_x, 64);
 	autocvar(scr_playerdebuginfo_y, 6);
 
-	hud_round_color = '20 0 0';
+	hud_round_color = '107 0 0';
 	hud_perk_orientation = HUD_PERK_ORI_DEFAULT;
 
-	// Runtime check if we're running this in WebASM/WebGL.
-	if (cvar_string("sys_platform") == "Web")
-		platform_is_web = true;
-	else
-		platform_is_web = false;
-
 	cvar_set("com_protocolname", "NZP-JOET");
-
-	if (platform_is_web) {
-		hud_round_color = '107 0 0';
-	}
 
 	// cvars for custom settings
 	autocvar(cl_cinematic, 0);
@@ -214,13 +207,9 @@ noref void(float apiver, string enginename, float enginever) CSQC_Init =
 	stopwatch_round_sec = stopwatch_round_min = stopwatch_round_hr = 0;
 	stopwatch_round_starttime = time;
 
-	// FTE via emscripten (for the fault of the browser?) bugs out
-	// when using mousewheel. So as a hack, just unbind the mouse
-	// wheel. :/
-	if (platform_is_web) {
-		localcmd("unbind MWHEELUP; unbind MWHEELDOWN\n");
-		localcmd("bind 1 +button4; bind 2 +button4\n");
-	}
+	// FTE via emscripten bugs out when using mousewheel, so unbind it.
+	localcmd("unbind MWHEELUP; unbind MWHEELDOWN\n");
+	localcmd("bind 1 +button4; bind 2 +button4\n");
 
 	//
 	// get the build date
@@ -246,12 +235,9 @@ noref void(float apiver, string enginename, float enginever) CSQC_Init =
 
 noref void() CSQC_WorldLoaded =
 {
-	if (need_vid_reload == true || platform_is_web == true) {
-		need_vid_reload = false;
-		localcmd("vid_reload\n");
-	}
+	need_vid_reload = false;
+	localcmd("vid_reload\n");
 
-	Achievement_Init();
 	Particles_Init();
 	nameprint_time = time + 8;
 
@@ -1252,22 +1238,7 @@ noref void() CSQC_Parse_Event =
 			break;
 		case CSQC_EVENT_MUSICSTREAM:
 			string track_name = readstring();
-			string track_extension;
-			if (platform_is_web)
-				track_extension = ".wav";
-			else
-				track_extension = ".ogg";
-
-			localsound_enhanced(strcat("tracks/", track_name, track_extension), CHAN_MUSIC, 0.85);
-			break;
-		case CSQC_EVENT_GIVEACHIEVEMENT:
-			float achievement_id = readbyte();
-
-			// Don't unlock an existing achievement or any if on emscripten.
-			if (achievements[achievement_id].unlocked || platform_is_web)
-				return;
-
-			Achievement_Unlock(achievement_id);
+			localsound_enhanced(strcat("tracks/", track_name, ".wav"), CHAN_MUSIC, 0.85);
 			break;
 		case CSQC_EVENT_PLAYERNAME:
 			character_name = readstring();
@@ -1283,11 +1254,10 @@ noref void() CSQC_Parse_Event =
 			screenflash_starttime = time;
 			break;
 		case CSQC_EVENT_RUMBLE:
+			// Rumble is not supported on WebGL.
 			float low_frequency = readshort();
 			float high_frequency = readshort();
 			float duration = readshort();
-			if (cvar("in_rumbleenabled"))
-				gp_rumble(last_input_deviceid, low_frequency, high_frequency, duration);
 			break;
 		case CSQC_EVENT_SETGAMEMODE:
 			active_gamemode = readbyte();

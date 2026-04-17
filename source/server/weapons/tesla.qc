@@ -228,7 +228,7 @@ void() W_FireTesla =
 	self.dimension_hit = HITBOX_DIM_ZOMBIES;
 #endif // FTE
 
-    // Initial Lightning is Red when Pack-A-Punched
+    // Initial Lightning is Red when Pack-a-Punched
     if (IsPapWeapon(self.weapon)) {
 
 #ifdef FTE

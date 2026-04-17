@@ -1,7 +1,7 @@
 /*
 	server/entities/pack_a_punch.qc
 
-	Pack-A-Punch Entity Logic
+	Pack-a-Punch Entity Logic
 
 	Copyright (C) 2021-2024 NZ:P Team
 
@@ -77,7 +77,7 @@ void() PAP_FlagMoveUp =
 //
 // PAP_WeaponFallIntoMachine()
 // Slowy reel the Upgraded Weapon back into
-// the Pack-A-Punch.
+// the Pack-a-Punch.
 //
 void() PAP_WeaponFallIntoMachine = 
 {
@@ -100,7 +100,7 @@ void() PAP_WeaponStopMoving =
 
 //
 // PAP_Reset()
-// Allow the Pack-A-Punch to Upgrade another Weapon.
+// Allow the Pack-a-Punch to Upgrade another Weapon.
 //
 void() PAP_Reset =
 {
@@ -175,7 +175,7 @@ void(entity pap, entity buyer, float machine_cost) PAP_UpgradeWeapon =
 
 	Player_RemoveScore(self, machine_cost);
 
-	// Instant Pack-A-Punch -- just take their money and assign their weapon.
+	// Instant Pack-a-Punch -- just take their money and assign their weapon.
 	if (game_modifier_packapunch_is_instant) {
 		float instant_weapon_tier = 0;
 
@@ -264,7 +264,7 @@ void(entity pap, entity buyer, float machine_cost) PAP_UpgradeWeapon =
 
 //
 // PAP_Touch()
-// Touch/Interaction function for Clients + Pack-A-Punch.
+// Touch/Interaction function for Clients + Pack-a-Punch.
 //
 void() PAP_Touch =
 {
@@ -335,7 +335,7 @@ void() PAP_Touch =
 			Weapon_GiveWeapon(EqualPapWeapon(tempe.weapon), 0, 0, tempe.boxstatus);
 			self = tempe;
 
-			// Prep Pack-A-Punch to Upgrade again
+			// Prep Pack-a-Punch to Upgrade again
 			self.think = PAP_Reset;
 			self.nextthink = time + 0.1;
 		}
@@ -355,7 +355,7 @@ void() PAP_Click =
 
 //
 // PAP_TurnOn()
-// Turns on the Pack-A-Punch machine.
+// Turns on the Pack-a-Punch machine.
 //
 void() PAP_TurnOn =
 {
@@ -369,7 +369,7 @@ void() PAP_TurnOn =
 
 //
 // PAP_Initialize()
-// Turns the Pack-A-Punch On if the Power is on.
+// Turns the Pack-a-Punch On if the Power is on.
 //
 void() PAP_Initalize =
 {
@@ -381,7 +381,7 @@ void() PAP_Initalize =
 
 //
 // perk_pap()
-// QuakeC Spawn Function for Pack-A-Punch Machine
+// QuakeC Spawn Function for Pack-a-Punch Machine
 //
 void() perk_pap = 
 { 

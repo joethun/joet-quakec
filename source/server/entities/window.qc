@@ -265,8 +265,6 @@ void() Window_Damage =
 		window_anim5_1();
 	else if(self.health == 0)
 		window_anim6_1();
-
-	ach_tracker_spin = 1;
 };
 
 void() Rebuild_Anims =

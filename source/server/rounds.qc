@@ -157,10 +157,6 @@ void() EndRound =
 	if (rounds >= 10) {
 		entity players = find(world, classname, "player");
 		while (players != world) {
-			if (players.ach_tracker_abst == 0)
-				GiveAchievement(8, players);
-			if (rounds >= 16 && players.ach_tracker_npnp == 0)
-				GiveAchievement(5, players);
 			players = find(players, classname, "player");
 		}
 	}
@@ -268,9 +264,6 @@ void() NewRound =
 	Remaining_Zombies = Total_Zombies = getZombieTotal();
 
 	switch(rounds) {
-		case 5: 	GiveAchievement(0); break;
-		case 10: 	GiveAchievement(1); break;
-		case 15: 	GiveAchievement(2); break;
 		default: 	break;
 	}
 
@@ -286,10 +279,6 @@ void() NewRound =
 
 	// Actually start the timer
 	zombie_spawn_timer = 2 + time;
-
-	if (rounds >= 10 && ach_tracker_spin == 0) {
-		GiveAchievement(10);
-	}
 
 	// Refresh Electric Traps
 	entity zaps = find(world, classname, "zapper_switch");

@@ -25,7 +25,6 @@
 		Boston, MA  02111-1307, USA
 
 */
-void (float achievement_id, optional entity who) GiveAchievement;
 void(entity client) LastStand_Begin;
 void() Gamemode_GetUp;
 void(entity attacker, float death_style) Gamemode_DieHandler;
@@ -309,7 +308,6 @@ void(entity victim, entity attacker, float damage, float d_style) DamageHandler 
 		if (d_style == DMG_TYPE_EXPLOSIVE && damage != 0) {
 			if (victim.health > 0 && victim.crawling == 2) {
 				makeCrawler(victim);
-				GiveAchievement(3, attacker);
 			}
 		}
 
@@ -325,9 +323,6 @@ void(entity victim, entity attacker, float damage, float d_style) DamageHandler 
 			return;
 		}
 
-		// Abstinence Program
-		victim.ach_tracker_abst = 1;
-		
 		victim.health -= damage;
 
 		// Determine how long to wait before regenerating based on our Health ratio
@@ -365,16 +360,6 @@ void(entity victim, entity attacker, float damage, float d_style) DamageHandler 
 		} else {
 			Sound_PlaySound(victim, "sounds/machines/elec_shock.wav", SOUND_TYPE_PLAYER_VOICE, SOUND_PRIORITY_PLAYALWAYS);
 		}
-
-		if (victim.sprinting) {
-			old_self = self;
-			self = victim;
-			W_SprintStop();
-			self = old_self;
-		}
-
-		victim.sprint_delay = time + 0.75;
-
 		// Was 20 for.. some reason.
 		if (victim.health <= 1)
 		{
@@ -530,12 +515,6 @@ void(entity inflictor, entity attacker, float damage2, float mindamage, float ra
 		else if (ent.takedamage && ent.classname != "ai_zombie_head" && ent.classname != "ai_zombie_larm" && ent.classname != "ai_zombie_rarm")
 		{
 			if (mapname == "ndu" && ent.classname == "ai_zombie" && inflictor.classname == "explosive_barrel") {
-				ach_tracker_barr++;
-
-				if (ach_tracker_barr >= 15) 
-				{
-					GiveAchievement(13);
-				}
 			}
 
 			// cypress -- accurate explosive damage

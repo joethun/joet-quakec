@@ -193,7 +193,6 @@ void () WallWeapon_TouchTrigger =
 				return;
 			}
 
-			other.ach_tracker_coll++;
 
 			// Set the weapon's ammo to the max capacity.
 			Weapon_SetPlayerAmmoInSlot(other, slot, wall_ammo);
@@ -269,7 +268,6 @@ void () WallWeapon_TouchTrigger =
 		}
 		else
 		{
-			other.ach_tracker_coll++;
 			other.reload_delay = 0;
 			Sound_PlaySound(other, "sounds/misc/ching.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
 			//other.boughtweapon = true;
@@ -303,7 +301,6 @@ void () WallWeapon_TouchTrigger =
 		}
 		else
 		{
-			other.ach_tracker_coll++;
 			other.reload_delay = 0;
 			Sound_PlaySound(other, "sounds/misc/ching.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
 			//other.boughtweapon = true;
@@ -334,7 +331,6 @@ void () WallWeapon_TouchTrigger =
 					Player_RemoveScore(other, wcost);
 					Sound_PlaySound(other, "sounds/misc/ching.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
 					Sound_PlaySound(other, "sounds/weapons/knife/bowie.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
-					other.ach_tracker_coll++;
 					if (self.enemy || self.target2 != "")
 					{
 						SUB_UseTargets();
@@ -367,8 +363,7 @@ void () WallWeapon_TouchTrigger =
 			Sound_PlaySound(other, "sounds/misc/denybuy.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
 			return;
 		}
-		other.ach_tracker_coll++;
-
+		other.semi_actions |= SEMIACTION_USE;
 		Sound_PlaySound(other, "sounds/misc/ching.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
 		other.reload_delay = 0;
 		Player_RemoveScore(other, wcost);
@@ -383,10 +378,6 @@ void () WallWeapon_TouchTrigger =
 		self = tempe;
 
 		Gamemode_BuyWeapon(other, self.weapon);
-	}
-
-	if (other.ach_tracker_coll == ach_tracker_col2) {
-		GiveAchievement(12, other);
 	}
 };
 
@@ -430,7 +421,7 @@ void() buy_weapon =
 {
 	InitTrigger ();
 
-	// Default Pack-A-Punch Ammo Cost
+	// Default Pack-a-Punch Ammo Cost
 	if (!self.pap_cost)
 		self.pap_cost = 4500;
 
@@ -456,6 +447,4 @@ void() buy_weapon =
 	self.think = WallWeapon_LinkChalk;
 	self.message = "";
 	self.nextthink = time + 0.2; 
-
-	ach_tracker_col2++;
 };

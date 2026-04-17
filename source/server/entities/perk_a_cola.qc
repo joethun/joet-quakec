@@ -83,8 +83,7 @@ void GivePerk(optional float p) {
 		return;
 	}
 
-	// No Perks? No Problem tracker
-	self.ach_tracker_npnp++;
+	// No Perks? No Problem tracker removed
 
 	self.perks = self.perks | perk;
 
@@ -100,8 +99,9 @@ void GivePerk(optional float p) {
 
 	self.max_health = self.health = Gamemode_GetMaxHealthForPlayer(self.max_health, self.perks);
 
-	if (self.perks == 255)
-		GiveAchievement(6, self);
+	if (self.perks == 255) {
+		// All perks collected
+	}
 
   	sound_perk_delay = time + 4.5;
 

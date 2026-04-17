@@ -41,29 +41,6 @@ float NUM_FOR_EDICT(entity edict)
 }
 
 //
-// nzp_achievement(client, achievement_id)
-// Awards achievement by sending approval to client.
-//
-void(entity client, float achievement_id) nzp_achievement =
-{
-    float entnum;
-    entnum = NUM_FOR_EDICT(client);
-
-    if (entnum < 1 || entnum > cvar("maxclients")) {
-        if (cvar("developer")) {
-            print("tried to unlock ach to a non-client\n");
-            return;
-        }
-    }
-
-    WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, CSQC_EVENT_GIVEACHIEVEMENT);
-	WriteByte(MSG_MULTICAST, achievement_id);
-	msg_entity = client;
-	multicast('0 0 0', MULTICAST_ONE);
-};
-
-//
 // nzp_setclientmode(gamemode)
 // Sends info to Client about the current Game Mode
 //

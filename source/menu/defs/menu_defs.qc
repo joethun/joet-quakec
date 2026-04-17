@@ -2,7 +2,7 @@
 #define false   0
 
 string build_datetime;
-#define JOET_VERSION "0.1.7"
+#define JOET_VERSION "0.1.8"
 float music_duration_time;
 
 string menu_background;
@@ -13,7 +13,6 @@ string current_selected_bsp;
 
 float last_map_menu;
 float current_menu;
-float running_platform;
 
 float last_input_was_gamepad;
 
@@ -25,19 +24,6 @@ string map_name_override;
 float last_input_deviceid;
 
 #endif // MENU
-
-enum {
-    PLATFORM_WIN,
-    PLATFORM_MAC,
-    PLATFORM_LIN,
-    PLATFORM_XBX,
-    PLATFORM_AND,
-    PLATFORM_WEB,
-    PLATFORM_BSD,
-    PLATFORM_IOS,
-    PLATFORM_DOS,
-    PLATFORM_UNK
-};
 
 enum {
     MENU_NONE,

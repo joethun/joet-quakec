@@ -392,6 +392,9 @@ void() worldspawn =
 	clientstat(STAT_GUNGAME_IDX, EV_FLOAT, gungame_weapon_idx);
 	clientstat(STAT_GUNGAME_SCOREGOAL, EV_FLOAT, gungame_score_threshold);
 
+	// Zombie counter
+	globalstat(STAT_REMAINING_ZOMBIES, EV_FLOAT, "Remaining_Zombies");
+
 	autocvar(sv_enablechatplugins, 0);
 	autocvar(sv_maprotationbasename, "map_rotation");
 	autocvar(sv_maprotationmode, 0);

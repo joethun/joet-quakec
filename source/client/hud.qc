@@ -27,6 +27,7 @@
 
 float(string bind) Key_IsControllerGlyph;
 void(vector position, string bind, vector scale) Key_DrawControllerGlyph;
+string(string name, float wep) HUD_ApplyPapNameOverride;
 
 // vid_ultrawide_limiter
 #define ULTRAWIDE_OFFSET 		250
@@ -1084,11 +1085,11 @@ void() HUD_Useprint =
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 3://ammo
-			usestring = strcat("Press  ",usespace, " to buy ammo for ", getstats(STAT_WEAPONNAMETOUCH));
+			usestring = strcat("Press  ",usespace, " to buy ammo for ", HUD_ApplyPapNameOverride(getstats(STAT_WEAPONNAMETOUCH), useprint_weapon));
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 4://weapon
-			usestring = strcat("Press  ",usespace, " to buy ", getstats(STAT_WEAPONNAMETOUCH));
+			usestring = strcat("Press  ",usespace, " to buy ", HUD_ApplyPapNameOverride(getstats(STAT_WEAPONNAMETOUCH), useprint_weapon));
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 5://window
@@ -1102,7 +1103,7 @@ void() HUD_Useprint =
 			usecost = strcat("[Cost: ", ftos(useprint_cost), "]");
 			break;
 		case 7://box take
-			usestring = strcat("Press  ",usespace, " for ", getstats(STAT_WEAPONNAMETOUCH));
+			usestring = strcat("Press  ",usespace, " for ", HUD_ApplyPapNameOverride(getstats(STAT_WEAPONNAMETOUCH), useprint_weapon));
 			break;
 		case 8://power
 			usestring = "The power must be activated first";
@@ -1368,12 +1369,29 @@ void() HUD_Perks =
 float weapon_name_time;
 string weapon_name_last;
 
+// Applies the silly PAP name overrides when cl_papnames is enabled.
+// W_COMPRESSOR -> "Meta Goober Gooner :3"
+// W_REAPER     -> "Mason's PP"
+// W_GUT        -> "Linus' Trenchulator 9283"
+string(string name, float wep) HUD_ApplyPapNameOverride =
+{
+	if (!cvar("cl_papnames"))
+		return name;
+	if (wep == W_COMPRESSOR)
+		return "Meta Goober Gooner :3";
+	if (wep == W_REAPER)
+		return "Mason's PP";
+	if (wep == W_GUT)
+		return "Linus' Trenchulator 9283";
+	return name;
+};
+
 void() HUD_WeaponString =
 {
 	if (cl_viewent.modelindex == 0)
 		return;
 
-	string weapon_name = getstats(STAT_WEAPONNAME);
+	string weapon_name = HUD_ApplyPapNameOverride(getstats(STAT_WEAPONNAME), getstatf(STAT_ACTIVEWEAPON));
 	vector weapon_name_color = [1, 1, 1];
 
 	switch(getstatf(STAT_WEAPONTIER)) {
@@ -2064,53 +2082,6 @@ void() HUD_PowerUpToast =
 	HUD_DrawStringWithBackdrop([pos_x, pos_y, 0], toast_string, [14, 14], [1, 1, 1], text_alpha, 0);
 };
 
-float achievement_init;
-float achievement_ypos;
-float achievement_desc_ypos;
-float achievement_img_ypos;
-float achievement_time;
-void() HUD_Achievements = {
-	if (active_achievement == -1)
-		return;
-
-	if (!achievement_init) {
-		achievement_time 		= 0;
-		achievement_ypos 		= -0.16;
-		achievement_desc_ypos	= -0.13;
-		achievement_img_ypos 	= -0.164;
-		achievement_init 		= true;
-	}
-
-
-	Draw_String([0.2*g_width, achievement_ypos*g_height, 0], "ACHIEVEMENT GET!", [0.015*g_width, 0.015*g_width, 0], [1, 1, 0], 1, 0);
-	Draw_String([0.2*g_width, achievement_desc_ypos*g_height, 0], achievements[active_achievement].name, [0.015*g_width, 0.015*g_width, 0], [1, 1, 1], 1, 0);
-	drawpic([0.005*g_width, achievement_img_ypos*g_height,0], achievements[active_achievement].img, [0.16*g_width, 0.08*g_width, 0], [1,1,1], 1);
-
-	if (achievement_time <= 120) {
-		achievement_ypos 		+= (frametime*0.15);
-		achievement_desc_ypos 	+= (frametime*0.15);
-		achievement_img_ypos	+= (frametime*0.15);
-	} else {
-		achievement_ypos 		-= (frametime*0.15);
-		achievement_desc_ypos 	-= (frametime*0.15);
-		achievement_img_ypos 	-= (frametime*0.15);
-		if (achievement_desc_ypos <= -0.13) {
-			achievement_init 	= 0;
-			active_achievement 	= -1;
-		}
-	}
-
-	if (achievement_desc_ypos > 0.045) {
-		if (achievement_time <= 120) {
-			achievement_ypos 		= 0.015;
-			achievement_desc_ypos 	= 0.045;
-			achievement_img_ypos 	= 0.01;
-		}
-
-		achievement_time += (frametime*25);
-	}
-}
-
 void(float x_position, float y_position, string command, string action) HUD_DrawWaypointModeString =
 {
 	string bind_button = "";
@@ -2344,6 +2315,27 @@ void() HUD_RoundStopWatch =
 	stopwatch = strcat(hr, ":", min, ":", sec);
 	HUD_DrawStringWithBackdrop([g_width - (getTextWidth(stopwatch, 12)) - 2, 16], stopwatch, [12, 12], [1, 1, 1], 1, 0);
 }
+
+/**************************
+*  HUD Zombie Counter     *
+**************************/
+
+//
+// HUD_ZombieCounter()
+// Draws the remaining zombie count at the bottom-center of the
+// screen. Enabled via cl_zombiecounter (Accessibility settings).
+//
+void() HUD_ZombieCounter =
+{
+	if (!cvar("cl_zombiecounter"))
+		return;
+
+	float remaining = getstatf(STAT_REMAINING_ZOMBIES);
+	string counter_text = strcat(ftos(remaining), " remaining");
+	float text_width = getTextWidth(counter_text, 12);
+	float x = (g_width - text_width) / 2;
+	HUD_DrawStringWithBackdrop([x, g_height - 14], counter_text, [12, 12], [1, 1, 1], 1, 0);
+};
 
 /*******************
 *  HUD Debug Info  *
@@ -2593,6 +2585,9 @@ void() HUD_DrawElementsForPlayer =
 	if (cvar("scr_serverstopwatch") >= 2) {
 		HUD_RoundStopWatch();
 	}
+
+	// Remaining zombie counter (Accessibility setting).
+	HUD_ZombieCounter();
 
 	// Player origin, angles, etc. for debugging if cvar is enabled.
 	HUD_PlayerDebugInfo();

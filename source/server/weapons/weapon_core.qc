@@ -1920,9 +1920,6 @@ void() CheckPlayer =
 			if (damage > 98) damage = 98;
 			
 			DamageHandler (self, other, damage, DMG_TYPE_OTHER); 
-
-			if (self.health <= 5)
-				GiveAchievement(7, self);	
 		}
 		
 		self.oldz = self.origin_z;		

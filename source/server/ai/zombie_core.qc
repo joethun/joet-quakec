@@ -1171,6 +1171,15 @@ void(entity ent) Zombie_Death_Cleanup = {
 	ent.health = 0;
 	ent.respawn_iterator = 0;
 	ent.skin = 0;
+
+	// Release our claim on the target's hunt_count so other zombies can
+	// factor this player back into their targeting score correctly.
+	if (ent.enemy != world && ent.enemy.classname == "player") {
+		ent.enemy.hunt_count--;
+		if (ent.enemy.hunt_count < 0)
+			ent.enemy.hunt_count = 0;
+	}
+
 	Remaining_Zombies = Remaining_Zombies - 1;
 }
 

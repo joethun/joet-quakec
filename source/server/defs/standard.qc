@@ -235,7 +235,6 @@ string  (string s)                                                              
 string  (string s)                                                                              precache_sound2     = #76;  // registered version only
 string  (string s)                                                                              precache_file2      = #77;  // registered version only
 void    (entity e)                                                                              setspawnparms       = #78;  // set parm1... to the
-void    (entity client, float achievement_id)                                                   nzp_achievement     = #79;
 float   (string s)                                                                              stof                = #81;  // 2001-09-20 QuakeC string manipulation by FrikaC
 //void	(vector where, float set)																multicast			= #82;
 vector  (entity what)                                                                           Get_Waypoint_Near   = #83;
@@ -391,7 +390,6 @@ void    (float gamemode)                                                        
 #define     SVC_USEPRINT                38
 #define 	SVC_LIMBUPDATE  			51 				// naievil -- keep me
 #define 	SVC_BSPDECAL    			50				// naievil -- keep me
-#define 	SVC_ACHIEVEMENT 			52
 
 #define     TE_SPIKE                    0
 #define     TE_SUPERSPIKE               1

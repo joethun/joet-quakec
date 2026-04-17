@@ -78,14 +78,6 @@ void(string com) SV_ParseClientCommand;
 
 #endif // FTE
 
-// achievement tracking
-.float 	ach_tracker_npnp;
-.float 	ach_tracker_abst;
-.float 	ach_tracker_coll;
-float 	ach_tracker_col2;
-float 	ach_tracker_barr;
-float 	ach_tracker_spin;
-
 float global_trace_damage_multiplier;
 
 .float has_ads_toggle;
@@ -161,7 +153,8 @@ void() W_SprintStop;
 .float dive_delay;
 .vector movement;
 
-.float hunt_count; // How many Hellhounds are hunting a client
+.float hunt_count;      // How many zombies/hounds are targeting this client
+.float retarget_check;  // Timer for polling player availability when chasing a dummy target
 
 //Weaponsystem defines
 void GetUp();

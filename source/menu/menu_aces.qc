@@ -1,4 +1,4 @@
-string menu_accesibility_buttons[8] = {"ac_hitm", "ac_text", "ac_color", "ac_whiteflash", "ac_monthspoof", "ac_mboxname", "ac_apply", "ac_back"};
+string menu_accesibility_buttons[10] = {"ac_hitm", "ac_text", "ac_color", "ac_whiteflash", "ac_monthspoof", "ac_mboxname", "ac_papnames", "ac_zombiec", "ac_apply", "ac_back"};
 
 float menu_accessibility_init;
 
@@ -7,6 +7,8 @@ float current_colorblind;
 float current_whiteflash;
 float current_monthspoof;
 float current_mboxname;
+float current_papnames;
+float current_zombiecounter;
 
 string(string prev_id) Menu_Accessibility_GetNextButton =
 {
@@ -55,6 +57,8 @@ void() Menu_Accessibility_StoreCurrentSettings =
     current_whiteflash = cvar("scr_whiteflash");
     current_monthspoof = cvar("sv_spoofmonth");
     current_mboxname = cvar("cl_mboxname");
+    current_papnames = cvar("cl_papnames");
+    current_zombiecounter = cvar("cl_zombiecounter");
 }
 
 void() Menu_Accessibility_ApplySettings =
@@ -103,6 +107,20 @@ void() Menu_Accessibility_UpdateMBoxName =
     Menu_PlaySound(MENU_SND_ENTER);
     current_mboxname = !current_mboxname;
     cvar_set("cl_mboxname", ftos(current_mboxname));
+}
+
+void() Menu_Accessibility_UpdatePapNames =
+{
+    Menu_PlaySound(MENU_SND_ENTER);
+    current_papnames = !current_papnames;
+    cvar_set("cl_papnames", ftos(current_papnames));
+}
+
+void() Menu_Accessibility_UpdateZombieCounter =
+{
+    Menu_PlaySound(MENU_SND_ENTER);
+    current_zombiecounter = !current_zombiecounter;
+    cvar_set("cl_zombiecounter", ftos(current_zombiecounter));
 }
 
 void() Menu_Accessibility =
@@ -178,6 +196,26 @@ void() Menu_Accessibility =
         default: break;
     }
     Menu_DrawOptionValue(6, mboxname_string);
+
+    // PAP Weapon Names
+    Menu_Button(7, "ac_papnames", "SILLY PAP NAMES", "Use alternate names for certain Pack-a-Punched weapons") ? Menu_Accessibility_UpdatePapNames() : 0;
+    string papnames_string = "";
+    switch(current_papnames) {
+        case 0: papnames_string = "DISABLED"; break;
+        case 1: papnames_string = "ENABLED"; break;
+        default: break;
+    }
+    Menu_DrawOptionValue(7, papnames_string);
+
+    // Zombie Counter
+    Menu_Button(8, "ac_zombiec", "ZOMBIE COUNTER", "Show remaining zombie count at the bottom of the screen") ? Menu_Accessibility_UpdateZombieCounter() : 0;
+    string zombiec_string = "";
+    switch(current_zombiecounter) {
+        case 0: zombiec_string = "DISABLED"; break;
+        case 1: zombiec_string = "ENABLED"; break;
+        default: break;
+    }
+    Menu_DrawOptionValue(8, zombiec_string);
 
     Menu_DrawDivider(12.25);
     Menu_Button(-2, "ac_apply", "APPLY", "Save & apply settings") ? Menu_Accessibility_ApplySettings() : 0;

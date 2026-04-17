@@ -258,11 +258,6 @@ void() PU_NukeFinalize =
 {
 	entity players;
 
-	// give 'The F Bomb'
-	if (self.kills == 1) {
-		GiveAchievement(4);
-	}
-	
 	// award points
 	if (game_modifier_can_earn_misc_score == true) {
 		players = find(world,classname,"player");

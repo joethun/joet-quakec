@@ -561,9 +561,6 @@ void() Float_Change =
 			self.nextthink = time + 1;
 			self.think = MBOX_PresentTeddy;
 			mystery_box_leave_count++;
-
-			if (mystery_box_leave_count >= 10)
-				GiveAchievement(11);
 			return;
 		}
 	}

@@ -79,88 +79,103 @@ void() Respawn =
 	Remaining_Zombies++;
 };
 
+// Score a candidate player target for a given zombie.
+// Lower score = more desirable target.
+// Factors: distance, how many zombies are already chasing them, line of sight.
+float(entity blarg, entity candidate) score_player_target =
+{
+	float dist = vlen(blarg.origin - candidate.origin);
+
+	// Penalise heavily for each zombie already chasing this player so the
+	// horde spreads across all living players rather than dog-piling one.
+	float chase_penalty = candidate.hunt_count * 300;
+
+	// Reward targets we have a clear line of sight to -- prefer them over
+	// targets hidden behind geometry that require pathfinding.
+	// Only available on FTE; non-FTE tracemove_fake isn't declared yet at
+	// this point in the file so we skip the bonus there.
+	float los_bonus = 0;
+#ifdef FTE
+	if (tracemove(blarg.origin, VEC_HULL_MIN, VEC_HULL_MAX, candidate.origin, TRUE, blarg))
+		los_bonus = -200;
+#endif // FTE
+
+	return dist + chase_penalty + los_bonus;
+};
+
 entity(entity blarg) find_new_enemy =
 {
 	entity  targets;
 	entity  best_target;
-	float 	best_distance;
-	float 	distance;
-	
-	best_distance = 10000;
+	float	best_score;
+	float	score;
+
+	best_score = 99999999;
 	best_target = world;
 
 	if (blarg.classname == "ai_zombie" || blarg.classname == "ai_dog") {
-		// Monkey Bomb (TODO -- if multiple, target first one thrown)
+		// Monkey Bomb overrides everything (dogs are immune).
 		targets = find(world, classname, "monkey_bomb");
 		if (targets != world && blarg.classname != "ai_dog") {
-			best_target = targets;
-			return best_target;
+			return targets;
 		}
 
-		// Now, try and find a viable player
+		// Decrement hunt_count on the old target before switching.
+		if (blarg.enemy != world && blarg.enemy.classname == "player") {
+			blarg.enemy.hunt_count--;
+			if (blarg.enemy.hunt_count < 0)
+				blarg.enemy.hunt_count = 0;
+		}
+
+		// Score every living, non-spectating player and pick the best.
 		targets = find(world, classname, "player");
-
-		while(targets != world) {
-			// Don't target downed players.
-			if (targets.downed == true || targets.is_spectator == true) {
-				targets = find(targets, classname, "player");
-				continue;
+		while (targets != world) {
+			if (!targets.downed && !targets.is_spectator) {
+				score = score_player_target(blarg, targets);
+				if (score < best_score) {
+					best_score = score;
+					best_target = targets;
+				}
 			}
-
-			// Found one, let's see if it's closer than our last ideal target.
-			distance = vlen(blarg.origin - targets.origin);
-
-			if (distance < best_distance) {
-				best_target = targets;
-				best_distance = distance;
-			}
-
-			// Continue iterating
 			targets = find(targets, classname, "player");
 		}
 
-		// Return a good player if we found one.
-		if (best_target != world)
+		if (best_target != world) {
+			// Track how many zombies are chasing this player.
+			best_target.hunt_count++;
 			return best_target;
+		}
 
-		// We couldn't find a good player. How about a horde point?
+		// No living players -- fall back to a horde point.
 		targets = find(world, classname, "zombie_horde_point");
-
-		while(targets != world) {
-			// Found one, let's see if it's closer than our last ideal target.
-			distance = vlen(blarg.origin - targets.origin);
-
-			if (distance < best_distance) {
+		while (targets != world) {
+			score = vlen(blarg.origin - targets.origin);
+			if (score < best_score) {
+				best_score = score;
 				best_target = targets;
-				best_distance = distance;
 			}
-
-			// Continue iterating
 			targets = find(targets, classname, "zombie_horde_point");
 		}
 
-		// Last chance -- try a player spawn point.
+		if (best_target != world)
+			return best_target;
+
+		// Last resort: a player spawn point.
+		best_score = 99999999;
 		targets = find(world, classname, "info_player_1_spawn");
-
-		while(targets != world) {
-			// Found one, let's see if it's closer than our last ideal target.
-			distance = vlen(blarg.origin - targets.origin);
-
-			if (distance < best_distance) {
+		while (targets != world) {
+			score = vlen(blarg.origin - targets.origin);
+			if (score < best_score) {
+				best_score = score;
 				best_target = targets;
-				best_distance = distance;
 			}
-
-			// Continue iterating
 			targets = find(targets, classname, "info_player_1_spawn");
 		}
 
-		// Return a horde point if we found one.
 		if (best_target != world)
 			return best_target;
 	}
 
-	// We didn't have much luck, just return the world.
 	return best_target;
 };
 
@@ -570,22 +585,12 @@ float(vector start, vector min, vector max, vector end, float nomonsters, entity
 
 float() TryWalkToEnemy =
 {
-
-	// Early out hack for FTE -- if there's tons of z-diff, GTFO!
+	// Only skip direct-walk if there's a significant vertical gap (stairs/ramps
+	// are fine up to ~80 units; 30 was far too conservative).
 	float z_axis_diff = fabs(self.origin_z - self.enemy.origin_z);
-	if (z_axis_diff >= 30)
+	if (z_axis_diff >= 80)
 		return 0;
 
-	// This has been a headache...
-	// TryWalkToEnemy is a system that attempts to ignore waypoints from a
-	// certain distance to simulate proper player-targeting. It does this
-	// using the custom builtin tracemove, which calls SV_Move to determine
-	// if it's possible for the enemy to walk directly to the target. This
-	// is problematic, however -- in that FTE does not feature this builtin
-	// since it's non-standard and was written by blubs. This means there
-	// needs to be improvisation, and as a result there is disparity here.
-	// See the custom tracemove() function for details on that.
-	// -- cypress (28 Nov 2023)
 #ifdef FTE
 	float TraceResult = tracemove(self.origin, VEC_HULL_MIN, VEC_HULL_MAX, self.enemy.origin, TRUE, self);
 #else
@@ -680,30 +685,57 @@ void() NextPathfindToEnemy {
 }
 
 void(float dist) Inside_Walk = {
-	// Hellhounds should only change targets if current one is in Last Stand
-	if (self.classname == "ai_dog" && self.enemy.downed == true) {
-		self.enemy = Dog_FindEnemy();
-	} 
-	// Normal Zombie time-out re-targeting
-	else if (self.classname != "ai_dog") {
-		if(self.enemy_timeout < time || self.enemy == world || self.enemy.downed == true) {
-			self.enemy_timeout = time + 5;
-			local entity oldEnemy;
-			oldEnemy = self.enemy;
+	// --- Target selection ---
+
+	// Hellhounds re-target only when their current target goes down.
+	if (self.classname == "ai_dog") {
+		if (self.enemy == world || self.enemy.downed == true)
+			self.enemy = Dog_FindEnemy();
+	} else {
+		// Zombies re-target when:
+		//   a) timeout expires (every 6 seconds -- was 5, gives more stickiness)
+		//   b) current target is gone or downed
+		//   c) current target is a non-player entity (horde/spawn point) and a
+		//      player has become available -- check more frequently for this case.
+		float needs_retarget = 0;
+
+		if (self.enemy == world || self.enemy.downed == true) {
+			needs_retarget = 1;
+		} else if (self.enemy_timeout < time) {
+			needs_retarget = 1;
+		} else if (self.enemy.classname != "player" && self.enemy.classname != "monkey_bomb") {
+			// We're chasing a dummy target -- check every second if a real
+			// player has spawned in.
+			if (self.retarget_check < time) {
+				self.retarget_check = time + 1;
+				entity scan = find(world, classname, "player");
+				while (scan != world) {
+					if (!scan.downed && !scan.is_spectator) {
+						needs_retarget = 1;
+						break;
+					}
+					scan = find(scan, classname, "player");
+				}
+			}
+		}
+
+		if (needs_retarget) {
+			self.enemy_timeout = time + 6;
 			self.enemy = find_new_enemy(self);
 		}
 	}
-	//================Check for proximity to player ===========
-	if(vlen(self.enemy.origin - self.origin) < 60) {
-		if(self.enemy.classname == "monkey_bomb" && self.classname != "ai_dog") {
+
+	// --- Proximity attack ---
+	if (vlen(self.enemy.origin - self.origin) < 60) {
+		if (self.enemy.classname == "monkey_bomb" && self.classname != "ai_dog") {
 			self.th_idle();
 		}
-		
-		if(self.attack_delay < time) {
+
+		if (self.attack_delay < time) {
 			self.attack_delay = time + 1 + (1 * random());
 
 			if (self.enemy.health)
-				self.th_melee(); 
+				self.th_melee();
 
 			if (self.enemy.downed == true) {
 				if (self.classname == "ai_dog")
@@ -716,50 +748,61 @@ void(float dist) Inside_Walk = {
 		}
 		return;
 	}
-	
-	if(vlen(self.enemy.origin - self.origin) < 600) {//50 feet
-		if(self.goalentity == self.enemy && self.chase_enemy_time > time) {
+
+	// --- Direct walk (no waypoints needed) ---
+	// Try a direct tracemove to the enemy when they're within 800 units.
+	// chase_enemy_time prevents re-running the trace every single frame.
+	if (vlen(self.enemy.origin - self.origin) < 800) {
+		if (self.goalentity == self.enemy && self.chase_enemy_time > time) {
+			// Already committed to a direct walk, keep going.
+			do_walk(dist);
 			return;
 		}
-		if(TryWalkToEnemy())
-		{
-			self.chase_enemy_time = time + 0.5;
+		if (TryWalkToEnemy()) {
+			// Extend the direct-walk window so we don't re-trace every frame.
+			self.chase_enemy_time = time + 1.5;
+			do_walk(dist);
 			return;
 		}
 	}
 
-	if(self.goalentity == self.enemy) {
+	// If we were walking directly to the enemy but lost LOS, fall back to
+	// waypoint navigation.
+	if (self.goalentity == self.enemy) {
 		self.goalentity = self.goaldummy;
 		self.chase_time = 0;
 	}
-	//============= No Target ====================
-	if(self.goalentity == world) {//not sure when this would ever occur... but whatever.
+
+	// --- Waypoint navigation ---
+	if (self.goalentity == world)
 		self.goalentity = self.goaldummy;
-	}
-	//============ GoalDummy is Target ============
-	if(self.goalentity == self.goaldummy) {
-		if(nearby(self.goaldummy.origin)) {
 
+	if (self.goalentity == self.goaldummy) {
+		// Arrived at current waypoint -- advance to the next one.
+		if (nearby(self.goaldummy.origin)) {
 #ifndef FTE
-
 			NextPathfindToEnemy();
-
 #else
-
 			PathfindToEnemy();
-
 #endif // FTE
-
 		}
 
-		if(self.chase_time < time) {
-			if(self.goaldummy.origin != world.origin && tracemove(self.origin,VEC_HULL_MIN,VEC_HULL_MAX,self.goalentity.origin,TRUE,self) == 1) {
+		// Recompute path if the chase timer expired.
+		if (self.chase_time < time) {
+#ifdef FTE
+			if (self.goaldummy.origin != world.origin &&
+				tracemove(self.origin, VEC_HULL_MIN, VEC_HULL_MAX, self.goalentity.origin, TRUE, self) == 1) {
 				self.chase_time = time + 7;
 			} else {
 				PathfindToEnemy();
 			}
+#else
+			PathfindToEnemy();
+#endif // FTE
 		}
 	}
+
+	do_walk(dist);
 }
 
 .float droptime;

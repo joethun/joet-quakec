@@ -70,18 +70,18 @@ void() Particles_MuzzleflashCallback =
 
 	float muzzleflash_type = rint(random() * 2); // Choose one of three Muzzleflash variances.
 
-	// Display Muzzleflash Particle and Dynamic Light - Joe T Edition: Enhanced lighting
+	// Display Muzzleflash Particle and Dynamic Light
 	if (IsPapWeapon(getstatf(STAT_ACTIVEWEAPON))) {			
 		pointparticles(particleeffectnum(strcat("muzzle.muzzle_pap_part", ftos(muzzleflash_type))), muzzleflash_position, '0 0 0', 1);
 
-		// Pack-A-Punched Weapons: Brighter, more dramatic lighting
+		// Pack-A-Punched Weapons can display either a Blue or Red light
 		if (random() > 0.5)
-			dynamiclight_add(muzzleflash_position, 320, '0.9 0.1 0.1'); // Brighter red
+			dynamiclight_add(muzzleflash_position, 256, '0.7 0 0');
 		else
-			dynamiclight_add(muzzleflash_position, 320, '0.1 0.2 0.9'); // Brighter blue
+			dynamiclight_add(muzzleflash_position, 256, '0 0 0.7');
 	} else {
 		pointparticles(particleeffectnum(strcat("muzzle.muzzle_part", ftos(muzzleflash_type))), muzzleflash_position, '0 0 0', 1);
-		dynamiclight_add(muzzleflash_position, 300, '1.4 0.8 0.3'); // Brighter orange flash
+		dynamiclight_add(muzzleflash_position, 256, '1.2 0.7 0.2');
 	}
 
     // Grenade-Lunching weapons should not show decals.

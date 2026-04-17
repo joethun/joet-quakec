@@ -95,21 +95,6 @@ float rounds_change;
 float player_count;
 float score_show;
 
-#define MAX_ACHIEVEMENTS    42
-
-var struct achievementlist_t
-{
-    string      img;
-    float       unlocked;
-    string      name;
-    string      description;
-    float       progress;
-} achievements[MAX_ACHIEVEMENTS];
-
-float active_achievement;
-float current_achievement_page;
-float achievement_pages;
-
 float sniper_hold_breath;
 
 
@@ -141,8 +126,6 @@ string person;
 
 //custom hud
 string huddir;
-
-int 	platform_is_web;
 
 // Stopwatch server time counter
 float 	stopwatch_sec;
