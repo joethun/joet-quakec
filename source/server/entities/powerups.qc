@@ -717,12 +717,13 @@ void() PU_FreePerk =
 		}
 
 		players.style = perk_to_give;
+		players.sequence = self.sequence; // Store per-player bottle skin before context switch
 		players.usedent = self;
 
 		tempe = self;
 		self = players;
 		self.isBuying = true;
-		self.zoom = 0;
+		W_AimOut();
 		W_SprintStop();
 		Weapon_PlayViewModelAnimation(ANIM_PUT_AWAY, DrinkPerk, getWeaponDelay(self.weapon, PUTOUT));
 		self = tempe;

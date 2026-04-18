@@ -121,7 +121,7 @@ void DrinkPerk() {
 	// NOTE: If you add perks, you will either need to append
 	// the MDL with a tool like QuArK or add an edge-case
 	// after this instruction to have a valid skin.
-	self.weaponskin = machine.sequence - 1;	
+	self.weaponskin = self.sequence - 1;	
 
 	self.maxspeed *= GetWeaponWalkSpeed(self.perks, self.weapon);
 	
@@ -323,6 +323,7 @@ void() touch_perk =
 			entity tempe = self; // Set machine to tempe
 			self = other; // Set self to client
 			self.usedent = tempe; // Set usedent to machine
+			self.sequence = tempe.sequence; // Store bottle skin on player for DrinkPerk
 			self.isBuying = true; // To avoid canceling the animation from triggering
 			self.zoom = 0;
 			Weapon_PlayViewModelAnimation(ANIM_PUT_AWAY, DrinkPerk, getWeaponDelay(self.weapon, PUTOUT));

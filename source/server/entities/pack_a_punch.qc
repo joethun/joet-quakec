@@ -250,7 +250,9 @@ void(entity pap, entity buyer, float machine_cost) PAP_UpgradeWeapon =
 	if (game_modifier_packapunch_uses_tiers)
 		pap.boxstatus = buyer.weapons[0].weapon_tier + 1;
 
+	self.isBuying = true;
 	Weapon_RemoveWeapon(0);
+	self.isBuying = false;
 	W_HideCrosshair(self);
 	Set_W_Frame (0, 39, 2.0, 0, 0, W_PutOutHack, "models/machines/v_pap.mdl", true, S_BOTH, true);
 	self.weapon2model = "";
