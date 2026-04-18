@@ -405,6 +405,7 @@ void() worldspawn =
 	autocvar(sv_headshotonly, 0);
 	autocvar(sv_maxai, 24);
 	autocvar(sv_fastrounds, 0);
+	autocvar(sv_freeperk, 0);
 
 	autocvar(sv_spoofmonth, 0);
 
@@ -445,6 +446,11 @@ void() worldspawn =
 	game_modifier_default_fog_color = world.fog;
 	game_modifier_perk_purchase_limit = 8;
 	game_modifier_cost_multiplier = 1;
+
+	// sv_freeperk: enable the free perk powerup drop for any gamemode.
+	// Gamemodes that already enable it (e.g. Gun Game) will override below.
+	if (cvar("sv_freeperk"))
+		game_modifier_powerup_free_perk = true;
 
 	sprint_max_time = 4.0;
 

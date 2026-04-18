@@ -51,9 +51,6 @@ string(string taunt) Gamemode_GetGoodByeTaunt;
 #define PERK_SPAWNFLAG_LIMELIGHT		256
 #define PERK_SPAWNFLAG_YELLOWLIGHT		512
 
-// Double-Tap Damage Boost
-#define PERK_SPAWNFLAG_DOUBLETAPV1		1024
-
 #define PERK_SPAWNFLAG_ALLOWPRONE		2048
 #define PERK_SPAWNFLAG_SILENTLEAVE		4096
 
@@ -132,11 +129,6 @@ void DrinkPerk() {
 	W_HideCrosshair(self);	
 	Set_W_Frame (machine.weapon_animduration, machine.weapon2_animduration, 2.25, 0, PERK, GivePerk, machine.weapon2model, true, S_RIGHT, true);
 	Sound_PlaySound(self, machine.oldmodel, SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
-
-	// Communicate to our engines that this client should display correct Double-Tap icon.
-	if (self.style == P_DOUBLE) {
-		nzp_setdoubletapver(self, self.has_doubletap_damage_buff);
-	}
 
 	Gamemode_DrinkPerk(self);
 }
@@ -328,16 +320,10 @@ void() touch_perk =
 			// Pass along the Perk information to the Player to avoid complications later on, then Drink!
 			other.style = self.style;
 
-			// Double-Tap 2.0 flag set here
-			if (self.classname == "perk_double") {
-				other.has_doubletap_damage_buff = !(self.spawnflags & PERK_SPAWNFLAG_DOUBLETAPV1);
-			}
-
 			entity tempe = self; // Set machine to tempe
 			self = other; // Set self to client
 			self.usedent = tempe; // Set usedent to machine
 			self.isBuying = true; // To avoid canceling the animation from triggering
-			self.sprinting = false;
 			self.zoom = 0;
 			Weapon_PlayViewModelAnimation(ANIM_PUT_AWAY, DrinkPerk, getWeaponDelay(self.weapon, PUTOUT));
 			other = self; // Set other to client

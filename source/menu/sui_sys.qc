@@ -152,7 +152,6 @@ void(vector pos, vector size) sui_push_frame =
 	_frame_index += 1;
 	if (_frame_index >= MAX_FRAMES)
 	{
-		//printf("^3sui warning: amount of frames = %.0f exceeds MAX_FRAMES = %.0f, consider increasing MAX_FRAMES\n", _frame_index, MAX_FRAMES);
 		return;
 	}
 	
@@ -211,14 +210,6 @@ float(vector point, vector pos, vector size) is_2dpoint_in_bbox =
 	return is_2dpoint_in_bounds(point, pos, pos + size);
 };
 
-void() _action_element_count_sanity =
-{
-	if (_action_elements_index > MAX_ACTION_ELEMENTS)
-	{
-		// let the user know if they're hitting the bounds
-		//printf("^3sui warning: amount of action elements = %.0f exceeds MAX_ACTION_ELEMENTS = %.0f, consider increasing MAX_ACTION_ELEMENTS\n", _action_elements_index, MAX_ACTION_ELEMENTS);
-	}
-};
 
 const float MAX_MOUSE_ACTIONS = 16;
 string _hover_actions[MAX_MOUSE_ACTIONS];
@@ -357,7 +348,6 @@ float(float num) mouse_action_sanity =
 {
 	if (num >= MAX_MOUSE_ACTIONS)
 	{
-		//printf("^3sui warning: you have exceeded the amount of overlapping action elements with %.0f, MAX_MOUSE_ACTIONS = %.0f\n", num, MAX_MOUSE_ACTIONS);
 		return TRUE;
 	}
 	return FALSE;
@@ -368,8 +358,7 @@ float(float num) mouse_action_sanity =
 void(vector pos) _sui_mouse_move =
 {
 	_cursor_position = pos;
-	_action_element_count_sanity();
-	
+
 	// Reset hover, it'll be back to what it used to be before draw gets called if mouse is still on same element
 	_hover_action_count = 0;
 	_hover_actions[0] = "";
@@ -588,9 +577,6 @@ void() _sui_mouse1_down =
 
 void() _sui_mouse1_up =
 {
-	// Can't be cheap here, we have to get the action fn of the element anyway so..
-	_action_element_count_sanity();
-	
 	// Assume we won't hit anything
 	_click_action_count = 0;
 	_last_clicked_action_count = 0;
@@ -715,9 +701,6 @@ float(float char, float scan) _sui_add_input =
 	// TODO check if input was listened, return FALSE if not
 	if (_input_length >= MAX_INPUTS)
 	{
-		// printf("^3sui warning: exceeded amount of per frame inputs count MAX_INPUTS = %.0f\n"
-		// 	"^3 - make sure sui_input_event isn't being called without sui_draw being called in update loop\n"
-		// 	"^3 - consider increasing MAX_INPUTS\n", MAX_INPUTS);
 		return TRUE;
 	}
 	_input_buffer[_input_length].char = char;

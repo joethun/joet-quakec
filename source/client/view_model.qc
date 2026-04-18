@@ -250,10 +250,12 @@ vector() ViewModel_GetADSPosition =
         ads_offset[2] = temp_adsofs[1]/1000;
     }
 
-    // Interpolate values in/out of ADS over time.
-    current_viewmodel_ads_position[0] += (ads_offset[0] - current_viewmodel_ads_position[0]) * VIEWMODEL_ADS_TIME_FACTOR;
-    current_viewmodel_ads_position[1] += (ads_offset[1] - current_viewmodel_ads_position[1]) * VIEWMODEL_ADS_TIME_FACTOR;
-    current_viewmodel_ads_position[2] += (ads_offset[2] - current_viewmodel_ads_position[2]) * VIEWMODEL_ADS_TIME_FACTOR;
+    // Interpolate values in/out of ADS over time. Per-weapon factor
+    // lets heavy weapons (LMGs) raise/lower more slowly.
+    float ads_time_factor = VIEWMODEL_ADS_TIME_FACTOR * GetWeaponADSFactor(getstatf(STAT_ACTIVEWEAPON));
+    current_viewmodel_ads_position[0] += (ads_offset[0] - current_viewmodel_ads_position[0]) * ads_time_factor;
+    current_viewmodel_ads_position[1] += (ads_offset[1] - current_viewmodel_ads_position[1]) * ads_time_factor;
+    current_viewmodel_ads_position[2] += (ads_offset[2] - current_viewmodel_ads_position[2]) * ads_time_factor;
     
     // Limit the vector to avoid bouncing back and forth on low framerates.
     if (client_zoom == 1 || client_zoom == 2) {

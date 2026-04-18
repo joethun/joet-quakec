@@ -166,7 +166,16 @@ void() Gamemode_GunGame_PlayerSpawn =
     // Initialize the score threshold only if
     // this is their first spawn.
     if (self.gungame_weapon_idx == 0) {
-        self.gungame_score_threshold = self.points + 500;
+        // Account for starting points that are awarded after this call,
+        // so the score callback doesn't immediately trigger advancement.
+        float starting_points;
+        if (rounds > 6)
+            starting_points = PLAYER_STARTPOINTS_LATE;
+        else
+            starting_points = PLAYER_STARTPOINTS_NORMAL;
+
+        float base_score = (self.points > starting_points) ? self.points : starting_points;
+        self.gungame_score_threshold = base_score + 500;
     }
 };
 

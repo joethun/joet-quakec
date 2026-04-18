@@ -37,10 +37,6 @@ float HeuristicCostEstimate (float start_way, float end_way)
 	return Distance(waypoints[start_way].org, waypoints[end_way].org);
 }
 
-void ReconstructPath(entity z, float start_way, float end_way) {
-
-}
-
 float open_first;
 float open;
 float closed_init;
@@ -151,7 +147,6 @@ float Pathfind (entity z, float s_wp, float e_wp) {
 		i = open_first;
 
 		bestf = 320000;
-		//print("Current ", ftos(current), "\n");
 
 		// go from first open to last, pick the one with lowest f
 		do {
@@ -163,7 +158,6 @@ float Pathfind (entity z, float s_wp, float e_wp) {
 		} while (i != open);
 
 		// mark node as visited
-		//print("Removing ", ftos(current), " from open\n");
 		SV_WP_SetAdd(current, false);
 
 		// we found a result, loop back with pathlength
@@ -171,8 +165,6 @@ float Pathfind (entity z, float s_wp, float e_wp) {
 			j = i = current;
 			// walk constructed path backwards
 			// keep 2 next steps with us
-			//print("Result\n");
-			//print(ftos(current), "\n");
 			while (waypoints[current].step != current) {
 				j = i; // 3rd waypoint along path
 				i = current; // 2nd waypoint along path
@@ -189,21 +181,15 @@ float Pathfind (entity z, float s_wp, float e_wp) {
 			// Check if we can tracemove to the 3rd waypoint along the path
 			if (tracemove(z.origin,VEC_HULL_MIN,VEC_HULL_MAX,waypoints[i].org,TRUE,z))
 			{
-				//VectorCopy(waypoints[i].origin, res);
-				//print("Giving third wp ", ftos(i), "\n");
 				return i;
 			}
 			// Check if we can tracemove to the 2nd waypoint along the path
 			else if (is_at_first_waypoint || tracemove(z.origin,VEC_HULL_MIN,VEC_HULL_MAX,waypoints[j].org,TRUE,z))
 			{
-				//VectorCopy(waypoints[j].origin, res);
-				//print("Giving second wp ", ftos(j), "\n");
 				return j;
 			}
 			else
 			{
-				//VectorCopy(waypoints[current].origin, res);
-				//print("Giving first wp ", ftos(current), "\n");
 				return current;
 			}
 		}
@@ -229,7 +215,6 @@ float Pathfind (entity z, float s_wp, float e_wp) {
 
 					if (waypoints[i].set == SET_NONE)
 					{
-						//print("Adding ", ftos(i), " into open\n");
 						SV_WP_SetAdd(i, true);
 					}
 				}
@@ -293,11 +278,6 @@ float Do_Pathfind(entity from, entity to) {
 			}
 		}
 	}
-
-	//print("Starting waypoint: ", ftos(best)," Ending waypoint: ", ftos(best_target), "\n");
-
-
-
 
 	return Pathfind(from, best, best_target);
 	#else 
@@ -381,13 +361,11 @@ void LoadWaypointData() {
 		string line;
 		line = fgets(file);
 		if (line == "") {
-			//bprint(PRINT_HIGH, "End of file\n");
 			loop = 0;
 			break;
 		}
 		h = strtrim(line);
 
-		//print(h, "\n");
 		if (h == "") {
 			continue;
 		}
@@ -406,7 +384,6 @@ void LoadWaypointData() {
 					point = 1;
 					targetcount = 0;
 				} else if (h == "Waypoint") {
-					//bprint(PRINT_HIGH, "Identified .way as legacy..\n");
 					point = 99;
 					Load_Waypoints_Legacy();
 				} else {

@@ -1063,6 +1063,11 @@ void() PlayerSpawn =
 	self.pri_grenade_state = 0; 		// defines that frag grenades are for player first, not betty
 	self.secondary_grenades = -1;		// shows that we both don't have betties AND shouldn't draw the image onscreen
 
+	// Initialize gamemode-specific player state before awarding starting
+	// points, so score callbacks (e.g. gun game advancement check) don't
+	// fire before the gamemode has had a chance to set up thresholds.
+	Gamemode_PlayerSpawn();
+
 	// Assign the Player starting points.
 	if (rounds > 6) {
 		// If we're higher than round 6(?), we start the player with
@@ -1115,8 +1120,6 @@ void() PlayerSpawn =
 	// to see their name.
 	if (time >= 5 && self.name != "")
 		nzp_setplayername(self, self.name);
-
-	Gamemode_PlayerSpawn();
 };
 
 void() SpectatorSpawn =

@@ -26,7 +26,6 @@ menu_aces.qc     // Accessibility Menu
 sound_enhanced.qc
 weapon_stats.qc
 defs/custom.qc
-achievements.qc
 hud.qc
 chat.qc
 view_model.qc

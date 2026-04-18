@@ -152,8 +152,8 @@ float(float weapon_id) MBOX_IsWonderWeapon =
 // MBOX_GetRandomBoxWeapon(user)
 // Returns a weapon from the Mystery Box allow-list
 // that the user is not holding.
-// Wonder weapons have a ~2% chance; normal weapons share the rest.
-// Normal weight: 49, Wonder weight: 1.
+// Wonder weapons have a ~10% total chance; normal weapons share the rest.
+// Normal weight: 3, Wonder weight: 2.
 //
 float(entity user) MBOX_GetRandomBoxWeapon =
 {
@@ -164,7 +164,7 @@ float(entity user) MBOX_GetRandomBoxWeapon =
         if (mystery_box_weapons[i].allowed &&
             !mystery_box_weapons[i].already_obtained &&
             !Weapon_PlayerHasWeapon(user, mystery_box_weapons[i].weapon_id, true)) {
-            total_weight += MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id) ? 24 : 47;
+            total_weight += MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id) ? 2 : 3;
         }
     }
 
@@ -177,7 +177,7 @@ float(entity user) MBOX_GetRandomBoxWeapon =
         if (mystery_box_weapons[i].allowed &&
             !mystery_box_weapons[i].already_obtained &&
             !Weapon_PlayerHasWeapon(user, mystery_box_weapons[i].weapon_id, true)) {
-            pick -= MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id) ? 24 : 47;
+            pick -= MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id) ? 2 : 3;
             if (pick <= 0)
                 return mystery_box_weapons[i].weapon_id;
         }
@@ -551,7 +551,6 @@ void() Float_Change =
 			self.weapon = tempf;
 			self.nextthink = time + 5;
 			self.think = Float_Decrease;
-			//bprint(PRINT_HIGH, "spot not found, or teddygun is > 0.7\n");
 			return;
 		}
 		else {
@@ -635,7 +634,8 @@ void() Create_Floating_Weapon =
 	setmodel (gun, temps);
 	setsize (gun, '0 0 0', '0 0 0');
 	gun.angles = self.angles;
-	
+	gun.angles_y += 180;	// show the left side of the weapon
+
 	gun.movetype = MOVETYPE_NOCLIP;
 	gun.solid = SOLID_NOT;
 	makevectors(self.angles);

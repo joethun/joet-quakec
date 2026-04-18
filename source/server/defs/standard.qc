@@ -273,7 +273,6 @@ void    (entity who)                                                            
 float   ()                                                                                      nzp_maxai           = #503;
 void    (entity who)                                                                            nzp_bettyprompt     = #504;
 void    (entity who, string name)                                                               nzp_setplayername   = #505;
-void    (entity who, float version)                                                             nzp_setdoubletapver = #506;
 void    (entity who, float color, float duration, float type)                                   nzp_screenflash     = #507;
 void    (entity who, float state)                                                               nzp_lockviewmodel   = #508;
 void    (entity who, float low_frequency, float high_frequency, float duration)                 nzp_rumble          = #509;

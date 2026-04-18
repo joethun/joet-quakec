@@ -179,8 +179,6 @@ void() Gamemode_Festive_Frame =
 void() Gamemode_Festive_PlayerSpawn =
 {
     self.has_bowie_knife = true;
-    self.has_doubletap_damage_buff = false;
-    nzp_setdoubletapver(self, false);
 
     // Give the player a random starting weapon
     float weapon_options[6] = {W_COLT, W_KAR, W_M1A1, W_SAWNOFF, W_MP40, W_GEWEHR};
@@ -291,40 +289,35 @@ float(float current_count, float current_round, float round_type, float current_
                     default: return 68;
                 }
         }
-    } else {
-        // .. This is programmatic, me thinks!
-        // Start with a base of 24 like normal algorithm..
-        float base_count = 24;
-
-        // Cold War seems to cap at Round 29 for solo, and 
-        // Round 20 for Co-Op..
-        float ai_round_cap = 0;
-        float player_weight = 0;
-        float algo_magic = 0.5;
-        
-        if (current_player_count == 1) {
-            ai_round_cap = 29;
-            player_weight = 0.84;
-        } else {
-            ai_round_cap = 20;
-            player_weight = 0.6;
-            algo_magic += (current_player_count / 2);
-        }
-
-        float multiplier = 1;
-
-        if (current_round < ai_round_cap) {
-            player_weight *= 0.84; // ..?
-            multiplier = clamp(current_round / 5, 0, 1);
-            multiplier *= current_round * player_weight;
-        } else {
-            multiplier = current_round * player_weight;
-        }
-
-        float zombie_count = rint(algo_magic * 6 * multiplier);
     }
 
-    return zombie_count;
+    // .. This is programmatic, me thinks!
+    // Cold War seems to cap at Round 29 for solo, and
+    // Round 20 for Co-Op..
+    float ai_round_cap = 0;
+    float player_weight = 0;
+    float algo_magic = 0.5;
+
+    if (current_player_count == 1) {
+        ai_round_cap = 29;
+        player_weight = 0.84;
+    } else {
+        ai_round_cap = 20;
+        player_weight = 0.6;
+        algo_magic += (current_player_count / 2);
+    }
+
+    float multiplier = 1;
+
+    if (current_round < ai_round_cap) {
+        player_weight *= 0.84; // ..?
+        multiplier = clamp(current_round / 5, 0, 1);
+        multiplier *= current_round * player_weight;
+    } else {
+        multiplier = current_round * player_weight;
+    }
+
+    return rint(algo_magic * 6 * multiplier);
 }
 
 float(float current_health, float current_round) Gamemode_Festive_GetZombieHealthForRound =

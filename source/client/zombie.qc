@@ -67,7 +67,6 @@ float(float isnew) SetZombieSkinning =
 	setcustomskin(self, __NULL__, sprintf("replace \"\" \"models/ai/zfull.mdl_%d.pcx\"\n", self.skin));
 
 	if (isnew) {
-		//print(sprintf("adding a new zombie ent: [%s] [%f]\n", model_path, time));
 		addentity(self);
 	}
 

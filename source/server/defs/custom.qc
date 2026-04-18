@@ -82,7 +82,6 @@ float global_trace_damage_multiplier;
 
 .float has_ads_toggle;
 .float ads_release;
-.float has_doubletap_damage_buff;
 
 .vector oldvelocity;
 .float lastsound_time;

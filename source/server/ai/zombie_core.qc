@@ -425,7 +425,7 @@ void() zombie_footstep
 $frame walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10 walk11 walk12 walk13 walk14 walk15 walk16
 //walk15
 //walk 1!
-void()	zombie_walk1		=[	$walk1,		zombie_walk2	] 	{self.nextthink = time + 0.12;Zombie_Walk(10);SetZombieHitBox(WALK1_BBOX);/*if(freeze_time < time)*/ self.frame = 37;Zombie_Think();};
+void()	zombie_walk1		=[	$walk1,		zombie_walk2	] 	{self.nextthink = time + 0.12;Zombie_Walk(10);SetZombieHitBox(WALK1_BBOX);self.frame = 37;Zombie_Think();};
 void()	zombie_walk2		=[	$walk2,		zombie_walk3	] 	{self.nextthink = time + 0.12;Zombie_Walk(4.4); self.frame = 38;Zombie_Think();};
 void()	zombie_walk3		=[	$walk3,		zombie_walk4	] 	{self.nextthink = time + 0.12;Zombie_Walk(4.4); self.frame = 39;Zombie_Think();};
 void()	zombie_walk4		=[	$walk4,		zombie_walk5	] 	{self.nextthink = time + 0.12;Zombie_Walk(4.4); self.frame = 40;Zombie_Think();};
@@ -447,7 +447,7 @@ void()	zombie_walk16		=[	$walk16,		Zombie_Walk_Setup	] 	{self.nextthink = time +
 //Walk 2!
 $frame bwalk1 bwalk2 bwalk3 bwalk4 bwalk5 bwalk6 bwalk7 bwalk8 bwalk9 bwalk10 bwalk11 bwalk12 bwalk13 bwalk14
 
-void()	zombie_walkb1		=[	$bwalk1,		zombie_walkb2	] 	{self.nextthink = time + 0.13;Zombie_Walk(4.2);SetZombieHitBox(WALK2_BBOX);/*if(freeze_time < time)*/ self.frame = 53;Zombie_Think();};
+void()	zombie_walkb1		=[	$bwalk1,		zombie_walkb2	] 	{self.nextthink = time + 0.13;Zombie_Walk(4.2);SetZombieHitBox(WALK2_BBOX);self.frame = 53;Zombie_Think();};
 void()	zombie_walkb2		=[	$bwalk2,		zombie_walkb3	] 	{self.nextthink = time + 0.13;Zombie_Walk(5.9); self.frame = 54;Zombie_Think();};
 void()	zombie_walkb3		=[	$bwalk3,		zombie_walkb4	] 	{self.nextthink = time + 0.13;Zombie_Walk(3); self.frame = 55;Zombie_Think();};
 void()	zombie_walkb4		=[	$bwalk4,		zombie_walkb5	] 	{self.nextthink = time + 0.13;Zombie_Walk(5.7); self.frame = 56;Zombie_Think();zombie_footstep();};//footstep
@@ -467,7 +467,7 @@ void()	zombie_walkb14		=[	$bwalk14,		Zombie_Walk_Setup	] 	{self.nextthink = time
 //Walk 3!
 $frame cwalk1 cwalk2 cwalk3 cwalk4 cwalk5 cwalk6 cwalk7 cwalk8 cwalk9 cwalk10 cwalk11 cwalk12 cwalk13 cwalk14 cwalk15 cwalk16
 
-void()	zombie_walkc1		=[	$cwalk1,		zombie_walkc2	] 	{self.nextthink = time + 0.13;Zombie_Walk(3.4);SetZombieHitBox(WALK3_BBOX);/*if(freeze_time < time)*/ self.frame = 67;Zombie_Think();};
+void()	zombie_walkc1		=[	$cwalk1,		zombie_walkc2	] 	{self.nextthink = time + 0.13;Zombie_Walk(3.4);SetZombieHitBox(WALK3_BBOX);self.frame = 67;Zombie_Think();};
 void()	zombie_walkc2		=[	$cwalk2,		zombie_walkc3	] 	{self.nextthink = time + 0.13;Zombie_Walk(2); self.frame = 68;Zombie_Think();};
 void()	zombie_walkc3		=[	$cwalk3,		zombie_walkc4	] 	{self.nextthink = time + 0.13;Zombie_Walk(5.4); self.frame = 69;Zombie_Think();};
 void()	zombie_walkc4		=[	$cwalk4,		zombie_walkc5	] 	{self.nextthink = time + 0.13;Zombie_Walk(5.6); self.frame = 70;Zombie_Think();zombie_footstep();};//footstep
@@ -489,7 +489,7 @@ void()	zombie_walkc16		=[	$cwalk16,		Zombie_Walk_Setup	] 	{self.nextthink = time
 //116- 129
 $frame jog1 jog2 jog3 jog4 jog5 jog6 jog7 jog8
 
-void()	zombie_jog1		=[	$jog1,		zombie_jog2	] 	{self.nextthink = time + 0.08;Zombie_Walk(7.5);SetZombieHitBox(JOG_BBOX);/*if(freeze_time < time)*/ self.frame = 83;Zombie_Think();};//FOOTSTEP
+void()	zombie_jog1		=[	$jog1,		zombie_jog2	] 	{self.nextthink = time + 0.08;Zombie_Walk(7.5);SetZombieHitBox(JOG_BBOX);self.frame = 83;Zombie_Think();};//FOOTSTEP
 void()	zombie_jog2		=[	$jog2,		zombie_jog3	] 		{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 84;Zombie_Think();};
 void()	zombie_jog3		=[	$jog3,		zombie_jog4	] 		{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 85;Zombie_Think();};
 void()	zombie_jog4		=[	$jog4,		zombie_jog5	] 		{self.nextthink = time + 0.08;Zombie_Walk(7.5); self.frame = 86;Zombie_Think();zombie_footstep();};//footstep
@@ -502,7 +502,7 @@ void()	zombie_jog8		=[	$jog8,		Zombie_Walk_Setup	] 	{self.nextthink = time + 0.0
 //78-85
 $frame run1 run2 run3 run4 run5 run6 run7 run8 run9 run10 
 //12 unless 14
-void()	zombie_run1		=[	$run1,		zombie_run2	] 	{Zombie_Walk(16.3);/*if(freeze_time < time)*/ self.frame = 92;SetZombieHitBox(RUN_BBOX);Zombie_Think();zombie_footstep();};//footstep
+void()	zombie_run1		=[	$run1,		zombie_run2	] 	{Zombie_Walk(16.3);self.frame = 92;SetZombieHitBox(RUN_BBOX);Zombie_Think();zombie_footstep();};//footstep
 void()	zombie_run2		=[	$run2,		zombie_run3	] 	{Zombie_Walk(16.3);self.frame = 93;Zombie_Think();};
 void()	zombie_run3		=[	$run3,		zombie_run4	] 	{Zombie_Walk(16.3); self.frame = 94;Zombie_Think();zombie_footstep();};//footstep
 void()	zombie_run4		=[	$run4,		zombie_run5	] 	{Zombie_Walk(16.3); self.frame = 95;Zombie_Think();};

@@ -257,9 +257,8 @@ void () Link_Waypoints =
 		bprint(PRINT_HIGH, "[INFO]: These waypoints are already linked!\n");
 		return;
 	}
-	
+
 	float i;
-	entity tempe;
 	for	(i = 0; i < MAX_WAY_TARGETS; i++) {
 		// First pass - if the target field is blank no extra
 		// validation is needed, just link.
@@ -571,7 +570,6 @@ void() Load_Waypoints
 		}
 		h = strtrim(line);
 
-		//bprint(PRINT_HIGH, strcat(h, "\n"));
 		if (h == "") {
 			continue;
 		}
@@ -590,7 +588,6 @@ void() Load_Waypoints
 					point = 1;
 					targetcount = 0;
 				} else if (h == "Waypoint") {
-					//bprint(PRINT_HIGH, "Identified .way as legacy..\n");
 					point = 99;
 					Load_Waypoints_Legacy();
 					loop = 0;
@@ -612,8 +609,6 @@ void() Load_Waypoints
 				string value, variable;
 				variable = strtrim(argv(0));
 				value = strtrim(argv(2));
-
-				//bprint(PRINT_HIGH, strcat(variable, "\n"));
 
 				switch (variable) {
 					case "origin":
@@ -808,19 +803,6 @@ void() Load_Waypoints_Legacy
 	}
 }
 
-
-void VisualizePathfind() {
-	if (self.classname != "player")
-		return;
-	if (!current_way)
-		return;
-	if (!active_way)
-		return;
-	if (current_way == active_way)
-		return;
-	
-	Pathfind(self, stof(active_way.waynum), stof(current_way.waynum));
-}
 
 .float waypoint_delay;
 

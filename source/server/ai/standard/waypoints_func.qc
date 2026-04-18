@@ -50,7 +50,6 @@ float (entity way1, entity way2) progs_Link_Waypoints =
 		way1.target8 == way2.waynum
 		)
 	{
-		//bprint(PRINT_HIGH, "These waypoints are already linked!\n");
 		return 2;//already linked
 	}
 	
@@ -96,7 +95,6 @@ float (entity way1, entity way2) progs_Link_Waypoints =
 	}
 	else
 	{
-		//bprint(PRINT_HIGH, "no targets remaining!\n");
 		return -1;//no targets
 	}
 	

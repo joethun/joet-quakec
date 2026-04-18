@@ -109,6 +109,7 @@ void() Menu_Lobby =
     string magic = "";
     string headshots = "";
     string fast_rounds = "";
+    string freeperk = "";
 
     switch(cvar("sv_gamemode")) {
         case 0: gamemode = "CLASSIC"; break;
@@ -141,6 +142,9 @@ void() Menu_Lobby =
     if (cvar("sv_fastrounds") == 1) fast_rounds = "ENABLED";
     else fast_rounds = "DISABLED";
 
+    if (cvar("sv_freeperk") == 1) freeperk = "ENABLED";
+    else freeperk = "DISABLED";
+
     sui_text([80, -160], MENU_TEXT_MEDIUM, "Game Mode", MENU_COLOR_WHITE, 1, 0);
     sui_text([80, -145], MENU_TEXT_SMALL, gamemode, MENU_COLOR_RED_BRIGHT, 1, 0);
     sui_fill([80, -135], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
@@ -168,6 +172,10 @@ void() Menu_Lobby =
     sui_text([80, -40], MENU_TEXT_MEDIUM, "Fast Rounds", MENU_COLOR_WHITE, 1, 0);
     sui_text([80, -25], MENU_TEXT_SMALL, fast_rounds, MENU_COLOR_RED_BRIGHT, 1, 0);
     sui_fill([80, -15], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
+
+    sui_text([220, -40], MENU_TEXT_MEDIUM, "Random Perk", MENU_COLOR_WHITE, 1, 0);
+    sui_text([220, -25], MENU_TEXT_SMALL, freeperk, MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([220, -15], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
 
     float lobby_delta = menu_loby_countdown - time;
     if (lobby_delta > 0) {

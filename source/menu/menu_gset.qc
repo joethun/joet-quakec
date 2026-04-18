@@ -1,4 +1,4 @@
-string menu_gset_buttons[8] = {"ge_mode", "ge_diff", "ge_rond", "ge_magc", "ge_head", "ge_hord", "ge_frnd", "ge_back"};
+string menu_gset_buttons[9] = {"ge_mode", "ge_diff", "ge_rond", "ge_magc", "ge_head", "ge_hord", "ge_frnd", "ge_fprk", "ge_back"};
 
 string(string prev_id) Menu_GameSettings_GetNextButton =
 {
@@ -96,6 +96,16 @@ void() Menu_GameSettings_ApplyFastRounds =
     cvar_set("sv_fastrounds", ftos(current_fastrounds));
 };
 
+void() Menu_GameSettings_ApplyFreePerk =
+{
+    Menu_PlaySound(MENU_SND_ENTER);
+
+    float current_freeperk = cvar("sv_freeperk");
+    current_freeperk = !current_freeperk;
+
+    cvar_set("sv_freeperk", ftos(current_freeperk));
+};
+
 void() Menu_GameSettings = 
 {
     Menu_DrawBackground();
@@ -170,6 +180,16 @@ void() Menu_GameSettings =
         fast_string = "DISABLED";
     }
     Menu_DrawOptionValue(7, fast_string);
+
+    // Free Perk
+    string freeperk_string = "";
+    Menu_Button(8, "ge_fprk", "RANDOM PERK", "Include the random perk power-up in all game modes") ? Menu_GameSettings_ApplyFreePerk() : 0;
+    if (cvar("sv_freeperk")) {
+        freeperk_string = "ENABLED";
+    } else {
+        freeperk_string = "DISABLED";
+    }
+    Menu_DrawOptionValue(8, freeperk_string);
 
     Menu_Button(-1, "ge_back", "BACK", "Return to pre-game menu") ? current_menu = MENU_LOBBY : 0;
 

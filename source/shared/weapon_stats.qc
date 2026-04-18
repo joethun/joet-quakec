@@ -851,32 +851,32 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 1000;
 			break;
 		case W_357:
-			weapon_damage = 150;
+			weapon_damage = 175;
 			break;
 		case W_KILLU:
-			weapon_damage = 300;
+			weapon_damage = 350;
 			break;
 		// -- Bolt-Action Rifles --
 		case W_KAR:
-			weapon_damage = 120;
+			weapon_damage = 150;
 			break;
 		case W_ARMAGEDDON:
-			weapon_damage = 240;
+			weapon_damage = 300;
 			break;
 		case W_SPRING:
-			weapon_damage = 120;
+			weapon_damage = 150;
 			break;
 		case W_PULVERIZER:
-			weapon_damage = 240;
+			weapon_damage = 300;
 			break;
 		case W_DESTROYER:
 			weapon_damage = 10000;
 			break;
 		case W_KAR_SCOPE:
-			weapon_damage = 180;
+			weapon_damage = 200;
 			break;
 		case W_HEADCRACKER:
-			weapon_damage = 360;
+			weapon_damage = 400;
 			break;
 		// -- Semi-Auto Rifles --
 		case W_GEWEHR:
@@ -902,63 +902,63 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 100;
 			break;
 		case W_GIBS:
-			weapon_damage = 200;
+			weapon_damage = 210;
 			break;
 		case W_MP40:
 			weapon_damage = 110;
 			break;
 		case W_AFTERBURNER:
-			weapon_damage = 220;
+			weapon_damage = 230;
 			break;
 		case W_MP5K:
-			weapon_damage = 95;
+			weapon_damage = 105;
 			break;
 		case W_KOLLIDER:
-			weapon_damage = 190;
+			weapon_damage = 220;
 			break;
 		case W_PPSH:
 			weapon_damage = 75;
 			break;
 		case W_REAPER:
-			weapon_damage = 150;
+			weapon_damage = 160;
 			break;
 		case W_TYPE:
 			weapon_damage = 95;
 			break;
 		case W_SAMURAI:
-			weapon_damage = 190;
+			weapon_damage = 200;
 			break;
+		// -- Assault Rifles / Light MGs --
 		case W_STG:
 			weapon_damage = 120;
 			break;
 		case W_SPATZ:
-			weapon_damage = 240;
+			weapon_damage = 245;
 			break;
-		// -- Assault Rifles / Light MGs --
 		case W_BAR:
 			weapon_damage = 160;
 			break;
 		case W_WIDOW:
-			weapon_damage = 320;
+			weapon_damage = 325;
 			break;
 		case W_FG:
 			weapon_damage = 100;
 			break;
 		case W_IMPELLER:
-			weapon_damage = 200;
+			weapon_damage = 205;
 			break;
 		// -- LMGs --
 		case W_BROWNING:
 			weapon_damage = 140;
 			break;
 		case W_ACCELERATOR:
-			weapon_damage = 280;
+			weapon_damage = 285;
 			break;
 		case W_MG:
 			weapon_damage = 95;
 			break;
 		case W_BARRACUDA:
-			weapon_damage = 190;
+			weapon_damage = 195;
 			break;
 		// -- Shotguns (per pellet) --
 		case W_SAWNOFF:
@@ -971,13 +971,13 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 80;
 			break;
 		case W_SNUFF:
-			weapon_damage = 240;
+			weapon_damage = 230;
 			break;
 		case W_BORE:
 			weapon_damage = 220;
 			break;
 		case W_GUT:
-			weapon_damage = 180;
+			weapon_damage = 170;
 			break;
 		// -- Snipers --
 		case W_PTRS:
@@ -1751,11 +1751,40 @@ vector GetWeaponADSOfs(float wep) =
 		case W_PANZER:
 		case W_LONGINUS:
 			return [-7679.2, 2900, -20000];
-		default: 
+		default:
 			//Large values > 20ish cause weapon to flicker, scale model down if we encounter!
 			//Scale better be 4.3, or else viewbobbing is going to be inaccurate.
 			return [-5.4792, 1.6500, 0];
 	}
+};
+
+//
+// GetWeaponADSFactor(wep)
+// Returns a multiplier applied to VIEWMODEL_ADS_TIME_FACTOR. 1.0 is
+// the baseline. Lower values produce a slower raise/lower to ADS --
+// LMGs are heavy and should take noticeably longer to shoulder.
+//
+float(float wep) GetWeaponADSFactor =
+{
+	switch (wep)
+	{
+		// Heaviest LMGs — slowest to shoulder.
+		case W_MG:
+		case W_BARRACUDA:
+			return 0.30;
+		case W_BROWNING:
+		case W_ACCELERATOR:
+			return 0.35;
+		// Automatic rifles — slower than ARs but noticeably
+		// quicker than the belt-feds.
+		case W_BAR:
+		case W_WIDOW:
+			return 0.60;
+		case W_FG:
+		case W_IMPELLER:
+			return 0.70;
+	}
+	return 1.0;
 };
 
 float(float wep, float frametype, optional float z) GetFrame =
@@ -4495,29 +4524,31 @@ vector(float wep) GetWeaponRecoil =
 			guaranteed = '0 95 0';
 			kick_change = '45 85 45';
 			break;
+		// Per-shot kick is tuned against fire rate so WaW-style
+		// "climb per second" ends up consistent across the family.
 		case W_BAR:
-			kick_change = '0 50 0';
+			kick_change = '15 150 15';
 			break;
 		case W_WIDOW:
-			kick_change = '0 50 0';
+			kick_change = '12 110 12';
 			break;
 		case W_MG:
-			kick_change = '40 30 40';
+			kick_change = '25 115 25';
 			break;
 		case W_BARRACUDA:
-			kick_change = '40 30 40';
+			kick_change = '18 80 18';
 			break;
 		case W_FG:
-			kick_change = '30 45 0';
+			kick_change = '20 90 20';
 			break;
 		case W_IMPELLER:
-			kick_change = '30 45 0';
+			kick_change = '18 80 18';
 			break;
 		case W_BROWNING:
-			kick_change = '50 66 50';
+			kick_change = '35 160 35';
 			break;
 		case W_ACCELERATOR:
-			kick_change = '50 66 50';
+			kick_change = '35 160 35';
 			break;
 		case W_TESLA:
 		case W_DG3:
@@ -5167,7 +5198,6 @@ float WepDef_WeaponCanGibEnemy(float weapon)
 // 2. Area of Effect (o)
 // 3. Dot crosshair (.) (unused).
 // 4 is reserved for the grenade, do not use.
-// 5. Shotgun spread (O) - larger AoE ring
 //
 float WepDef_GetWeaponCrosshairType(float weapon)
 {
@@ -5183,7 +5213,7 @@ float WepDef_GetWeaponCrosshairType(float weapon)
 		case W_SNUFF:
 		case W_TRENCH:
 		case W_GUT:
-			return 5;
+			return 1;
 		case W_BK:
 		case W_KRAUS:
 			return 3;

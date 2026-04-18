@@ -342,15 +342,6 @@ void(entity target, string player_name) nzp_setplayername =
 	multicast('0 0 0', MULTICAST_ONE);
 };
 
-void(entity who, float version) nzp_setdoubletapver =
-{
-	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, EVENT_DOUBLETAPUPDATE);
-	WriteByte(MSG_MULTICAST, version);
-	msg_entity = who;
-	multicast('0 0 0', MULTICAST_ONE);
-};
-
 #endif // FTE
 
 void(float count) UpdatePlayerCount =

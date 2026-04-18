@@ -73,6 +73,9 @@ inline void(entity ent) PU_FreeEnt =
 
 };
 
+float() PU_AllPlayersHavePerksCapped;
+float() PU_MaxAmmoRequirement;
+
 //
 // PU_GetFreeEnt()
 // Returns a Power-Up entity to use.
@@ -194,6 +197,13 @@ float() PU_GetNextPowerUp =
 			// Check if we meet the requirements
 			if (pu.requirement_function() == true) {
 				id = pu.id;
+
+				// If Free Perk was picked but every player already has
+				// all perks, forward the slot to Max Ammo so its chance
+				// isn't wasted.
+				if (id == PU_FREEPERK && PU_AllPlayersHavePerksCapped() && PU_MaxAmmoRequirement())
+					id = PU_MAXAMMO;
+
 				found = true;
 			}
 		}
@@ -546,6 +556,34 @@ float() PU_MaxAmmoRequirement =
 }
 
 //
+// PU_AllPlayersHavePerksCapped()
+// True when every live player already holds the perk cap for the
+// current gamemode. Downed players are ignored (they can't drink a
+// perk drop anyway). Used to redirect the Free Perk slot to Max Ammo.
+//
+float() PU_AllPlayersHavePerksCapped =
+{
+	entity players;
+	float any_eligible = false;
+	float cap = P_ALL;
+
+	if (cvar("sv_gamemode") == GAMEMODE_GUNGAME)
+		cap = P_ALL_GUNGAME;
+
+	players = find(world, classname, "player");
+	while (players) {
+		if (!players.downed) {
+			if (players.perks < cap)
+				return false;
+			any_eligible = true;
+		}
+		players = find(players, classname, "player");
+	}
+
+	return any_eligible;
+}
+
+//
 // PU_FreePerkRequirement()
 // Requirements for Free Perk Power-Up.
 //
@@ -561,7 +599,7 @@ float() PU_FreePerkRequirement =
 		if (random() < 0.25)
 			return false;
 	}
-	
+
 	return true;
 }
 
@@ -683,8 +721,10 @@ void() PU_FreePerk =
 
 		tempe = self;
 		self = players;
+		self.isBuying = true;
+		self.zoom = 0;
 		W_SprintStop();
-		DrinkPerk();
+		Weapon_PlayViewModelAnimation(ANIM_PUT_AWAY, DrinkPerk, getWeaponDelay(self.weapon, PUTOUT));
 		self = tempe;
 
 		players = find(players, classname, "player");

@@ -188,22 +188,27 @@ void() W_AimOut =
 
 void() W_SprintStop =
 {
-	if (self.isBuying || !self.sprinting)
+	if (!self.sprinting)
 		return;
 
-	Weapon_PlayViewModelAnimation(ANIM_SPRINT_STOP, ReturnWeaponModel, 0);
+	// Don't interrupt perk drinking animation or clear its delays,
+	// but do update sprinting state so movement speed is correct.
+	if (!self.isBuying) {
+		Weapon_PlayViewModelAnimation(ANIM_SPRINT_STOP, ReturnWeaponModel, 0);
 
-	// Run Walk for a few frames to simulate an ease in velocity
-	PAnim_Walk6();
+		// Run Walk for a few frames to simulate an ease in velocity
+		PAnim_Walk6();
 
-	self.zoom = 0;
-	self.tp_anim_time = 0;
-	self.sprinting = 0;
+		self.zoom = 0;
+		self.tp_anim_time = 0;
+		self.reload_delay2 = self.fire_delay2 = self.reload_delay = self.fire_delay = 0;
+		self.sprint_stop_time = time;
+		self.sprint_duration = self.sprint_timer;
+	}
+
 	self.into_sprint = 0;
 	self.sprint_wall_grace = 0;
-	self.reload_delay2 = self.fire_delay2 = self.reload_delay = self.fire_delay = 0;
-	self.sprint_stop_time = time;
-	self.sprint_duration = self.sprint_timer;
+	self.sprinting = 0;
 }
 
 
@@ -222,14 +227,25 @@ void W_SprintStart () {
 		return;
 	}
 	
-	if (self.fire_delay > time ||
+	if (!self.isBuying &&
+		(self.fire_delay > time ||
 		self.fire_delay2 > time ||
 		self.new_anim_stop ||
-		self.new_anim2_stop ||
-		self.isBuying ||
-		self.downed ||
+		self.new_anim2_stop)) {
+		return;
+	}
+
+	if (self.downed ||
 		!(self.flags & FL_ONGROUND) ||
 		self.sprint_delay > time) {
+		return;
+	}
+
+	// Don't interrupt perk drinking animation or clear its delays,
+	// but do update sprinting state so movement speed is correct.
+	if (self.isBuying) {
+		self.sprinting = true;
+		self.sprint_wall_grace = 0;
 		return;
 	}
 
@@ -1084,7 +1100,7 @@ void(float side) W_Fire =
 	delay = getWeaponDelay(self.weapon, FIRE);
 
 	// Double Tap 2.0
-	if (self.perks & P_DOUBLE && self.has_doubletap_damage_buff)
+	if (self.perks & P_DOUBLE)
 		shotcount *= 2;
 
 	spread = WepDef_WeaponSpread(self.weapon, self.stance);

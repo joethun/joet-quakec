@@ -1286,9 +1286,6 @@ noref void() CSQC_Parse_Event =
 		case EVENT_ENDGAME:
 			in_endgame_sequence = true;
 			break;
-		case EVENT_DOUBLETAPUPDATE:
-			double_tap_version = readbyte();
-			break;
 		case EVENT_UPDATE:
 			float updatetype = readbyte();
 			float var_1 = readbyte();
