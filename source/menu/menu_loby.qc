@@ -115,10 +115,13 @@ void() Menu_Lobby =
         case 0: gamemode = "CLASSIC"; break;
         case 1: gamemode = "GRIEF"; break;
         case 2: gamemode = "GUN GAME"; break;
-        case 3: gamemode = "HARDCORE"; break;
-        case 4: gamemode = "WILD WEST"; break;
-        case 5: gamemode = "STICKS & STONES"; break;
-        case 6: gamemode = "FEVER"; break;
+        case 3: gamemode = "RANDOMIZER"; break;
+        case 4: gamemode = "HARDCORE"; break;
+        case 5: gamemode = "WILD WEST"; break;
+        case 6: gamemode = "STICKS & STONES"; break;
+        case 7: gamemode = "FEVER"; break;
+        case 8: gamemode = "MINIMALIST"; break;
+        case 9: gamemode = "ONE IN THE CHAMBER"; break;
         default: gamemode = "???"; break;
     }
 
@@ -145,37 +148,41 @@ void() Menu_Lobby =
     if (cvar("sv_freeperk") == 1) freeperk = "ENABLED";
     else freeperk = "DISABLED";
 
-    sui_text([80, -160], MENU_TEXT_MEDIUM, "Game Mode", MENU_COLOR_WHITE, 1, 0);
-    sui_text([80, -145], MENU_TEXT_SMALL, gamemode, MENU_COLOR_RED_BRIGHT, 1, 0);
-    sui_fill([80, -135], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
+    sui_text([10, -140], MENU_TEXT_MEDIUM, "Game Mode", MENU_COLOR_WHITE, 1, 0);
+    sui_text([10, -125], MENU_TEXT_SMALL, gamemode, MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([10, -115], [100, 2], MENU_COLOR_DIVIDER, 1, 0);
 
-    sui_text([220, -160], MENU_TEXT_MEDIUM, "Difficulty", MENU_COLOR_WHITE, 1, 0);
-    sui_text([220, -145], MENU_TEXT_SMALL, difficulty, MENU_COLOR_RED_BRIGHT, 1, 0);
-    sui_fill([220, -135], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
+    sui_text([150, -140], MENU_TEXT_MEDIUM, "Difficulty", MENU_COLOR_WHITE, 1, 0);
+    sui_text([150, -125], MENU_TEXT_SMALL, difficulty, MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([150, -115], [100, 2], MENU_COLOR_DIVIDER, 1, 0);
 
-    sui_text([80, -120], MENU_TEXT_MEDIUM, "Start Round", MENU_COLOR_WHITE, 1, 0);
-    sui_text([80, -105], MENU_TEXT_SMALL, start_round, MENU_COLOR_RED_BRIGHT, 1, 0);
-    sui_fill([80, -95], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
+    sui_text([290, -140], MENU_TEXT_MEDIUM, "Start Round", MENU_COLOR_WHITE, 1, 0);
+    sui_text([290, -125], MENU_TEXT_SMALL, start_round, MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([290, -115], [100, 2], MENU_COLOR_DIVIDER, 1, 0);
 
-    sui_text([220, -120], MENU_TEXT_MEDIUM, "Magic", MENU_COLOR_WHITE, 1, 0);
-    sui_text([220, -105], MENU_TEXT_SMALL, magic, MENU_COLOR_RED_BRIGHT, 1, 0);
-    sui_fill([220, -95], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
+    sui_text([10, -90], MENU_TEXT_MEDIUM, "Magic", MENU_COLOR_WHITE, 1, 0);
+    sui_text([10, -75], MENU_TEXT_SMALL, magic, MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([10, -65], [100, 2], MENU_COLOR_DIVIDER, 1, 0);
 
-    sui_text([80, -80], MENU_TEXT_MEDIUM, "Headshots Only", MENU_COLOR_WHITE, 1, 0);
-    sui_text([80, -65], MENU_TEXT_SMALL, headshots, MENU_COLOR_RED_BRIGHT, 1, 0);
-    sui_fill([80, -55], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
+    sui_text([150, -90], MENU_TEXT_MEDIUM, "Headshots Only", MENU_COLOR_WHITE, 1, 0);
+    sui_text([150, -75], MENU_TEXT_SMALL, headshots, MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([150, -65], [100, 2], MENU_COLOR_DIVIDER, 1, 0);
 
-    sui_text([220, -80], MENU_TEXT_MEDIUM, "Horde Size", MENU_COLOR_WHITE, 1, 0);
-    sui_text([220, -65], MENU_TEXT_SMALL, sprintf("%d", cvar("sv_maxai")), MENU_COLOR_RED_BRIGHT, 1, 0);
-    sui_fill([220, -55], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
+    sui_text([290, -90], MENU_TEXT_MEDIUM, "Horde Size", MENU_COLOR_WHITE, 1, 0);
+    sui_text([290, -75], MENU_TEXT_SMALL, sprintf("%d", cvar("sv_maxai")), MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([290, -65], [100, 2], MENU_COLOR_DIVIDER, 1, 0);
 
-    sui_text([80, -40], MENU_TEXT_MEDIUM, "Fast Rounds", MENU_COLOR_WHITE, 1, 0);
-    sui_text([80, -25], MENU_TEXT_SMALL, fast_rounds, MENU_COLOR_RED_BRIGHT, 1, 0);
-    sui_fill([80, -15], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
+    sui_text([10, -40], MENU_TEXT_MEDIUM, "Fast Rounds", MENU_COLOR_WHITE, 1, 0);
+    sui_text([10, -25], MENU_TEXT_SMALL, fast_rounds, MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([10, -15], [100, 2], MENU_COLOR_DIVIDER, 1, 0);
 
-    sui_text([220, -40], MENU_TEXT_MEDIUM, "Random Perk", MENU_COLOR_WHITE, 1, 0);
-    sui_text([220, -25], MENU_TEXT_SMALL, freeperk, MENU_COLOR_RED_BRIGHT, 1, 0);
-    sui_fill([220, -15], [90, 2], MENU_COLOR_DIVIDER, 1, 0);
+    sui_text([150, -40], MENU_TEXT_MEDIUM, "Random Perk", MENU_COLOR_WHITE, 1, 0);
+    sui_text([150, -25], MENU_TEXT_SMALL, freeperk, MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([150, -15], [100, 2], MENU_COLOR_DIVIDER, 1, 0);
+
+    sui_text([290, -40], MENU_TEXT_MEDIUM, "Perk Cap", MENU_COLOR_WHITE, 1, 0);
+    sui_text([290, -25], MENU_TEXT_SMALL, strcat(ftos(cvar("sv_perkcap") ? cvar("sv_perkcap") : 8), " PERKS"), MENU_COLOR_RED_BRIGHT, 1, 0);
+    sui_fill([290, -15], [100, 2], MENU_COLOR_DIVIDER, 1, 0);
 
     float lobby_delta = menu_loby_countdown - time;
     if (lobby_delta > 0) {

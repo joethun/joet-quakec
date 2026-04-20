@@ -33,6 +33,18 @@ void() W_PutOutHack;
 void(vector where, float time_alive) SpawnSpark;
 
 //
+// PAP_PutOutHack()
+// Wrapper around W_PutOutHack that clears isBuying,
+// preventing the PaP cookie animation from being cancelled
+// while still allowing the player to move freely.
+//
+void() PAP_PutOutHack =
+{
+	self.isBuying = false;
+	W_PutOutHack();
+};
+
+//
 // PAP_FlagStopMoving()
 // Resets flag's angular velocity.
 //
@@ -252,9 +264,8 @@ void(entity pap, entity buyer, float machine_cost) PAP_UpgradeWeapon =
 
 	self.isBuying = true;
 	Weapon_RemoveWeapon(0);
-	self.isBuying = false;
 	W_HideCrosshair(self);
-	Set_W_Frame (0, 39, 2.0, 0, 0, W_PutOutHack, "models/machines/v_pap.mdl", true, S_BOTH, true);
+	Set_W_Frame (0, 39, 2.0, 0, 0, PAP_PutOutHack, "models/machines/v_pap.mdl", true, S_BOTH, true);
 	self.weapon2model = "";
 	self.Weapon_Name = "";
 

@@ -1,4 +1,4 @@
-string menu_gset_buttons[9] = {"ge_mode", "ge_diff", "ge_rond", "ge_magc", "ge_head", "ge_hord", "ge_frnd", "ge_fprk", "ge_back"};
+string menu_gset_buttons[10] = {"ge_mode", "ge_diff", "ge_rond", "ge_magc", "ge_head", "ge_hord", "ge_frnd", "ge_fprk", "ge_perk", "ge_back"};
 
 string(string prev_id) Menu_GameSettings_GetNextButton =
 {
@@ -47,7 +47,7 @@ void() Menu_GameSettings_ApplyGameMode =
     float current_gamemode = cvar("sv_gamemode");
     current_gamemode += 1;
 
-    if (current_gamemode > 6)
+    if (current_gamemode > 9)
         current_gamemode = 0;
 
     cvar_set("sv_gamemode", ftos(current_gamemode));
@@ -106,6 +106,20 @@ void() Menu_GameSettings_ApplyFreePerk =
     cvar_set("sv_freeperk", ftos(current_freeperk));
 };
 
+void() Menu_GameSettings_ApplyPerkCap =
+{
+    Menu_PlaySound(MENU_SND_ENTER);
+
+    float current = cvar("sv_perkcap");
+    // Cycle through 1 -> 2 -> 4 -> 8 -> 1
+    if (current >= 8)       current = 1;
+    else if (current >= 4)  current = 8;
+    else if (current >= 2)  current = 4;
+    else                    current = 2;
+
+    cvar_set("sv_perkcap", ftos(current));
+};
+
 void() Menu_GameSettings = 
 {
     Menu_DrawBackground();
@@ -121,10 +135,13 @@ void() Menu_GameSettings =
         case 1: localcmd("sv_gamemode 2\n"); break;
         //case 1: gamemode_description = "Compete in Teams to outlive your opponents"; gamemode_string = "GRIEF"; break;
         case 2: gamemode_description = "Race to earn score to cycle through weaponry"; gamemode_string = "GUN GAME"; break;
-        case 3: gamemode_description = "No HUD? Two Perks? 150% Item Cost? No problem"; gamemode_string = "HARDCORE"; break;
-        case 4: gamemode_description = "Old-fashioned stand-off between you and the dead"; gamemode_string = "WILD WEST"; break;
-        case 5: gamemode_description = "Knives and nades only. Grenades explode on contact"; gamemode_string = "STICKS & STONES"; break;
-        case 6: gamemode_description = "The cycle continues. Old meets new in this Cold War inspired mode!"; gamemode_string = "FEVER"; break;
+        case 3: gamemode_description = "Get a new random weapon every 30 seconds!"; gamemode_string = "RANDOMIZER"; break;
+        case 4: gamemode_description = "No HUD? Two Perks? 150% Item Cost? No problem"; gamemode_string = "HARDCORE"; break;
+        case 5: gamemode_description = "Old-fashioned stand-off between you and the dead"; gamemode_string = "WILD WEST"; break;
+        case 6: gamemode_description = "Knives and nades only. Grenades explode on contact"; gamemode_string = "STICKS & STONES"; break;
+        case 7: gamemode_description = "The cycle continues. Old meets new in this Cold War inspired mode!"; gamemode_string = "FEVER"; break;
+        case 8: gamemode_description = "One weapon. One perk. Survive."; gamemode_string = "MINIMALIST"; break;
+        case 9: gamemode_description = "One bullet. Each kill earns another. Bowie knife included."; gamemode_string = "ONE IN THE CHAMBER"; break;
         default: gamemode_description = "???"; break;
     }
     Menu_Button(1, "ge_mode", "GAME MODE", gamemode_description) ? Menu_GameSettings_ApplyGameMode() : 0;
@@ -190,6 +207,11 @@ void() Menu_GameSettings =
         freeperk_string = "DISABLED";
     }
     Menu_DrawOptionValue(8, freeperk_string);
+
+    // Perk Cap
+    string perkcap_string = strcat(ftos(cvar("sv_perkcap") ? cvar("sv_perkcap") : 8), " PERKS");
+    Menu_Button(9, "ge_perk", "PERK CAP", "Max perks a player can hold (ignored by Hardcore and Minimalist)") ? Menu_GameSettings_ApplyPerkCap() : 0;
+    Menu_DrawOptionValue(9, perkcap_string);
 
     Menu_Button(-1, "ge_back", "BACK", "Return to pre-game menu") ? current_menu = MENU_LOBBY : 0;
 

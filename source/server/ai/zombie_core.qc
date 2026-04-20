@@ -1186,13 +1186,13 @@ void(entity ent) Zombie_Death_Cleanup = {
 float() Zombie_PowerUpDropPercentage =
 {
 	switch(cvar("sv_difficulty")) {
-		case 0: return 0.02;
-		case 1: return 0.04;
+		case 0: return 0.01;
+		case 1: return 0.02;
 		case 2: return 0;
 		case 3: return 0;
 	}
 
-	return 0.02;
+	return 0.01;
 }
 
 void() Zombie_Death =

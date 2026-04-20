@@ -43,6 +43,7 @@ float() Gamemode_IsPartyMode =
     switch(current_gamemode) {
         case GAMEMODE_GUNGAME: return true;
         case GAMEMODE_STICKSNSTONES: return true;
+        case GAMEMODE_RANDOMIZER: return true;
         default: return false;
     }
 };
@@ -59,11 +60,25 @@ void() Gamemode_Init =
     switch(current_gamemode) {
         case GAMEMODE_CLASSIC: break;
         case GAMEMODE_GUNGAME: Gamemode_GunGame_Init(); break;
+        case GAMEMODE_RANDOMIZER: Gamemode_Randomizer_Init(); break;
         case GAMEMODE_HARDCORE: Gamemode_Hardcore_Init(); break;
         case GAMEMODE_STICKSNSTONES: Gamemode_Sticks_Init(); break;
         case GAMEMODE_WILDWEST: Gamemode_WW_Init(); break;
         case GAMEMODE_FESTIVE: Gamemode_Festive_Init(); break;
+        case GAMEMODE_MINIMALIST: Gamemode_Minimalist_Init(); break;
+        case GAMEMODE_OITC: Gamemode_OITC_Init(); break;
         default: error("Received unrecognized gamemode."); break;
+    }
+
+    // Apply sv_perkcap for gamemodes that don't manage their own perk limit.
+    // Hardcore and Minimalist set their own limits and are excluded.
+    switch(current_gamemode) {
+        case GAMEMODE_HARDCORE:
+        case GAMEMODE_MINIMALIST:
+            break;
+        default:
+            game_modifier_perk_purchase_limit = cvar("sv_perkcap") ? cvar("sv_perkcap") : 8;
+            break;
     }
 };
 
@@ -77,10 +92,13 @@ void() Gamemode_Frame =
     switch(current_gamemode) {
         case GAMEMODE_CLASSIC: break;
         case GAMEMODE_GUNGAME: Gamemode_GunGame_Frame(); break;
+        case GAMEMODE_RANDOMIZER: Gamemode_Randomizer_Frame(); break;
         case GAMEMODE_HARDCORE: Gamemode_Hardcore_Frame(); break;
         case GAMEMODE_STICKSNSTONES: Gamemode_Sticks_Frame(); break;
         case GAMEMODE_WILDWEST: Gamemode_WW_Frame(); break;
         case GAMEMODE_FESTIVE: Gamemode_Festive_Frame(); break;
+        case GAMEMODE_MINIMALIST: Gamemode_Minimalist_Frame(); break;
+        case GAMEMODE_OITC: Gamemode_OITC_Frame(); break;
         default: error("Received unrecognized gamemode."); break;
     }
 
@@ -105,10 +123,13 @@ void() Gamemode_PlayerSpawn =
     switch(current_gamemode) {
         case GAMEMODE_CLASSIC: break;
         case GAMEMODE_GUNGAME: Gamemode_GunGame_PlayerSpawn(); break;
+        case GAMEMODE_RANDOMIZER: Gamemode_Randomizer_PlayerSpawn(); break;
         case GAMEMODE_HARDCORE: Gamemode_Hardcore_PlayerSpawn(); break;
         case GAMEMODE_STICKSNSTONES: Gamemode_Sticks_PlayerSpawn(); break;
         case GAMEMODE_WILDWEST: Gamemode_WW_PlayerSpawn(); break;
         case GAMEMODE_FESTIVE: Gamemode_Festive_PlayerSpawn(); break;
+        case GAMEMODE_MINIMALIST: Gamemode_Minimalist_PlayerSpawn(); break;
+        case GAMEMODE_OITC: Gamemode_OITC_PlayerSpawn(); break;
         default: error("Received unrecognized gamemode."); break;
     }
 };
@@ -191,6 +212,7 @@ float(float damage, float weapon_id, float weapon_tier) Gamemode_GetWeaponDamage
     switch(current_gamemode) {
         case GAMEMODE_WILDWEST: return Gamemode_WW_GetWeaponDamage(damage, weapon_id, weapon_tier);
         case GAMEMODE_FESTIVE: return Gamemode_Festive_GetWeaponDamage(damage, weapon_id, weapon_tier);
+        case GAMEMODE_OITC: return Gamemode_OITC_GetWeaponDamage(damage, weapon_id, weapon_tier);
         default: return damage;
     }
 
@@ -201,6 +223,7 @@ void(entity attacker, float death_style) Gamemode_DieHandler =
 {
     switch(current_gamemode) {
         case GAMEMODE_STICKSNSTONES: Gamemode_Sticks_DieHandler(attacker, death_style); break;
+        case GAMEMODE_OITC: Gamemode_OITC_DieHandler(attacker, death_style); break;
         default: break;
     }
 };
@@ -209,7 +232,29 @@ void(entity client) Gamemode_DrinkPerk =
 {
     switch(current_gamemode) {
         case GAMEMODE_STICKSNSTONES: Gamemode_Sticks_DrinkPerk(client); break;
+        case GAMEMODE_MINIMALIST: Gamemode_Minimalist_DrinkPerk(client); break;
         default: break;
+    }
+}
+
+float(entity client) Gamemode_CanReplacePerk =
+{
+    switch(current_gamemode) {
+        case GAMEMODE_MINIMALIST: return true;
+        default: return false;
+    }
+}
+
+//
+// Gamemode_GetWeaponSlotLimit()
+// Returns the max number of weapon slots allowed.
+// 0 means no restriction (use default).
+//
+float() Gamemode_GetWeaponSlotLimit =
+{
+    switch(current_gamemode) {
+        case GAMEMODE_MINIMALIST: return 1;
+        default: return 0;
     }
 }
 
@@ -217,8 +262,19 @@ void(entity client, float weapon) Gamemode_BuyWeapon =
 {
     switch(current_gamemode) {
         case GAMEMODE_STICKSNSTONES: Gamemode_Sticks_BuyWeapon(client, weapon); break;
+        case GAMEMODE_MINIMALIST: Gamemode_Minimalist_BuyWeapon(client, weapon); break;
         default: break;
     }
+}
+
+float(entity client, float weapon) Gamemode_CanBuyWeapon =
+{
+    switch(current_gamemode) {
+        case GAMEMODE_MINIMALIST: return Gamemode_Minimalist_CanBuyWeapon(client, weapon);
+        default: return true;
+    }
+    
+    return true;
 }
 
 void() Gamemode_LastStand =

@@ -28,6 +28,7 @@
 void(vector where, float time_alive) SpawnSpark;
 void() MBOX_Touch;
 string(string taunt) Gamemode_GetGoodByeTaunt;
+float(entity client, float weapon) Gamemode_CanBuyWeapon;
 
 #define MBOX_SPAWNFLAG_NOTHERE 		1
 #define MBOX_SPAWNFLAG_NOLIGHT 		2
@@ -152,8 +153,8 @@ float(float weapon_id) MBOX_IsWonderWeapon =
 // MBOX_GetRandomBoxWeapon(user)
 // Returns a weapon from the Mystery Box allow-list
 // that the user is not holding.
-// Wonder weapons have a ~10% total chance; normal weapons share the rest.
-// Normal weight: 3, Wonder weight: 2.
+// Wonder weapons have a ~5% total chance; normal weapons share the rest.
+// Normal weight: 3, Wonder weight: 1.
 //
 float(entity user) MBOX_GetRandomBoxWeapon =
 {
@@ -164,7 +165,7 @@ float(entity user) MBOX_GetRandomBoxWeapon =
         if (mystery_box_weapons[i].allowed &&
             !mystery_box_weapons[i].already_obtained &&
             !Weapon_PlayerHasWeapon(user, mystery_box_weapons[i].weapon_id, true)) {
-            total_weight += MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id) ? 2 : 3;
+            total_weight += MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id) ? 1 : 3;
         }
     }
 
@@ -177,7 +178,7 @@ float(entity user) MBOX_GetRandomBoxWeapon =
         if (mystery_box_weapons[i].allowed &&
             !mystery_box_weapons[i].already_obtained &&
             !Weapon_PlayerHasWeapon(user, mystery_box_weapons[i].weapon_id, true)) {
-            pick -= MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id) ? 2 : 3;
+            pick -= MBOX_IsWonderWeapon(mystery_box_weapons[i].weapon_id) ? 1 : 3;
             if (pick <= 0)
                 return mystery_box_weapons[i].weapon_id;
         }
@@ -556,7 +557,7 @@ void() Float_Change =
 		else {
 			self.model = "models/props/teddy.mdl";
 			setmodel(self, self.model);
-			self.angles_y = self.angles_y - 90;
+			self.angles_y = self.angles_y + 90;
 			self.nextthink = time + 1;
 			self.think = MBOX_PresentTeddy;
 			mystery_box_leave_count++;
@@ -703,7 +704,7 @@ void() MBOX_Touch =
 {
 	entity tempe;
 	
-	if (other.classname != "player" || other.downed)
+	if (other.classname != "player" || other.downed || other.isBuying)
 		return;
 		
 	if (!self.boxstatus) {
@@ -745,6 +746,9 @@ void() MBOX_Touch =
 				tempe = self;
 				self = other;
 
+				// In Minimalist, CanBuyWeapon handles stripping the old weapon
+				// and locking in the new choice before we give it.
+				Gamemode_CanBuyWeapon(self, tempe.boxweapon.weapon);
 				Weapon_GiveWeapon(tempe.boxweapon.weapon, 0, 0, 0);
 				self = tempe;
 				MBOX_FreeEnt(self.boxweapon);

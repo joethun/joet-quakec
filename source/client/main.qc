@@ -968,6 +968,8 @@ noref void(float width, float height, float menushown) CSQC_UpdateView =
 		DropRecoilKick();
 		Camera_SniperSway();
 
+		// Apply visual recoil to camera (for shake effect)
+		// Note: gun_kick is NOT applied to input_angles, so it doesn't affect actual aim
 		camang[0] += gun_kick[0];
 		camang[1] += gun_kick[1];
 		camang[2] += gun_kick[2];
@@ -1198,6 +1200,8 @@ noref void() CSQC_Input_Frame =
 	input_angles += gun_kick;
 	input_angles += sniper_sway;
 	input_angles += cam_snap_difference;
+
+	prev_input_angles = input_angles;
 }
 
 #define DEG2RAD(x)	(x * M_PI / 180.f)
@@ -1271,10 +1275,10 @@ noref void() CSQC_Parse_Event =
 			hud_perk_orientation = readbyte();
 			break;
 		case EVENT_WEAPONRECOIL:
-			vector rec;
-			rec[0] = readcoord() / 5;
-			rec[1] = readcoord() / 5;
-			rec[2] = readcoord() / 5;
+			local vector rec;
+			rec_x = readcoord()/5;
+			rec_y = readcoord()/5;
+			rec_z = readcoord()/5;
 			gun_kick += rec;
 			break;
 		case EVENT_CHATMESSAGE:
@@ -1364,9 +1368,13 @@ noref void() CSQC_Parse_Event =
 					date = "";
 					person = "";
 					break;
-				case GAMEMODE_HARDCORE:
-					chaptertitle = "HARDCORE";
+				case GAMEMODE_RANDOMIZER:
+					chaptertitle = "RANDOMIZER";
+					location = "New Weapon Every 30 Seconds!";
+					date = "";
+					person = "";
 					break;
+				case GAMEMODE_HARDCORE:
 				case GAMEMODE_STICKSNSTONES:
 					chaptertitle = "STICKS & STONES";
 					location = "Ballistic Knife FTW!";
@@ -1376,6 +1384,18 @@ noref void() CSQC_Parse_Event =
 				case GAMEMODE_WILDWEST:
 					chaptertitle = "WILD WEST";
 					location = "It's a stand-off!";
+					date = "";
+					person = "";
+					break;
+				case GAMEMODE_MINIMALIST:
+					chaptertitle = "MINIMALIST";
+					location = "One weapon. One perk. Survive.";
+					date = "";
+					person = "";
+					break;
+				case GAMEMODE_OITC:
+					chaptertitle = "ONE IN THE CHAMBER";
+					location = "Each kill earns a bullet!";
 					date = "";
 					person = "";
 					break;

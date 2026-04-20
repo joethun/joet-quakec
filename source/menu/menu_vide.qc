@@ -1,4 +1,4 @@
-string menu_video_buttons[9] = {"vm_shfps", "vm_maxps", "vm_vsync", "vm_fov", "vm_gamma", "vm_uwide", "vm_parts", "vm_filtr", "vm_back"};
+string menu_video_buttons[13] = {"vm_shfps", "vm_maxps", "vm_vsync", "vm_fov", "vm_gamma", "vm_uwide", "vm_parts", "vm_filtr", "vm_vign", "vm_rscl", "vm_crt", "vm_appl", "vm_back"};
 
 float menu_video_init;
 
@@ -63,6 +63,18 @@ void() Menu_Video_UpdateFiltering =
         cvar_set("gl_texturemode", "GL_NEAREST_MIPMAP_LINEAR");
         current_filter = 1;
     }
+};
+
+void() Menu_Video_UpdateVignette =
+{
+    Menu_PlaySound(MENU_SND_ENTER);
+    cvar_set("cl_vignette", ftos(!cvar("cl_vignette")));
+};
+
+void() Menu_Video_UpdateCRT =
+{
+    Menu_PlaySound(MENU_SND_ENTER);
+    cvar_set("cl_crt", ftos(!cvar("cl_crt")));
 };
 
 void() Menu_Video_ApplySettings =
@@ -183,7 +195,20 @@ void() Menu_Video =
     else filt_string = "LINEAR";
     Menu_DrawOptionValue(8, filt_string);
 
+    // Vignette
+    Menu_Button(9, "vm_vign", "VIGNETTE", "Toggle dark edge vignette effect") ? Menu_Video_UpdateVignette() : 0;
+    Menu_DrawOptionValue(9, cvar("cl_vignette") ? "ENABLED" : "DISABLED");
+
+    // Render Scale
+    Menu_Button(10, "vm_rscl", "RENDER SCALE", "Render at a lower resolution for retro look or performance") ? 0 : 0;
+    Menu_CvarSlider(10, "vm_rscl", [0.25, 1.0, 3], "r_renderscale", false, false, false);
+
+    // CRT Scanlines
+    Menu_Button(11, "vm_crt", "CRT SCANLINES", "Overlay scanlines for a CRT monitor effect") ? Menu_Video_UpdateCRT() : 0;
+    Menu_DrawOptionValue(11, cvar("cl_crt") ? "ENABLED" : "DISABLED");
+
     Menu_DrawDivider(12.25);
+    Menu_Button(-2, "vm_appl", "APPLY", "Save & apply settings") ? Menu_Video_ApplySettings() : 0;
     Menu_Button(-1, "vm_back", "BACK", "Return to configuration menu") ? current_menu = MENU_OPTIONS : 0;
 
 	sui_pop_frame();	

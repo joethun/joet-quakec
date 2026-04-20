@@ -29,6 +29,7 @@ float backupWepSkin;
 float sound_perk_delay; 
 void(entity person) W_HideCrosshair;
 void(entity client) Gamemode_DrinkPerk;
+float(entity client) Gamemode_CanReplacePerk;
 float(entity client, float current_price) Gamemode_GetPerkMachinePrice;
 float(float current_max_health, float current_perks) Gamemode_GetMaxHealthForPlayer;
 string(string taunt) Gamemode_GetGoodByeTaunt;
@@ -256,7 +257,8 @@ void() touch_perk =
 
 	// Perk Purchase Limit met
 	if (Player_GetNumPerks(other) >= game_modifier_perk_purchase_limit)
-		return;
+		if (!Gamemode_CanReplacePerk(other))
+			return;
 
 	if (cvar("sv_magic") == 0) {
 		useprint(other, 21, 0, 0);

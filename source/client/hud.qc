@@ -1809,8 +1809,6 @@ void() HUD_Scores =
 	
 	if(serverkey("constate") != "disconnected")
 	{
-		Draw_String([5, g_height - scoreboard_text_size - 5], sprintf("Nazi Zombies: Portable %s", build_datetime), [scoreboard_text_size, scoreboard_text_size], TEXTCOLOR, 1, 0);
-
 		// Scoreboard header
 		drawfill([g_width/2 - 271, 177], [270 * 2 + 2, 1], [0.2, 0.2, 0.2], 1, 0);
 		drawfill([g_width/2 - 271, 178 + scoreboard_text_size + 4], [270 * 2 + 2, 1], [0.2, 0.2, 0.2], 1, 0);
@@ -1940,11 +1938,26 @@ void() HUD_Endgame = {
 
 	survive = strcat("You Survived ", ftos(rounds), round);
 
+	// Read the frozen elapsed time (set by server at game over)
+	float elapsed = getstatf(STAT_GAME_START_TIME);
+	float hours   = floor(elapsed / 3600);
+	float minutes = floor((elapsed - hours * 3600) / 60);
+	float seconds = floor(elapsed - hours * 3600 - minutes * 60);
+
+	string playtime;
+	if (hours > 0)
+		playtime = sprintf("Time Played: %dh %dm %ds", hours, minutes, seconds);
+	else
+		playtime = sprintf("Time Played: %dm %ds", minutes, seconds);
+
 	float game_over_width = getTextWidth(game_over, 24);
-	HUD_DrawStringWithBackdrop([g_width/2 - game_over_width/2, 100], game_over, [24, 24], [1, 1, 1], 1, 0);
+	HUD_DrawStringWithBackdrop([g_width/2 - game_over_width/2, 100], game_over, [24, 24], TEXT_RED, 1, 0);
 
 	float survive_width = getTextWidth(survive, 18);
 	HUD_DrawStringWithBackdrop([g_width/2 - survive_width/2, 135], survive, [18, 18], [1, 1, 1], 1, 0);
+
+	float playtime_width = getTextWidth(playtime, 12);
+	HUD_DrawStringWithBackdrop([g_width/2 - playtime_width/2, 160], playtime, [12, 12], TEXT_RED, 1, 0);
 }
 
 //
@@ -2160,7 +2173,23 @@ void() HUD_GunGame =
 	}
 
 	Draw_String([g_width/2 - getTextWidth(weapon_id, 18)/2, 8], weapon_id, [18, 18], [1, 1, 1], 1, 0);
-	Draw_String([g_width/2 - getTextWidth(point_info, 12)/2, 30], point_info, [12, 12], [1, 1, 0], 1, 0);
+	Draw_String([g_width/2 - getTextWidth(point_info, 12)/2, 30], point_info, [12, 12], TEXT_RED, 1, 0);
+}
+
+void() HUD_Randomizer =
+{
+	drawfill([g_width/2 - 318, 4], [636, 45], [0, 0, 0], cvar("cl_textopacity"), 0);
+
+	string weapon_id = getstats(STAT_WEAPONNAME);
+	float time_remaining = getstatf(STAT_RANDOMIZER_TIME) - time;
+	
+	if (time_remaining < 0)
+		time_remaining = 0;
+	
+	string timer_info = sprintf("Next Weapon in: %d seconds", rint(time_remaining));
+
+	Draw_String([g_width/2 - getTextWidth(weapon_id, 18)/2, 8], weapon_id, [18, 18], [1, 1, 1], 1, 0);
+	Draw_String([g_width/2 - getTextWidth(timer_info, 12)/2, 30], timer_info, [12, 12], TEXT_RED, 1, 0);
 }
 
 void() HUD_PlayerNames =
@@ -2352,6 +2381,87 @@ void() HUD_PlayerDebugInfo =
 };
 
 //
+// HUD_GameSettings()
+// Draws a summary of all game settings below the scoreboard,
+// styled like the PRE-GAME menu: label in white, value in red,
+// divider line below. 4 items per row.
+//
+void() HUD_GameSettings =
+{
+	float text_size = 9;
+
+	string perkcap_val = ftos(cvar("sv_perkcap") ? cvar("sv_perkcap") : 8);
+
+	string v_gamemode = "";
+	switch(active_gamemode) {
+		case GAMEMODE_CLASSIC:       v_gamemode = "Classic"; break;
+		case GAMEMODE_GUNGAME:       v_gamemode = "Gun Game"; break;
+		case GAMEMODE_RANDOMIZER:    v_gamemode = "Randomizer"; break;
+		case GAMEMODE_HARDCORE:      v_gamemode = "Hardcore"; break;
+		case GAMEMODE_WILDWEST:      v_gamemode = "Wild West"; break;
+		case GAMEMODE_STICKSNSTONES: v_gamemode = "Sticks & Stones"; break;
+		case GAMEMODE_FESTIVE:       v_gamemode = "Fever"; break;
+		case GAMEMODE_MINIMALIST:    v_gamemode = "Minimalist"; break;
+		case GAMEMODE_OITC:          v_gamemode = "One in the Chamber"; break;
+		default:                     v_gamemode = "Classic"; break;
+	}
+	string v_difficulty = "";
+	switch(cvar("sv_difficulty")) {
+		case 0: v_difficulty = "Normal"; break;
+		case 1: v_difficulty = "Easy"; break;
+		case 2: v_difficulty = "Hard"; break;
+		case 3: v_difficulty = "Nightmare"; break;
+		default: v_difficulty = "Normal"; break;
+	}
+
+	string settings_str = v_gamemode;
+	settings_str = strcat(settings_str, "  |  ", v_difficulty);
+	settings_str = strcat(settings_str, "  |  Round ", ftos(cvar("sv_startround") ? cvar("sv_startround") : 1));
+	settings_str = strcat(settings_str, "  |  Magic: ", cvar("sv_magic") ? "ON" : "OFF");
+	settings_str = strcat(settings_str, "  |  Headshots Only: ", cvar("sv_headshotonly") ? "ON" : "OFF");
+	settings_str = strcat(settings_str, "  |  Horde: ", ftos(cvar("sv_maxai")));
+	settings_str = strcat(settings_str, "  |  Fast Rounds: ", cvar("sv_fastrounds") ? "ON" : "OFF");
+	settings_str = strcat(settings_str, "  |  Free Perk: ", cvar("sv_freeperk") ? "ON" : "OFF");
+	settings_str = strcat(settings_str, "  |  Perk Cap: ", perkcap_val);
+
+	float str_w = getTextWidth(settings_str, text_size);
+	float x = (g_width - str_w) / 2;
+	float y = g_height - text_size - 4;
+
+	drawfill([0, y - 3], [g_width, text_size + 8], [0, 0, 0], 0.75, 0);
+	Draw_String([x, y], settings_str, [text_size, text_size], '0.9 0.15 0.15', 1, 0);
+}
+
+//
+// HUD_CRT()
+// Draws a scanline overlay for a CRT effect.
+//
+void() HUD_CRT =
+{
+	// Tile the 4px scanline texture across the full screen
+	float tile_h = 4;
+	for (float y = 0; y < g_height; y += tile_h) {
+		drawpic([0, y, 0], "gfx/hud/crt_scanline.tga", [g_width, tile_h, 0], [1, 1, 1], 1, 0);
+	}
+}
+
+//
+// HUD_Vignette()
+// Draws a dark vignette around the screen edges using the scope overlay texture.
+//
+void() HUD_Vignette =
+{
+	// Draw oversized so the transparent center fills more of the screen,
+	// pushing the dark edges further out. Centered on screen.
+	float scale = 1.2;
+	float w = g_width  * scale;
+	float h = g_height * scale;
+	float x = (g_width  - w) / 2;
+	float y = (g_height - h) / 2;
+	drawpic([x, y, 0], "gfx/hud/vignette.tga", [w, h, 0], [0, 0, 0], 0.55, 0);
+}
+
+//
 // HUD_DrawElementsForEndGame()
 // Heads-Up Display draw logic for when the server
 // is in its "GAME OVER" state.
@@ -2363,6 +2473,9 @@ void() HUD_DrawElementsForEndGame =
 
 	// Draws the scoreboard.
 	HUD_Scores();
+
+	// Draws the game settings summary below the scoreboard.
+	HUD_GameSettings();
 };
 
 //
@@ -2528,6 +2641,7 @@ void() HUD_DrawElementsForPlayer =
 
 		switch(active_gamemode) {
 			case GAMEMODE_GUNGAME: HUD_GunGame(); break;
+			case GAMEMODE_RANDOMIZER: HUD_Randomizer(); break;
 			default: break;
 		}
 
@@ -2579,6 +2693,10 @@ void() HUD_DrawElementsForPlayer =
 //
 void() HUD_DrawElements = 
 {
+	// Vignette always drawn first — under everything, present from the start.
+	if (cvar("cl_vignette"))
+		HUD_Vignette();
+
 	//
 	// Game Over Sequence
 	//
@@ -2615,4 +2733,8 @@ void() HUD_DrawElements =
 	// Standard Play
 	//
 	HUD_DrawElementsForPlayer();
+
+	// CRT scanlines drawn last — on top of everything including HUD.
+	if (cvar("cl_crt"))
+		HUD_CRT();
 };

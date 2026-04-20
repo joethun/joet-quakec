@@ -753,10 +753,10 @@ float(float wep) getWeaponAmmo =
 			weapon_ammo = 256;
 			break;
 		case W_MP5K:
-			weapon_ammo = 120;
+			weapon_ammo = 210;
 			break;
 		case W_KOLLIDER:
-			weapon_ammo = 200;
+			weapon_ammo = 300;
 			break;
 		case W_MG:
 			weapon_ammo = 500;
@@ -4055,9 +4055,9 @@ float(float wep) getWeaponRecoilReturn =
 		case W_BORE:
 			return 1000;
 		case W_FG:
-			return 1129;
+			return 1100;
 		case W_IMPELLER:
-			return 1129;
+			return 1100;
 		case W_GEWEHR:
 			return 1500;
 		case W_COMPRESSOR:
@@ -4075,17 +4075,17 @@ float(float wep) getWeaponRecoilReturn =
 		case W_WIDDER:
 			return 1500;
 		case W_MP40:
-			return 2538;
+			return 2500;
 		case W_AFTERBURNER:
-			return 2538;
+			return 2500;
 		case W_MP5K:
-			return 1255;
+			return 1250;
 		case W_KOLLIDER:
-			return 1255;
+			return 1250;
 		case W_MG:
-			return 1778;
+			return 1600;
 		case W_BARRACUDA:
-			return 1778;
+			return 1600;
 		case W_PANZER:
 			return 0;
 		case W_LONGINUS:
@@ -4524,31 +4524,29 @@ vector(float wep) GetWeaponRecoil =
 			guaranteed = '0 95 0';
 			kick_change = '45 85 45';
 			break;
-		// Per-shot kick is tuned against fire rate so WaW-style
-		// "climb per second" ends up consistent across the family.
 		case W_BAR:
-			kick_change = '15 150 15';
+			kick_change = '0 50 0';
 			break;
 		case W_WIDOW:
-			kick_change = '12 110 12';
+			kick_change = '0 50 0';
 			break;
 		case W_MG:
-			kick_change = '25 115 25';
+			kick_change = '40 30 40';
 			break;
 		case W_BARRACUDA:
-			kick_change = '18 80 18';
+			kick_change = '40 30 40';
 			break;
 		case W_FG:
-			kick_change = '20 90 20';
+			kick_change = '30 45 0';
 			break;
 		case W_IMPELLER:
-			kick_change = '18 80 18';
+			kick_change = '30 45 0';
 			break;
 		case W_BROWNING:
-			kick_change = '35 160 35';
+			kick_change = '0 50 0';
 			break;
 		case W_ACCELERATOR:
-			kick_change = '35 160 35';
+			kick_change = '0 50 0';
 			break;
 		case W_TESLA:
 		case W_DG3:
@@ -4793,7 +4791,7 @@ float(float wep) GetWeaponZoomAmount =
 			return 18;
 		case W_BAR:
 		case W_WIDOW:
-			return 15;
+			return 12;
 		case W_FG:
 		case W_IMPELLER:
 			return 15;

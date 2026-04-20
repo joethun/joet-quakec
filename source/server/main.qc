@@ -36,6 +36,11 @@ string(string current_tune) Gamemode_GetSplashTune;
 
 .float gungame_weapon_idx;
 .float gungame_score_threshold;
+.float randomizer_next_swap_time;
+.float minimalist_has_chosen_weapon;
+.float minimalist_chosen_weapon_id;
+
+float game_start_time;
 
 //called when starting server/loading the map
 void() main =
@@ -392,8 +397,14 @@ void() worldspawn =
 	clientstat(STAT_GUNGAME_IDX, EV_FLOAT, gungame_weapon_idx);
 	clientstat(STAT_GUNGAME_SCOREGOAL, EV_FLOAT, gungame_score_threshold);
 
+	// Randomizer
+	clientstat(STAT_RANDOMIZER_TIME, EV_FLOAT, randomizer_next_swap_time);
+
 	// Zombie counter
 	globalstat(STAT_REMAINING_ZOMBIES, EV_FLOAT, "Remaining_Zombies");
+
+	// Game playtime
+	globalstat(STAT_GAME_START_TIME, EV_FLOAT, "game_start_time");
 
 	autocvar(sv_enablechatplugins, 0);
 	autocvar(sv_maprotationbasename, "map_rotation");
@@ -406,6 +417,7 @@ void() worldspawn =
 	autocvar(sv_maxai, 24);
 	autocvar(sv_fastrounds, 0);
 	autocvar(sv_freeperk, 0);
+	autocvar(sv_perkcap, 8);
 
 	autocvar(sv_spoofmonth, 0);
 

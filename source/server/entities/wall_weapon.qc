@@ -28,6 +28,7 @@
 
 void() W_PlayTakeOut;
 void(entity client, float weapon) Gamemode_BuyWeapon;
+float(entity client, float weapon) Gamemode_CanBuyWeapon;
 float(float current_cost, float weapon_cost, float weapon_id, float is_upgraded, float weapon_tier) Gamemode_GetCostForWeaponAmmo;
 
 // =================================
@@ -356,6 +357,14 @@ void () WallWeapon_TouchTrigger =
 		}
 
 		other.semi_actions |= SEMIACTION_USE;
+
+		// Check if gamemode allows this weapon purchase
+		if (!Gamemode_CanBuyWeapon(other, self.weapon)) {
+			centerprint(other, "You can only use ONE weapon in Minimalist mode!");
+			Sound_PlaySound(other, "sounds/misc/denybuy.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
+			return;
+		}
+
 		if (other.points < wcost) {
 			centerprint (other, STR_NOTENOUGHPOINTS);
 			Sound_PlaySound(other, "sounds/misc/denybuy.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);

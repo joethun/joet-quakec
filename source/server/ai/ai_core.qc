@@ -809,6 +809,10 @@ void(float dist) Inside_Walk = {
 void(float dist) Zombie_Walk =  {
 	dist = Gamemode_GetAIWalkSpeed(dist, self.classname);
 
+	// Slow walkers (walktypes 1-3) and joggers (walktype 4) by 10%
+	if (self.walktype >= 1 && self.walktype <= 4)
+		dist = dist * 0.9;
+
 	self.velocity_x = 0;
 	self.velocity_y = 0;
 

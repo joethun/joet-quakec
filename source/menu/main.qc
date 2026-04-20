@@ -212,6 +212,8 @@ void() m_init =
 	autocvar(cl_mboxname, 0);
 	autocvar(cl_papnames, 0);
 	autocvar(cl_zombiecounter, 0);
+	autocvar(cl_vignette, 1);
+	autocvar(cl_crt, 0);
 
 	autocvar(sv_gamemode, 0);
 	autocvar(sv_difficulty, 0);

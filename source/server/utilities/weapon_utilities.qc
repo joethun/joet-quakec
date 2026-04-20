@@ -50,6 +50,7 @@
 void() W_AimOut;
 void() ReturnWeaponModel;
 void(entity person) W_HideCrosshair;
+float() Gamemode_GetWeaponSlotLimit;
 
 //
 // Weapon_GetPlayerAmmoInSlot(person, slot)
@@ -368,6 +369,11 @@ void Weapon_GiveWeapon(float weapon_id, float weapon_mag, float weapon_reserve, 
 
 	// Find next available weapon slot
 	float weapon_slots = (self.perks & P_MULE) ? MULEKICK_WEAPON_SLOT : MULEKICK_WEAPON_SLOT - 1;
+
+	// Gamemodes can restrict the number of weapon slots
+	float gamemode_slot_limit = Gamemode_GetWeaponSlotLimit();
+	if (gamemode_slot_limit > 0 && gamemode_slot_limit < weapon_slots)
+		weapon_slots = gamemode_slot_limit;
 
 	for(float i = 0; i < weapon_slots; i++) {
 		if (self.weapons[i].weapon_id == 0) {

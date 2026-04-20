@@ -218,6 +218,7 @@ void Set_W_Frame (float startframe, float endframe, float duration, float funcca
 		self.new_anim_stop = dontstartnew;
 		self.weapon_animduration = math;
 		self.anim_reversed = reversed;
+		self.anim_weapon_time = 0;
 	}
 	if (side == S_LEFT || side == S_BOTH) {
 		self.weapon2frame = startframe;
@@ -226,6 +227,7 @@ void Set_W_Frame (float startframe, float endframe, float duration, float funcca
 		self.new_anim2_stop = dontstartnew;
 		self.weapon2_animduration = math;
 		self.anim2_reversed = reversed;
+		self.anim_weapon2_time = 0;
 
 		if (side != S_BOTH) {
 			self.animend2 = endanimfunc;

@@ -197,13 +197,6 @@ float() PU_GetNextPowerUp =
 			// Check if we meet the requirements
 			if (pu.requirement_function() == true) {
 				id = pu.id;
-
-				// If Free Perk was picked but every player already has
-				// all perks, forward the slot to Max Ammo so its chance
-				// isn't wasted.
-				if (id == PU_FREEPERK && PU_AllPlayersHavePerksCapped() && PU_MaxAmmoRequirement())
-					id = PU_MAXAMMO;
-
 				found = true;
 			}
 		}
@@ -725,6 +718,9 @@ void() PU_FreePerk =
 		self.isBuying = true;
 		W_AimOut();
 		W_SprintStop();
+		self.zoom = 0;
+		self.fire_delay = self.fire_delay2 = self.reload_delay = self.reload_delay2 = self.knife_delay = time + 3;
+		W_HideCrosshair(self);
 		Weapon_PlayViewModelAnimation(ANIM_PUT_AWAY, DrinkPerk, getWeaponDelay(self.weapon, PUTOUT));
 		self = tempe;
 

@@ -35,6 +35,7 @@ float(float current_delay) Gamemode_GetRoundDelay;
 void() SUB_UseTargets;
 float() spawn_a_dogA;
 void() zapper_cooldown;
+float game_start_time;
 
 void() Spawn_Enemy =
 {
@@ -340,14 +341,15 @@ void() InitRounds =
 	roundtype = 1;
 	delay_at_round = 2/0.95;
 	totalpowerups = 0;
-	powerup_activate = 2000;
+	powerup_activate = 3000;
+	game_start_time = time;
 
 	switch(cvar("sv_difficulty")) {
-		case 0: powerup_score_threshold = ((player_count + 1) * 500) + powerup_activate; break;
-		case 1: powerup_score_threshold = ((player_count) * 500) + powerup_activate; break;
-		case 2: powerup_score_threshold = ((player_count + 1) * 750) + powerup_activate; break;
-		case 3: powerup_score_threshold = ((player_count + 1) * 1250) + powerup_activate; break;
-		default: powerup_score_threshold = ((player_count + 1) * 500) + powerup_activate; break;
+		case 0: powerup_score_threshold = ((player_count + 1) * 750) + powerup_activate; break;
+		case 1: powerup_score_threshold = ((player_count) * 750) + powerup_activate; break;
+		case 2: powerup_score_threshold = ((player_count + 1) * 1000) + powerup_activate; break;
+		case 3: powerup_score_threshold = ((player_count + 1) * 1500) + powerup_activate; break;
+		default: powerup_score_threshold = ((player_count + 1) * 750) + powerup_activate; break;
 	}
 
 	// cypress -- fix Soft_Restart spawning multiple 

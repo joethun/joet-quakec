@@ -30,6 +30,7 @@ void() Gamemode_GetUp;
 void(entity attacker, float death_style) Gamemode_DieHandler;
 float(float current_earned_score, float damage_style) Gamemode_ScoreForDamage;
 float(float current_health_delay, float current_perks) Gamemode_GetHealthRegenDelayForPlayer;
+float game_start_time;
 
 #define DMG_SCORE_HEADSHOT		100 	// Death by Headshot
 #define DMG_SCORE_MELEE			130		// Death by Melee
@@ -131,6 +132,10 @@ float() PollPlayersAlive =
 // Endgamesetup -- think function for setting up the death of everyone
 void() EndGameSetup =
 {
+	// Overwrite game_start_time with the final elapsed seconds so the
+	// client stat freezes at the correct value instead of counting up.
+	game_start_time = time - game_start_time;
+
 	entity gameover_watcher = spawn();
 	gameover_watcher.think = EndGame;
 	gameover_watcher.nextthink = time + 4;

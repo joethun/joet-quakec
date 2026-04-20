@@ -347,15 +347,20 @@ float 	map_compatibility_mode;
 #define STAT_GUNGAME_IDX		76
 #define STAT_GUNGAME_SCOREGOAL	77
 #define STAT_REMAINING_ZOMBIES	78
+#define STAT_RANDOMIZER_TIME	79
+#define STAT_GAME_START_TIME	80
 
 // Game Modes
 #define GAMEMODE_CLASSIC        0
 #define GAMEMODE_GRIEF          1
 #define GAMEMODE_GUNGAME        2
-#define GAMEMODE_HARDCORE       3
-#define GAMEMODE_WILDWEST       4
-#define GAMEMODE_STICKSNSTONES  5
-#define GAMEMODE_FESTIVE 		6
+#define GAMEMODE_RANDOMIZER     3
+#define GAMEMODE_HARDCORE       4
+#define GAMEMODE_WILDWEST       5
+#define GAMEMODE_STICKSNSTONES  6
+#define GAMEMODE_FESTIVE 		7
+#define GAMEMODE_MINIMALIST     8
+#define GAMEMODE_OITC           9
 
 // Misc. player statistics
 .float playernum;

@@ -146,6 +146,7 @@ float last_input_deviceid;			// The Device ID of the input hardware that last ca
 string build_datetime;
 
 vector gun_kick;
+vector prev_input_angles;
 
 float hide_viewmodel;
 
