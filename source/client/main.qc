@@ -437,6 +437,7 @@ noref void(float isnew) CSQC_Ent_Update =
 		self.is_in_menu = readbyte();
 		self.is_spectator = readbyte();
 		self.ping = readshort();
+		self.maxspeed = readshort();
 
 		// set for HUD_PlayerDebugInfo
 		player_velocity = self.velocity;

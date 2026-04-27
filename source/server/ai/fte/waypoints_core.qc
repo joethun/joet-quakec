@@ -55,12 +55,9 @@ void () Create_New_Waypoint =
 	new_way = spawn();
 
 	setorigin(new_way, self.origin);
-	
-	
-	//new_way.flags = FL_ITEM;
+
 	new_way.solid = SOLID_TRIGGER;
 
-	
 	setmodel(new_way, "models/way/normal_way.spr");
 	new_way.classname = "waypoint";
 	new_way.effects = EF_FULLBRIGHT;
@@ -446,7 +443,6 @@ void() Save_Waypoints
 	dprint (strcat("Saving waypoints ", strcat(h, "\n")));
 	
 	local entity dway;
-	//fputs(file, "begin\n");
 	dway = find(world, classname, "waypoint");
 	while (dway)
 	{
@@ -491,9 +487,7 @@ void (vector here, float which, string special, string trg, string trg2, string 
 	new_way = spawn();
 
 	setorigin(new_way, here);
-	
-	
-	//new_way.flags = FL_ITEM;
+
 	new_way.solid = SOLID_TRIGGER;
 
 	if (cvar("waypoint_mode"))

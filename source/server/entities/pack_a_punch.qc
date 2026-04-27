@@ -306,7 +306,7 @@ void() PAP_Touch =
 	float is_double_pap_pulverizer = (other.weapon == W_PULVERIZER && other.weapons[0].weapon_tier < 1);
 
 	if (is_double_pap_pulverizer) {
-		pap_cost = 50000;
+		pap_cost = 25000;
 	} else if (game_modifier_packapunch_uses_tiers) {
 		if (other.weapons[0].weapon_tier == 1) {
 			pap_cost *= 3;

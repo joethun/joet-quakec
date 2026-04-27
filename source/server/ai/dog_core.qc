@@ -363,7 +363,6 @@ void(entity where) spawn_a_dogB =
 	local entity old_self;
 	old_self = self;
 	self = sdog;
-	//droptofloor();
 	self.th_walk();
 	self = old_self;
 };
@@ -447,7 +446,6 @@ float() spawn_a_dogA =
 		}
 		if (!pcount && random() < 0.6)
 		{
-			//spawn_a_dogB(lastspawn);
 			spawn_dog_lightning(lastspawn);
 			dogCount++;
 			spawn_time = time + zombie_spawn_delay;

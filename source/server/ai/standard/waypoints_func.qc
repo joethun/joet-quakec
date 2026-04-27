@@ -25,7 +25,6 @@
 
 */
 
-//float current_special;
 entity active_way, current_way;
 
 
@@ -172,10 +171,6 @@ void() Remove_Waypoint =
 	if (tempe)
 		tempe.target8 = "";
 
-
-	//if (active_way.targetname != "")
-	//	current_special--;
-		
 	bprint (PRINT_HIGH, "Removed waypoint ");
 	bprint (PRINT_HIGH, active_way.waynum);
 	bprint (PRINT_HIGH, "\n");
@@ -204,12 +199,9 @@ void () Create_New_Waypoint =
 	new_way = spawn();
 
 	setorigin(new_way, self.origin);
-	
-	
-	//new_way.flags = FL_ITEM;
+
 	new_way.solid = SOLID_TRIGGER;
 
-	
 	setmodel(new_way, "models/way/normal_way.spr");
 	new_way.classname = "waypoint";
 	new_way.effects = EF_FULLBRIGHT;
@@ -628,8 +620,6 @@ void () Make_Special_Waypoint =
 	if (active_way)
 	{
 		strunzone(active_way.targetname);
-		//local entity nearDoor;
-		//nearDoor = closestDoor();
 		if(self.active_door == world)
 		{
 			bprint(PRINT_HIGH, "Error: no door selected!\n");
@@ -642,16 +632,11 @@ void () Make_Special_Waypoint =
 		}
 		setmodel(active_way, "models/way/current_way_door.spr");
 		active_way.targetname = self.active_door.wayTarget;
-		//active_way.targetname = ftos(current_special);
-		//active_way.targetname = strzone(active_way.targetname);
-		//active_way.targetname = strcat("d", active_way.targetname);
-		//active_way.targetname = strzone(active_way.targetname);
 		bprint(PRINT_HIGH, "special waypoint ");
 		bprint (PRINT_HIGH, active_way.waynum);
 		bprint(PRINT_HIGH, " named ");
 		bprint (PRINT_HIGH, active_way.targetname);
 		bprint(PRINT_HIGH, "\n");
-		//current_special++;
 	}
 }
 
@@ -661,9 +646,7 @@ void (vector here, float which, string special, string trg, string trg2, string 
 	new_way = spawn();
 
 	setorigin(new_way, here);
-	
-	
-	//new_way.flags = FL_ITEM;
+
 	new_way.solid = SOLID_TRIGGER;
 
 	if (cvar("waypoint_mode"))
@@ -768,7 +751,6 @@ void() Save_Waypoints
 	file = fopen (h, FILE_WRITE);
 	
 	local entity dway;
-	//fputs(file, "begin\n");
 	dway = find(world, classname, "waypoint");
 	while (dway)
 	{

@@ -327,7 +327,6 @@ void() touch_perk =
 			self.usedent = tempe; // Set usedent to machine
 			self.sequence = tempe.sequence; // Store bottle skin on player for DrinkPerk
 			self.isBuying = true; // To avoid canceling the animation from triggering
-			self.zoom = 0;
 			Weapon_PlayViewModelAnimation(ANIM_PUT_AWAY, DrinkPerk, getWeaponDelay(self.weapon, PUTOUT));
 			other = self; // Set other to client
 			self = tempe; // Set self to machine

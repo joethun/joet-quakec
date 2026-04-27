@@ -851,10 +851,10 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 1000;
 			break;
 		case W_357:
-			weapon_damage = 175;
+			weapon_damage = 750;
 			break;
 		case W_KILLU:
-			weapon_damage = 350;
+			weapon_damage = 1500;
 			break;
 		// -- Bolt-Action Rifles --
 		case W_KAR:
@@ -870,7 +870,7 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 300;
 			break;
 		case W_DESTROYER:
-			weapon_damage = 10000;
+			weapon_damage = 15000;
 			break;
 		case W_KAR_SCOPE:
 			weapon_damage = 200;
@@ -923,10 +923,10 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 160;
 			break;
 		case W_TYPE:
-			weapon_damage = 95;
+			weapon_damage = 100;
 			break;
 		case W_SAMURAI:
-			weapon_damage = 200;
+			weapon_damage = 205;
 			break;
 		// -- Assault Rifles / Light MGs --
 		case W_STG:
@@ -936,16 +936,16 @@ float(float wep, float weapon_tier) getWeaponDamage =
 			weapon_damage = 245;
 			break;
 		case W_BAR:
-			weapon_damage = 160;
+			weapon_damage = 155;
 			break;
 		case W_WIDOW:
-			weapon_damage = 325;
+			weapon_damage = 315;
 			break;
 		case W_FG:
-			weapon_damage = 100;
+			weapon_damage = 110;
 			break;
 		case W_IMPELLER:
-			weapon_damage = 205;
+			weapon_damage = 215;
 			break;
 		// -- LMGs --
 		case W_BROWNING:

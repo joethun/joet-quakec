@@ -451,6 +451,7 @@ float Player_SendEntity(entity ePVEnt, float flChanged)
 	WriteByte(MSG_ENTITY, self.is_in_menu);
 	WriteByte(MSG_ENTITY, self.is_spectator);
 	WriteShort(MSG_ENTITY, self.ping);
+	WriteShort(MSG_ENTITY, self.maxspeed);
 	return TRUE;
 }
 

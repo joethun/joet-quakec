@@ -96,7 +96,6 @@ void() door_hit_top =
 	self.state = STATE_TOP;
 	if ((self.classname == "door_nzp_cost" || self.classname == "door_nzp" || self.classname == "door_open"))
 	{
-		//remove (self.owner.trigger_field); //moto - what does this do lol
 		if (!(self.spawnflags & 128)) {
 			setmodel(self, "");
 			self.solid = SOLID_NOT;
@@ -230,7 +229,6 @@ void() door_fire =
 	do
 	{
 		door_go_up ();
-		//self.isopen = true;
 		self = self.enemy;
 	} while ( (self != starte) && (self != world) );
 	self = oself;

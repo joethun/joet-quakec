@@ -190,8 +190,6 @@ void(float which) SetZombieHitBox =
 	if(self.currentHitBoxSetup == which)
 		return;
 
-	//which = IDLE_BBOX;
-	
 	switch(which)
 	{
 		case EMPTY_BBOX:
@@ -914,8 +912,6 @@ void() zombie_attack =
 	}
 	else
 	{
-		//zombie_attack_through_w1();
-		
 		if(self.outside == TRUE)
 		{
 			if(random() < 0.30)
@@ -1267,7 +1263,6 @@ void() Z_ElectroShock =
 	else {
 		tesla_spark(self.origin + '0 0 13');
 	}
-	// Zombie_Tesla_Light();
 
 	// Decide what to Gib
 	float r = random();
@@ -1708,8 +1703,7 @@ void() spawnAllZombEnts =
 void(entity where) spawn_a_zombieB =
 {
 	local entity szombie;//USED FOR WHAT TO SPAWN
-	//szombie = spawn();
-	
+
 	szombie = getFreeZombieEnt();
 	if(szombie == world || zombie_spawn_timer > time)
 		return;

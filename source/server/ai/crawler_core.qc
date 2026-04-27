@@ -278,11 +278,7 @@ void(entity who) makeCrawler =
 		who.speed_penalty = 3;
 		who.walktype = 2;
 	}
-	
-	//who.th_jump = zombie_jump1;
-	//who.th_grabledge = zombie_grabledge1;
-	//who.th_diewunder = die_wunder1;
-	
+
 	setmodel(who,"models/ai/zbc%.mdl");
 	if(who.head.deadflag)
 	{

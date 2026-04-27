@@ -113,6 +113,7 @@ float screenflash_worktime;
 float screenflash_starttime;
 
 .float stance;
+.float maxspeed;
 
 vector camang;		// used for punches
 

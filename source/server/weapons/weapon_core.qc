@@ -127,6 +127,9 @@ void() W_AimIn =
 	if (WepDef_DoesNotADS(self.weapon))
 		return;
 
+	if (self.isBuying)
+		return;
+
 	if ((self.stance == PLAYER_STANCE_PRONE) && self.velocity && !self.dive)
 		return;
 
@@ -1528,8 +1531,6 @@ void() W_ThrowGrenade =
 		
 		nade.avelocity = '400 -400 400';
 
-		//nade.angles = vectoangles(nade.velocity);
-		//nade.angles_z += (nade.angles_z + 180 < 360)? 180 : -180;
 		nade.angles = vectoangles(v_forward);
 		nade.angles_z -= 15;
 		// set nade duration
@@ -2272,6 +2273,14 @@ void() WeaponCore_ClientLogic =
 	// moving (but not diving), force them to stop
 	if (self.stance == PLAYER_STANCE_PRONE && self.velocity && self.zoom && !self.dive && self.dive_delay < time) {
 		W_AimOut();
+	}
+
+	// Cancel ADS while buying (perks, Pack-a-Punch, wall weapons,
+	// priming a grenade or Bouncing Betty, etc.).
+	if (self.isBuying && self.zoom) {
+		self.zoom = 0;
+		self.scopetime = 0;
+		self.ads_release = false;
 	}
 
 	// Fire Button Pressed

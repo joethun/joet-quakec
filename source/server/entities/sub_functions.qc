@@ -410,14 +410,12 @@ void () HalfLife_DoRender =
 
                         self.solid = SOLID_BBOX;
                 }
-                    
-                //setmodel(self, string_null);
+
                 self.size = osize;
                 self.mins = omins;
                 self.maxs = omaxs;
                 self.absmin = oabsmin;
                 self.absmax = oabsmax;
-                //setorigin(self, self.origin);
             }
         }
 };

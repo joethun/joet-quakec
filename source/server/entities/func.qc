@@ -336,8 +336,6 @@ void() button_fire =
 	if (self.state == STATE_UP || self.state == STATE_TOP)
 		return;
 
-	//sound(self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-
 	self.state = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, button_wait);
 };
@@ -466,7 +464,6 @@ void() func_ending =
 {  
 	if (!self.model)
 		return;
-	//	objerror("ERROR: func_model expects a model. Removing.");
 
 	precache_model (self.model);
 	

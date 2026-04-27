@@ -76,7 +76,6 @@ void SV_WP_SetAdd(float wp, float isopen)
 		// gotta check if last entry was removed before this call
 		if (waypoints[open_first].set == SET_CLOSED)
 		{
-			//Con_Printf("Empty set: %i is new first\n", wp);
 			open_first = wp;
 			waypoints[wp].prev = wp;
 		}

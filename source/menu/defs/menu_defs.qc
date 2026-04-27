@@ -2,7 +2,7 @@
 #define false   0
 
 string build_datetime;
-#define JOET_VERSION "0.2.0"
+#define JOET_VERSION "0.2.1"
 float music_duration_time;
 
 string menu_background;

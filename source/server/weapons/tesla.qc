@@ -279,8 +279,6 @@ void() W_FireTesla =
 	if(hit_ent.classname == "ai_zombie_head" || hit_ent.classname == "ai_zombie_larm" || hit_ent.classname == "ai_zombie_rarm")
 		hit_ent = hit_ent.owner;
 
-    // print("W_FireTesla hit ent: ", hit_ent.classname, "\n");
-
     if(trace_ent != world && trace_ent.takedamage) {
         tesla_damage(hit_ent, world, self, 1, true); 
     }

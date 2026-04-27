@@ -39,7 +39,7 @@ void() path_corner_touch =
 	self.movetype = MOVETYPE_NONE;
 	self.solid = SOLID_NOT;
 	self.touch = SUB_Null;
-	setsize(self, '0 0 0 ', '0 0 0');
+	setsize(self, '0 0 0', '0 0 0');
 	if(!self.target)
 	{
 		if (self.spawnflags & 1)
@@ -57,7 +57,7 @@ void() path_corner =
 	self.movetype = MOVETYPE_BOUNCE;
 	self.solid = SOLID_BBOX;
 	self.touch = path_corner_touch;
-	setsize(self, '0 0 0 ', '0 0 0');
+	setsize(self, '0 0 0', '0 0 0');
 };
 
 void() Respawn = 
@@ -516,7 +516,6 @@ void(float dist) Window_Hop =
 			self.goalentity.box1owner = world;//free box1
 			self.goalentity.usedent = self;//we own the window
 			//don't need to set goalorigin here
-			//self.used = WWINDOW;
 			self.chase_time = 0;
 			self.th_windowhop();
 			return;
@@ -646,7 +645,6 @@ void() PathfindToEnemy =
 	} else if (path_failure == -1) {
 		self.goalentity = self.enemy;
 		self.chase_time = time + 6;
-	} else {
 	}
 }
 
@@ -698,6 +696,7 @@ void(float dist) Inside_Walk = {
 		//   c) current target is a non-player entity (horde/spawn point) and a
 		//      player has become available -- check more frequently for this case.
 		float needs_retarget = 0;
+		entity scan;
 
 		if (self.enemy == world || self.enemy.downed == true) {
 			needs_retarget = 1;
@@ -708,7 +707,7 @@ void(float dist) Inside_Walk = {
 			// player has spawned in.
 			if (self.retarget_check < time) {
 				self.retarget_check = time + 1;
-				entity scan = find(world, classname, "player");
+				scan = find(world, classname, "player");
 				while (scan != world) {
 					if (!scan.downed && !scan.is_spectator) {
 						needs_retarget = 1;
@@ -716,6 +715,22 @@ void(float dist) Inside_Walk = {
 					}
 					scan = find(scan, classname, "player");
 				}
+			}
+		} else if (self.enemy.classname == "player" && self.retarget_check < time) {
+			// Re-target if another player has drifted meaningfully closer
+			// than the current target -- stops zombies from plowing past a
+			// player standing just off their path to reach one further away.
+			self.retarget_check = time + 0.5;
+			float cur_dist = vlen(self.enemy.origin - self.origin);
+			scan = find(world, classname, "player");
+			while (scan != world) {
+				if (scan != self.enemy && !scan.downed && !scan.is_spectator) {
+					if (vlen(scan.origin - self.origin) + 150 < cur_dist) {
+						needs_retarget = 1;
+						break;
+					}
+				}
+				scan = find(scan, classname, "player");
 			}
 		}
 
@@ -850,10 +865,8 @@ void(float dist) Zombie_Walk =  {
 }
 
 void() Zombie_AI = {
-	//dist = 0;
 	float dist = 0;
 	self.flags = self.flags | FL_PARTIALGROUND;
-	//check_onfire();
 
 	//
 	// Try to play some zombie sounds.

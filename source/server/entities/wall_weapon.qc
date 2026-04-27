@@ -269,7 +269,6 @@ void () WallWeapon_TouchTrigger =
 		{
 			other.reload_delay = 0;
 			Sound_PlaySound(other, "sounds/misc/ching.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
-			//other.boughtweapon = true;
 			Player_RemoveScore(other, wcost);
 			other.grenades = other.grenades | 2;
 			other.secondary_grenades = 2;
@@ -302,7 +301,6 @@ void () WallWeapon_TouchTrigger =
 		{
 			other.reload_delay = 0;
 			Sound_PlaySound(other, "sounds/misc/ching.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
-			//other.boughtweapon = true;
 			Player_RemoveScore(other, wcost);
 			other.primary_grenades = 4;
 			if (self.enemy || self.target2 != "")
@@ -349,7 +347,6 @@ void () WallWeapon_TouchTrigger =
 		entity tempe;
 		wcost = floor(self.cost * game_modifier_cost_multiplier);
 
-		//centerprint(other, self.message);
       	Player_UseprintWithWait(other, self, 4, wcost, self.weapon);
 
 		if (!Player_UseButtonPressed(other, self) || (other.semi_actions & SEMIACTION_USE)) {
