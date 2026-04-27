@@ -845,7 +845,7 @@ float(float wep, float weapon_tier) getWeaponDamage =
 	{
 		// -- Pistols --
 		case W_COLT:
-			weapon_damage = 45;
+			weapon_damage = 25;
 			break;
 		case W_BIATCH:
 			weapon_damage = 1000;
